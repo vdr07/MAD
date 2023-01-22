@@ -1,0 +1,110 @@
+package com.github.kiarahmani.replayer;
+
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
+import com.github.adejanovski.cassandra.jdbc.CassandraConnection;
+
+public class Client {
+	private Connection connect = null;
+	private Statement stmt = null;
+	private ResultSet rs = null;
+	private int id;
+	Properties p;
+
+	public Client(int id) {
+		this.id = id;
+		p = new Properties();
+		p.setProperty("id", String.valueOf(this.id));
+		Object o;
+		try {
+			o = Class.forName("MyDriver").newInstance();
+			DriverManager.registerDriver((Driver) o);
+			Driver driver = DriverManager.getDriver("jdbc:mydriver://");
+			connect = driver.connect("", p);
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void close() {
+		try {
+			connect.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void addFriendship(long profile_id1, long profile_id2) throws SQLException {
+		String stmtstring = "INSERT INTO FRIENDS_BY_PROFILE (profile_id, friend_id)" +
+			" VALUES (?, ?);";
+		PreparedStatement stmt = connect.prepareStatement(stmtstring);
+		stmt.setLong(1, profile_id1);
+		stmt.setLong(2, profile_id2);
+		stmt.executeUpdate();
+
+		String stmtstring2 = "INSERT INTO FRIENDS_BY_PROFILE (profile_id, friend_id)" +
+			" VALUES (?, ?);";
+		PreparedStatement stmt2 = connect.prepareStatement(stmtstring2);
+		stmt2.setLong(1, profile_id2);
+		stmt2.setLong(2, profile_id1);
+		stmt2.executeUpdate();
+	}
+
+	public void removeFriendship(long profile_id1, long profile_id2) throws SQLException {
+		String stmtstring = "DELETE FROM FRIENDS_BY_PROFILE WHERE profile_id = ? AND friend_id = ?;";
+		PreparedStatement stmt = connect.prepareStatement(stmtstring);
+		stmt.setLong(1, profile_id1);
+		stmt.setLong(2, profile_id2);
+		stmt.executeUpdate();
+
+		String stmtstring2 = "DELETE FROM FRIENDS_BY_PROFILE WHERE profile_id = ? AND friend_id = ?;";
+		PreparedStatement stmt2 = connect.prepareStatement(stmtstring2);
+		stmt2.setLong(1, profile_id2);
+		stmt2.setLong(2, profile_id1);
+		stmt2.executeUpdate();
+	}
+
+	public void listFriendships(int profile_id) throws SQLException {
+		String stmtString = "SELECT friend_id FROM FRIENDS_BY_PROFILE WHERE profile_id = ?;";
+		PreparedStatement stmt = connect.prepareStatement(stmtString);
+		stmt.setInt(1, profile_id);
+		ResultSet rs = stmt.executeQuery();
+		int readID;
+		while (rs.next() != false) {
+			readID = rs.getInt("FRIEND_ID");
+			System.out.println("Friend with ID = " + readID);
+		}
+	}
+
+	public void createPost(int profile_id) throws SQLException {
+		String stmtstring = "INSERT INTO POSTS_BY_PROFILE (profile_id, post_id) VALUES (?, ?);";
+		PreparedStatement stmt = connect.prepareStatement(stmtstring);
+		stmt.setInt(1, profile_id);
+		stmt.setInt(2, ThreadLocalRandom.current().nextInt(1, 99999));
+		stmt.executeUpdate();
+	}
+
+	public void getPosts(int profile_id) throws SQLException {
+		String stmtstring = "SELECT post_id FROM POSTS_BY_PROFILE WHERE profile_id = ?;";
+		PreparedStatement stmt = connect.prepareStatement(stmtstring);
+		stmt.setInt(1, profile_id);
+		ResultSet rs = stmt.executeQuery();
+		int readID;
+		while (rs.next() != false) {
+			readID = rs.getInt("POST_ID");
+			System.out.println("post with ID = " + readID);
+		}
+	}
+}

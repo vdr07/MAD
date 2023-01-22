@@ -1,0 +1,63 @@
+package com.github.kiarahmani.replayer;
+
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Properties;
+import java.util.concurrent.ThreadLocalRandom;
+
+public class Client {
+	private Connection connect = null;
+	private int _ISOLATION = Connection.TRANSACTION_READ_COMMITTED;
+	private int id;
+	Properties p;
+
+	public Client(int id) {
+		this.id = id;
+		p = new Properties();
+		p.setProperty("id", String.valueOf(this.id));
+		Object o;
+		try {
+			o = Class.forName("MyDriver").newInstance();
+			DriverManager.registerDriver((Driver) o);
+			Driver driver = DriverManager.getDriver("jdbc:mydriver://");
+			connect = driver.connect("", p);
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void writeAndCheck(int x) throws SQLException {
+		String stmtstring = "INSERT INTO VALUES (var_name, value) VALUES (?, ?);";
+		PreparedStatement stmt = connect.prepareStatement(stmtstring);
+		stmt.setString(1, "a");
+		stmt.setInt(2, x);
+		stmt.executeUpdate();
+
+		String stmtstring2 = "INSERT INTO VALUES (var_name, value) VALUES (?, ?);";
+		PreparedStatement stmt2 = connect.prepareStatement(stmtstring2);
+		stmt2.setString(1, "b");
+		stmt2.setInt(2, x);
+		stmt2.executeUpdate();
+
+		String stmtstring3 = "SELECT value FROM values WHERE var_name = ?;";
+		PreparedStatement stmt3 = connect.prepareStatement(stmtstring3);
+		stmt3.setString(1, "a");
+		ResultSet rs3 = stmt3.executeQuery();
+		rs3.next();
+		int a = rs3.getInt("VALUE");
+
+		String stmtstring4 = "SELECT value FROM values WHERE var_name = ?;";
+		PreparedStatement stmt4 = connect.prepareStatement(stmtstring4);
+		stmt4.setString(1, "b");
+		ResultSet rs4 = stmt4.executeQuery();
+		rs4.next();
+		int b = rs4.getInt("VALUE");
+
+		if (a != b)
+			System.out.println("-----ERROR----");
+	}
+}

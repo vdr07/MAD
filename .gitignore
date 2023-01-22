@@ -1,0 +1,9 @@
+/target/
+analyzer/z3-encoding.smt2
+analyzer/anomalies/
+analyzer/bin/
+analyzer/sootOutput/
+tests/instance.json
+tests/schedule.json
+tests/init.cql
+tests/schema.cql
