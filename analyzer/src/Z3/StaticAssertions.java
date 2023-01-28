@@ -37,10 +37,10 @@ public class StaticAssertions {
 	}
 
 	public Quantifier mk_type_par_then_st() {
-		BoolExpr rhs = ctx.mkEq(ctx.mkApp(objs.getfuncs("ttype"), ctx.mkApp(objs.getfuncs("parent"), o1)),
+		BoolExpr lhs = ctx.mkEq(ctx.mkApp(objs.getfuncs("ttype"), ctx.mkApp(objs.getfuncs("parent"), o1)),
 				ctx.mkApp(objs.getfuncs("ttype"), ctx.mkApp(objs.getfuncs("parent"), o2)));
-		BoolExpr lhs = (BoolExpr) ctx.mkApp(objs.getfuncs("same_transaction"), o1, o2);
-		BoolExpr body = ctx.mkImplies(rhs, lhs);
+		BoolExpr rhs = (BoolExpr) ctx.mkApp(objs.getfuncs("same_transaction"), o1, o2);
+		BoolExpr body = ctx.mkImplies(lhs, rhs);
 		Quantifier x = ctx.mkForall(new Expr[]{o1, o2}, body, 1, null, null, null, null);
 		return x;
 	}
@@ -53,6 +53,14 @@ public class StaticAssertions {
 		Quantifier x = ctx.mkForall(new Expr[]{o1, o2}, body, 1, null, null, null, null);
 		return x;
 	}
+
+	/*public Quantifier mk_st_then_sib() {
+		BoolExpr lhs = (BoolExpr) ctx.mkApp(objs.getfuncs("same_transaction"), o1, o2);
+		BoolExpr rhs = (BoolExpr) ctx.mkApp(objs.getfuncs("sibling"), o1, o2);
+		BoolExpr body = ctx.mkImplies(lhs, rhs);
+		Quantifier x = ctx.mkForall(new Expr[]{o1, o2}, body, 1, null, null, null, null);
+		return x;
+	}*/
 
 	public BoolExpr mk_ar_on_writes() {
 		BoolExpr lhs = (BoolExpr) ctx.mkApp(objs.getfuncs("ar"), o1, o2);

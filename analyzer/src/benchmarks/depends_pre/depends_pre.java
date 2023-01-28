@@ -26,21 +26,23 @@ public class depends_pre {
 		}
 	}
 
-	public void transaction(int key1, int key2, int key3) throws SQLException {
+	public void transaction(int key1, int key2, int val1, int val2) throws SQLException {
+		PreparedStatement stmt1 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
+		stmt1.setInt(1, val1);
+		stmt1.setInt(2, key1);
+		stmt1.executeUpdate();
+
+		PreparedStatement stmt2 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
+		stmt2.setInt(1, val2);
+		stmt2.setInt(2, key2);
+		stmt2.executeUpdate();
+	}
+
+	public void read_key(int key1) throws SQLException {
 		PreparedStatement stmt = connect.prepareStatement("SELECT value " + "FROM " + "ACCOUNTS" + " WHERE id = ?");
 		stmt.setInt(1, key1);
 		ResultSet rs = stmt.executeQuery();
 		rs.next();
 		int read_val = rs.getInt("VALUE");
-
-		PreparedStatement stmt1 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
-		stmt1.setInt(1, read_val);
-		stmt1.setInt(2, key2);
-		stmt1.executeUpdate();
-
-		PreparedStatement stmt2 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
-		stmt2.setInt(1, read_val);
-		stmt2.setInt(2, key3);
-		stmt2.executeUpdate();
 	}
 }

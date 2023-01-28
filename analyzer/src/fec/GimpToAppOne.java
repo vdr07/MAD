@@ -36,7 +36,7 @@ public class GimpToAppOne extends GimpToApp {
 		for (Body b : bodies) {
 			if (!b.getMethod().getName().contains("init")
 					&& !ConstantArgs._EXCLUDED_TXNS.contains(b.getMethod().getName())) {
-				Transaction txn = extractTxn(b);
+				Transaction txn = extractTxn(b, app);
 				LOG.info("Transaction <<" + b.getMethod().getName() + ">> compiled to AR");
 
 				if (txn != null)
@@ -47,7 +47,7 @@ public class GimpToAppOne extends GimpToApp {
 		return app;
 	}
 
-	private Transaction extractTxn(Body b) throws UnknownUnitException {
+	private Transaction extractTxn(Body b, Application app) throws UnknownUnitException {
 
 		if (ConstantArgs.DEBUG_MODE)
 			super.printGimpBody(b);
@@ -72,21 +72,6 @@ public class GimpToAppOne extends GimpToApp {
 			}
 		}
 
-		Tag tags = b.getMethod().getTag("VisibilityAnnotationTag");
-		if (tags != null) {
-			for (AnnotationTag tag : ((VisibilityAnnotationTag) tags).getAnnotations()) {
-				if (Objects.equals(tag.getType(), "Lar/DependsOn;")) {
-					Optional<String> dependency = tag.getElems().stream().filter((a) -> Objects.equals(a.getName(), "name")).
-							map((x) -> ((AnnotationStringElem) x).getValue()).
-							findFirst();
-					dependency.ifPresent(s -> {
-						LOG.info("Found dependency: {} depends on {}", name, s);
-						txn.addDependency(s);
-					});
-				}
-			}
-		}
-
 		unitHandler.InitialAnalysis();
 		LOG.info("Initial analysis done");
 		unitHandler.extractStatements();
@@ -102,10 +87,36 @@ public class GimpToAppOne extends GimpToApp {
 		}
 		txn.setExps(unitHandler.data.getExps());
 		txn.setTypes();
+
+		Tag tags = b.getMethod().getTag("VisibilityAnnotationTag");
+		if (tags != null) {
+			for (AnnotationTag tag : ((VisibilityAnnotationTag) tags).getAnnotations()) {
+				if (Objects.equals(tag.getType(), "Lar/DependsOn;")) {
+					Optional<String> dependency = tag.getElems().stream().filter((a) -> Objects.equals(a.getName(), "name")).
+							map((x) -> ((AnnotationStringElem) x).getValue()).
+							findFirst();
+					dependency.ifPresent(s -> {
+						LOG.info("Found dependency: {} depends on {}", name, s);
+						//txn.addDependency(s);
+
+						// Add the transaction statements to the dependant transaction that happens before
+						Optional<Transaction> depTxn = app.getTxns().stream().filter((a) -> Objects.equals(a.getName(), s)).
+							findFirst();
+						depTxn.ifPresent(dt -> {
+							for (Statement st : txn.getStmts()) {
+								dt.addStmt(st);
+							}
+							dt.setTypes();	// Update the statements names to the dependant transaction
+						});
+					});
+				}
+			}
+			return null;	// Discard the current transaction, only accounting for the dependant transaction
+		}
+
 		// if (ConstantArgs.DEBUG_MODE)
 		// printExpressions(unitHandler);
 		return txn;
-
 	}
 
 	// just a helping function for dev phase

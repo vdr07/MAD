@@ -165,6 +165,8 @@ public class Z3Driver {
 				ctx.mkFuncDecl("sibling", new Sort[]{objs.getSort("O"), objs.getSort("O")}, objs.getSort("Bool")));
 		objs.addFunc("same_transaction",
 				ctx.mkFuncDecl("same_transaction", new Sort[]{objs.getSort("O"), objs.getSort("O")}, objs.getSort("Bool")));
+		//objs.addFunc("same_transaction2",
+		//		ctx.mkFuncDecl("same_transaction2", new Sort[]{objs.getSort("O"), objs.getSort("O")}, objs.getSort("Bool")));
 		objs.addFunc("WR_O",
 				ctx.mkFuncDecl("WR_O", new Sort[]{objs.getSort("O"), objs.getSort("O")}, objs.getSort("Bool")));
 		objs.addFunc("RW_O",
@@ -187,6 +189,7 @@ public class Z3Driver {
 		addAssertion("sib_then_par", staticAssrtions.mk_sib_then_par());
 		//addAssertion("mk_type_par_then_st", staticAssrtions.mk_type_par_then_st());
 		//addAssertion("mk_st_then_type_par", staticAssrtions.mk_st_then_type_par());
+		//addAssertion("mk_st_then_sib", staticAssrtions.mk_st_then_sib());
 		addAssertion("ar_on_writes", staticAssrtions.mk_ar_on_writes());
 		addAssertion("vis_on_writes", staticAssrtions.mk_vis_on_writes());
 		addAssertion("vis_then_ar", staticAssrtions.mk_vis_then_ar());
@@ -201,17 +204,23 @@ public class Z3Driver {
 		addAssertion("otime_props", staticAssrtions.mk_otime_props());
 		addAssertion("opart_props", staticAssrtions.mk_opart_props());
 
-		for (Transaction txn : app.getTxns()) {
+		/*for (Transaction txn : app.getTxns()) {
 			for (String dependency : txn.getDependencies()) {
 				Transaction dependTxn = app.getTxnByName(dependency);
-
+				String name = txn.getName();
 				for (String stmt1 : txn.getStmtNames()) {
+					addAssertion("op_types2_" + name + "_" + stmt1,
+						dynamicAssertions.op_types_to_parent_type2(name, dependency, stmt1));
 					for (String stmt2 : dependTxn.getStmtNames()) {
+						addAssertion("same_transaction", dynamicAssertions.same_transaction(dependency, stmt1, stmt2));
+						addAssertion("same_transaction", dynamicAssertions.same_transaction(dependency, stmt2, stmt1));
+						addAssertion("same_transaction2", dynamicAssertions.same_transaction2(dependency, stmt1, stmt2));
+						addAssertion("same_transaction2", dynamicAssertions.same_transaction2(dependency, stmt2, stmt1));
 						addAssertion("depends_" + stmt1 + "_" + stmt2, microserviceAssertions.mkHappensAfter(stmt2, stmt1));
 					}
 				}
 			}
-		}
+		}*/
 
 		/* ________ MY ASSERTIONS _______________ */
 		//addAssertion("causal_vis", staticAssrtions.mk_causal_vis());
@@ -248,9 +257,7 @@ public class Z3Driver {
 		// relating operation otypes to parent ttypes
 		for (Transaction txn : app.getTxns()) {
 			String name = txn.getName();
-			System.out.println("txnName = " + name);
 			for (String stmtName : txn.getStmtNames()) {
-				System.out.println("stmtName = " + stmtName);
 				addAssertion("op_types_" + name + "_" + stmtName,
 						dynamicAssertions.op_types_to_parent_type(name, stmtName));
 				for (String stmtName2 : txn.getStmtNames()) {
@@ -310,7 +317,7 @@ public class Z3Driver {
 			addAssertion("pk_" + t.getName(), dynamicAssertions.mk_pk_tables(t));
 			addAssertion("pk_" + t.getName() + "_identical", dynamicAssertions.mk_pk_tables_identical(t));
 			LogZ3(";functions");
-			// dependecy relations on operations
+			// dependency relations on operations
 			objs.addFunc("IsAlive_" + t.getName(),
 					ctx.mkFuncDecl("IsAlive_" + t.getName(), new Sort[]{tSort, oSort}, objs.getSort("Bool")));
 			objs.addFunc("RW_O_" + t.getName(),
@@ -513,8 +520,6 @@ public class Z3Driver {
 			for (FuncDecl t2 : Ts.values()) {
 				List<BoolExpr> conditions = ruleGenerator.return_conditions_rw_then(t1, t2, vo1, vo2, vt1, vt2,
 						includedTables);
-				System.out.println("t2 = " + t2.getName().toString());
-				System.out.println("t1 == t2 ? " + (t1 == t2));
 				conditions.add(ctx.mkFalse());
 				// conditions.add(ctx.mkTrue());
 				BoolExpr rhs = ctx.mkOr(conditions.toArray(new BoolExpr[conditions.size()]));
@@ -527,7 +532,6 @@ public class Z3Driver {
 				BoolExpr lhs5 = ctx.mkNot(ctx.mkEq(vo1, vo2));
 				BoolExpr lhs6 = ctx.mkNot(ctx.mkEq(vt1, vt2));
 				BoolExpr lhs7 = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_O"), vo1, vo2);
-
 				BoolExpr lhs = ctx.mkAnd(lhs1, lhs2, lhs3, lhs4, lhs5, lhs6, lhs7);
 				BoolExpr body = ctx.mkImplies(lhs, rhs);
 				Quantifier rw_then = ctx.mkForall(new Expr[]{vo1, vo2, vt1, vt2}, body, 1, null, null, null, null);

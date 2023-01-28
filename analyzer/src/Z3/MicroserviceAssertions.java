@@ -40,8 +40,9 @@ public class MicroserviceAssertions {
 				ctx.mkApp(objs.getfuncs("otype"), o2),
 				ctx.mkApp(objs.getConstructor("OType", stmt2))
 		);
+		BoolExpr part3 = ctx.mkNot(ctx.mkEq(o1, o2));
 		BoolExpr body = ctx.mkImplies(
-				ctx.mkAnd(part1, part2),
+				ctx.mkAnd(part1, part2, part3),
 				(BoolExpr) ctx.mkApp(objs.getfuncs("ar"), o1, o2)
 		);
 		return ctx.mkForall(new Expr[]{o1, o2}, body, 1, null, null, null, null);

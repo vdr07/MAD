@@ -93,6 +93,28 @@ public class DynamicAssertsions {
 		return x;
 	}
 
+/*	public BoolExpr op_types_to_parent_type2(String name1,String name2, String stmtName) {
+		BoolExpr rhs = ctx.mkOr(ctx.mkEq(ctx.mkApp(objs.getfuncs("ttype"), ctx.mkApp(objs.getfuncs("parent"), o1)),
+				ctx.mkApp(objs.getConstructor("TType", name1))), ctx.mkEq(ctx.mkApp(objs.getfuncs("ttype"), ctx.mkApp(objs.getfuncs("parent"), o1)),
+				ctx.mkApp(objs.getConstructor("TType", name2))));
+		BoolExpr lhs = (BoolExpr) ctx.mkEq(ctx.mkApp(objs.getfuncs("otype"), o1),
+				ctx.mkApp(objs.getConstructor("OType", stmtName)));
+		BoolExpr body = ctx.mkImplies(lhs, rhs);
+		Quantifier x = ctx.mkForall(new Expr[] { o1 }, body, 1, null, null, null, null);
+		return x;
+	}
+
+	public BoolExpr op_types_to_parent_type2(String name1,String name2, String stmtName) {
+		BoolExpr rhs = ctx.mkOr(ctx.mkEq(ctx.mkApp(objs.getfuncs("parent"), o1),
+				ctx.mkApp(objs.getConstructor("TType", name1))), ctx.mkEq(ctx.mkApp(objs.getfuncs("ttype"), ctx.mkApp(objs.getfuncs("parent"), o1)),
+				ctx.mkApp(objs.getConstructor("TType", name2))));
+		BoolExpr lhs = (BoolExpr) ctx.mkEq(ctx.mkApp(objs.getfuncs("otype"), o1),
+				ctx.mkApp(objs.getConstructor("OType", stmtName)));
+		BoolExpr body = ctx.mkImplies(lhs, rhs);
+		Quantifier x = ctx.mkForall(new Expr[] { o1 }, body, 1, null, null, null, null);
+		return x;
+	}*/
+
 	public BoolExpr same_transaction(String txnName, String stmt1, String stmt2) {
 		BoolExpr rhs1 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ttype"), ctx.mkApp(objs.getfuncs("parent"), o1)),
 				ctx.mkApp(objs.getConstructor("TType", txnName)));
@@ -108,6 +130,19 @@ public class DynamicAssertsions {
 		Quantifier x = ctx.mkForall(new Expr[] { o1, o2 }, body, 1, null, null, null, null);
 		return x;
 	}
+
+/*	public BoolExpr same_transaction2(String txnName, String stmt1, String stmt2) {
+		BoolExpr rhs1 = ctx.mkEq(ctx.mkApp(objs.getfuncs("parent"), o1), ctx.mkApp(objs.getfuncs("parent"), o2));
+		BoolExpr rhs3 = ctx.mkEq(ctx.mkApp(objs.getfuncs("otype"), o1),
+				ctx.mkApp(objs.getConstructor("OType", stmt1)));
+		BoolExpr rhs4 = ctx.mkEq(ctx.mkApp(objs.getfuncs("otype"), o2),
+				ctx.mkApp(objs.getConstructor("OType", stmt2)));
+		BoolExpr rhs = ctx.mkAnd(rhs1,rhs3, rhs4);
+		BoolExpr lhs = (BoolExpr) ctx.mkApp(objs.getfuncs("same_transaction2"), o1, o2);
+		BoolExpr body = ctx.mkImplies(rhs, lhs);
+		Quantifier x = ctx.mkForall(new Expr[] { o1, o2 }, body, 1, null, null, null, null);
+		return x;
+	}*/
 
 	public BoolExpr otime_follows_po(String stmt, String stmt2) {
 		FuncDecl otime = objs.getfuncs("otime");
@@ -409,7 +444,8 @@ public class DynamicAssertsions {
 
 			// WR then version increases
 			lhs = (BoolExpr) ctx.mkApp(wrFunc, r, o1, o2);
-			rhs = ctx.mkEq(ctx.mkApp(verFunc, r, o2), ctx.mkApp(verFunc, r, o1));
+			rhs = ctx.mkEq(ctx.mkApp(verFunc, r, o2), 
+					ctx.mkBVAdd((BitVecExpr) ctx.mkApp(verFunc, r, o1), ctx.mkBV(1, ConstantArgs._MAX_BV_)));
 			body = ctx.mkImplies(lhs, rhs);
 			x = ctx.mkForall(new Expr[] { r, o1, o2 }, body, 1, null, null, null, null);
 			result.add(x);
