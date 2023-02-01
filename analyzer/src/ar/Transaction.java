@@ -22,6 +22,8 @@ public class Transaction {
 	private ArrayList<String> dependencies;
 	private Map<String, ParamValExp> params;
 	private Map<Value, Expression> exps;
+	private String originalTransaction;
+	private String microservice;
 
 	public String getName() {
 		return this.name;
@@ -45,6 +47,14 @@ public class Transaction {
 
 	public void addDependency(String dep) {
 		this.dependencies.add(dep);
+	}
+
+	public void setOriginalTransaction(String originalTransaction) {
+		this.originalTransaction = originalTransaction;
+	}
+	
+	public void setMicroservice(String microservice) {
+		this.microservice = microservice;
 	}
 
 	public Statement getStmtByType(String type) {
@@ -158,6 +168,14 @@ public class Transaction {
 		return this.dependencies;
 	}
 
+	public String getOriginalTransaction() {
+		return this.originalTransaction;
+	}
+	
+	public String getMicroservice() {
+		return this.microservice;
+	}
+
 	public void printTxn() {
 		String paramList = " (";
 		int iter = 0;
@@ -175,6 +193,26 @@ public class Transaction {
 			} catch (ClassCastException e) {
 				System.out.println(" ++ UNEXPECTED -> cast to (InvokeStmt) failed ...");
 			}
+		
+		String dependenciesString = "Dependencies: ";
+		iter = 0;
+		for (String dependency : dependencies) {
+			dependenciesString += dependency;
+			if (iter++ < dependencies.size() - 1)
+				dependenciesString += ", ";
+		}
+		
+		if(dependencies.size() == 0) dependenciesString += "<empty>";
+
+		System.out.println(dependenciesString);
+
+		if(originalTransaction != null && microservice != null) {
+			System.out.println("Original Transaction: "+originalTransaction);
+			System.out.println("Microservice: "+microservice);
+		}
+		
+		System.out.println("----------------------------------------------------------------");
+
 	}
 
 }

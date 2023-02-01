@@ -109,10 +109,28 @@ public class GimpToAppOne extends GimpToApp {
 							dt.setTypes();	// Update the statements names to the dependant transaction
 						});
 					});
+					return null;	// Discard the current transaction, only accounting for the dependant transaction
+				} else if (Objects.equals(tag.getType(), "Lar/ChoppedTransaction;")) {
+					Optional<String> originalTransaction = tag.getElems().stream().filter((a) -> Objects.equals(a.getName(), "originalTransaction")).
+							map((x) -> ((AnnotationStringElem) x).getValue()).
+							findFirst();
+					originalTransaction.ifPresent(ot -> {
+						LOG.info("Chopped transaction: {} belonged to transaction {}", name,ot);
+						txn.setOriginalTransaction(ot);
+					});
+
+					Optional<String> microservice = tag.getElems().stream().filter((a) -> Objects.equals(a.getName(), "microservice")).
+							map((x) -> ((AnnotationStringElem) x).getValue()).
+							findFirst();
+					microservice.ifPresent(m -> {
+						LOG.info("Chopped transaction: {} executes on microservice {}", name, microservice);
+						txn.setMicroservice(m);
+					});
 				}
 			}
-			return null;	// Discard the current transaction, only accounting for the dependant transaction
 		}
+
+		if(txn.getOriginalTransaction() == null) txn.setOriginalTransaction(name);
 
 		// if (ConstantArgs.DEBUG_MODE)
 		// printExpressions(unitHandler);

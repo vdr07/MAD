@@ -2,6 +2,8 @@ package ar;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 // This class captures the intermediate representation of db-backed programs which are extracted from Gimple representations
 public class Application {
@@ -60,4 +62,33 @@ public class Application {
 		return result.toArray(new String[size]);
 	}
 
+	public String[] getAllOrigTxnNames() {
+		List<String> result = new ArrayList<String>();
+		int size = 0;
+		for (Transaction t : this.txns) {
+			String originalTransactionName = t.getOriginalTransaction();
+			if(originalTransactionName != null && !result.contains(originalTransactionName)) {
+				result.add(originalTransactionName);
+				size++;
+			}
+		}
+		return result.toArray(new String[size]);
+	}
+
+	public Map<Integer, String> getStmtNamesOrigTxnMap(String origTxnName) {
+		Map<Integer, String> result = new HashMap<Integer, String>();
+		int iter = 1;
+		for (Transaction t : this.txns) {
+			try {
+				if(t.getOriginalTransaction().equals(origTxnName)) {
+					for (String s : t.getStmtNames()) {
+						result.put(iter, s);
+						iter += 1;
+					}
+				}
+			} catch (Exception e) {
+			}
+		}
+		return result;
+	}
 }

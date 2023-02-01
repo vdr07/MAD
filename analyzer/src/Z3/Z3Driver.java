@@ -126,6 +126,7 @@ public class Z3Driver {
 		HeaderZ3("SORTS & DATATYPES");
 		objs.addSort("T", ctx.mkUninterpretedSort("T"));
 		objs.addSort("O", ctx.mkUninterpretedSort("O"));
+		objs.addSort("OT", ctx.mkUninterpretedSort("OT"));
 		objs.addSort("Bool", ctx.mkBoolSort());
 		objs.addSort("Int", ctx.mkIntSort());
 		objs.addSort("BitVec", ctx.mkBitVecSort(ConstantArgs._MAX_BV_));
@@ -146,6 +147,7 @@ public class Z3Driver {
 		LogZ3(";data types");
 		objs.addDataType("TType", mkDataType("TType", app.getAllTxnNames()));
 		objs.addDataType("OType", mkDataType("OType", app.getAllStmtTypes()));
+		objs.addDataType("OTType", mkDataType("OTType", app.getAllOrigTxnNames()));
 
 		// =====================================================================================================================================================
 		HeaderZ3("STATIC FUNCTIONS & PROPS");
@@ -159,14 +161,16 @@ public class Z3Driver {
 		objs.addFunc("opart", ctx.mkFuncDecl("opart", objs.getSort("O"), objs.getSort("Int")));
 		objs.addFunc("ttype", ctx.mkFuncDecl("ttype", objs.getSort("T"), objs.getDataTypes("TType")));
 		objs.addFunc("otype", ctx.mkFuncDecl("otype", objs.getSort("O"), objs.getDataTypes("OType")));
+		objs.addFunc("ottype", ctx.mkFuncDecl("ottype", objs.getSort("OT"), objs.getDataTypes("OTType")));
 		objs.addFunc("is_update", ctx.mkFuncDecl("is_update", objs.getSort("O"), objs.getSort("Bool")));
 		objs.addFunc("parent", ctx.mkFuncDecl("parent", objs.getSort("O"), objs.getSort("T")));
+		objs.addFunc("original_transaction", ctx.mkFuncDecl("original_transaction", objs.getSort("O"), objs.getSort("OT")));
 		objs.addFunc("sibling",
 				ctx.mkFuncDecl("sibling", new Sort[]{objs.getSort("O"), objs.getSort("O")}, objs.getSort("Bool")));
+		objs.addFunc("step_sibling",
+				ctx.mkFuncDecl("step_sibling", new Sort[]{objs.getSort("O"), objs.getSort("O")}, objs.getSort("Bool")));
 		objs.addFunc("same_transaction",
 				ctx.mkFuncDecl("same_transaction", new Sort[]{objs.getSort("O"), objs.getSort("O")}, objs.getSort("Bool")));
-		//objs.addFunc("same_transaction2",
-		//		ctx.mkFuncDecl("same_transaction2", new Sort[]{objs.getSort("O"), objs.getSort("O")}, objs.getSort("Bool")));
 		objs.addFunc("WR_O",
 				ctx.mkFuncDecl("WR_O", new Sort[]{objs.getSort("O"), objs.getSort("O")}, objs.getSort("Bool")));
 		objs.addFunc("RW_O",
@@ -187,13 +191,15 @@ public class Z3Driver {
 		// assertions
 		addAssertion("par_then_sib", staticAssrtions.mk_par_then_sib());
 		addAssertion("sib_then_par", staticAssrtions.mk_sib_then_par());
+		addAssertion("sot_then_stepsib", staticAssrtions.mk_sot_then_stepsib());
+		addAssertion("stepsib_then_sot", staticAssrtions.mk_stepsib_then_sot());
 		//addAssertion("mk_type_par_then_st", staticAssrtions.mk_type_par_then_st());
 		//addAssertion("mk_st_then_type_par", staticAssrtions.mk_st_then_type_par());
-		//addAssertion("mk_st_then_sib", staticAssrtions.mk_st_then_sib());
 		addAssertion("ar_on_writes", staticAssrtions.mk_ar_on_writes());
 		addAssertion("vis_on_writes", staticAssrtions.mk_vis_on_writes());
 		addAssertion("vis_then_ar", staticAssrtions.mk_vis_then_ar());
 		addAssertion("types_then_eq", staticAssrtions.mk_types_then_eq());
+		addAssertion("sot_then_eq", staticAssrtions.mk_sot_then_eq());
 		addAssertion("no_loops_o", staticAssrtions.mk_no_loops_o());
 		addAssertion("trans_ar", staticAssrtions.mk_trans_ar());
 		addAssertion("total_ar", staticAssrtions.mk_total_ar());
@@ -204,31 +210,13 @@ public class Z3Driver {
 		addAssertion("otime_props", staticAssrtions.mk_otime_props());
 		addAssertion("opart_props", staticAssrtions.mk_opart_props());
 
-		/*for (Transaction txn : app.getTxns()) {
-			for (String dependency : txn.getDependencies()) {
-				Transaction dependTxn = app.getTxnByName(dependency);
-				String name = txn.getName();
-				for (String stmt1 : txn.getStmtNames()) {
-					addAssertion("op_types2_" + name + "_" + stmt1,
-						dynamicAssertions.op_types_to_parent_type2(name, dependency, stmt1));
-					for (String stmt2 : dependTxn.getStmtNames()) {
-						addAssertion("same_transaction", dynamicAssertions.same_transaction(dependency, stmt1, stmt2));
-						addAssertion("same_transaction", dynamicAssertions.same_transaction(dependency, stmt2, stmt1));
-						addAssertion("same_transaction2", dynamicAssertions.same_transaction2(dependency, stmt1, stmt2));
-						addAssertion("same_transaction2", dynamicAssertions.same_transaction2(dependency, stmt2, stmt1));
-						addAssertion("depends_" + stmt1 + "_" + stmt2, microserviceAssertions.mkHappensAfter(stmt2, stmt1));
-					}
-				}
-			}
-		}*/
-
 		/* ________ MY ASSERTIONS _______________ */
 		//addAssertion("causal_vis", staticAssrtions.mk_causal_vis());
 		//addAssertion("causal_consistency", staticAssrtions.mk_causal_cons_updates());
 		//addAssertion("tcc", staticAssrtions.mk_trans_causal_cons());
-		//addAssertion("read_committed", staticAssrtions.mk_read_comm());
-		//addAssertion("repeatable_read", staticAssrtions.mk_rep_read());
-		//addAssertion("linearizability", staticAssrtions.mk_linearizable());
+		addAssertion("read_committed", staticAssrtions.mk_read_comm());
+		addAssertion("repeatable_read", staticAssrtions.mk_rep_read());
+		addAssertion("linearizability", staticAssrtions.mk_linearizable());
 		/* _________________________________________ */
 
 
@@ -257,14 +245,18 @@ public class Z3Driver {
 		// relating operation otypes to parent ttypes
 		for (Transaction txn : app.getTxns()) {
 			String name = txn.getName();
+			String origTxnName = txn.getOriginalTransaction();
 			for (String stmtName : txn.getStmtNames()) {
 				addAssertion("op_types_" + name + "_" + stmtName,
 						dynamicAssertions.op_types_to_parent_type(name, stmtName));
-				for (String stmtName2 : txn.getStmtNames()) {
+				/*for (String stmtName2 : txn.getStmtNames()) {
 					if (!stmtName2.equals(stmtName)) {
 						addAssertion("same_transaction", dynamicAssertions.same_transaction(name, stmtName, stmtName2));
 					}
-				}
+				}*/
+				if(origTxnName != null)
+					addAssertion("op_types_orig_" + origTxnName + "_" + stmtName,
+						dynamicAssertions.op_types_to_original_transaction_type(origTxnName, stmtName));
 			}
 		}
 		// make sure the otime assignment follows the program order
@@ -274,6 +266,17 @@ public class Z3Driver {
 				for (int i = j; i <= map.size(); i++) {
 					if (map.get(i + 1) != null) {
 						addAssertion("otime_follows_po_" + i + "_" + j + map.get(i),
+								dynamicAssertions.otime_follows_po(map.get(j), map.get(i + 1)));
+					}
+				}
+		}
+		
+		for (String origTxnName : app.getAllOrigTxnNames()) {
+			Map<Integer, String> map = app.getStmtNamesOrigTxnMap(origTxnName);
+			for (int j = 1; j < map.size(); j++)
+				for (int i = j; i <= map.size(); i++) {
+					if (map.get(i + 1) != null) {
+						addAssertion("otime_follows_po2_" + i + "_" + j + map.get(i),
 								dynamicAssertions.otime_follows_po(map.get(j), map.get(i + 1)));
 					}
 				}
@@ -513,10 +516,8 @@ public class Z3Driver {
 	// functions adding assertions for every pair of operations that 'potentially'
 	// create the edge
 	private void RWthen(Set<Table> includedTables) throws UnexoectedOrUnhandledConditionalExpression {
-
 		Map<String, FuncDecl> Ts = objs.getAllTTypes();
 		for (FuncDecl t1 : Ts.values()) {
-			System.out.println("t1 = " + t1.getName().toString());
 			for (FuncDecl t2 : Ts.values()) {
 				List<BoolExpr> conditions = ruleGenerator.return_conditions_rw_then(t1, t2, vo1, vo2, vt1, vt2,
 						includedTables);

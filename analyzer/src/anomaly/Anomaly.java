@@ -58,6 +58,7 @@ public class Anomaly {
 	public Map<Expr, ArrayList<Expr>> WWPairs;
 	public Map<Expr, ArrayList<Expr>> RWPairs;
 	public Map<Expr, ArrayList<Expr>> parentChildPairs;
+	public Map<Expr, ArrayList<Expr>> originalTransactionChildPairs;
 	public Map<Expr, Expr> cycle;
 	public Map<Expr, Expr> otypes;
 	public Map<Expr, Expr> ttypes;
@@ -101,6 +102,7 @@ public class Anomaly {
 		Map<String, FuncDecl> functions = getFunctions();
 		conflictingRow = new HashMap<>();
 		parentChildPairs = getParentChild(functions.get("parent"));
+		originalTransactionChildPairs = getOriginalTransactionChild(functions.get("original_transaction"));
 		WWPairs = getWWPairs(functions.get("WW_O"));
 		WRPairs = getWRPairs(functions.get("WR_O"));
 		RWPairs = getRWPairs(functions.get("RW_O"));
@@ -162,9 +164,16 @@ public class Anomaly {
 			Expr firstParent = t;
 			if (y == null) {
 				// since there is no outgoing edge from this node, we should look for a sibling
-				// which is on the cycle
+				// which is on the cycle, if none, then look for a step-sibling
+				boolean foundNextSibling = true;
 				y = returnNextSibling(e);
+
 				if (y == null) {
+					y = returnNextStepSibling(e);
+					foundNextSibling = false;
+				}
+
+				if(y == null) {
 					System.out.println("~~~~>>" + cycle);
 					System.out.println("~~~~>>" + y);
 					System.out.println("~~~~>>" + e);
@@ -173,8 +182,8 @@ public class Anomaly {
 				Tuple<String, String> newTuple = new Tuple<String, String>(
 						model.eval(otypeFunc.apply(e), true).toString(),
 						model.eval(otypeFunc.apply(y), true).toString());
-
-				this.cycleStructure.add(new Tuple<String, Tuple<String, String>>("sibling", newTuple));
+				if(foundNextSibling) this.cycleStructure.add(new Tuple<String, Tuple<String, String>>("sibling", newTuple));
+				else this.cycleStructure.add(new Tuple<String, Tuple<String, String>>("step_sibling", newTuple));
 			} else {
 				Tuple<String, String> newTuple = new Tuple<String, String>(
 						model.eval(otypeFunc.apply(e), true).toString(),
@@ -223,6 +232,15 @@ public class Anomaly {
 		return null;
 	}
 
+	private Expr returnNextStepSibling(Expr o1) {
+		// System.out.println("~~~" + o1);
+		// System.out.println("~~~" + cycle);
+		for (Expr o2 : Os)
+			if (areStepSibling(o2, o1) && cycle.keySet().contains(o2))
+				return o2;
+		return null;
+	}
+
 	public String getTypeOfTxnByName(String txnName) {
 		Expr tInstance = this.Ts.stream().filter(t -> t.toString().contains(txnName)).collect(Collectors.toList())
 				.get(0);
@@ -233,7 +251,11 @@ public class Anomaly {
 	private boolean areSibling(Expr o1, Expr o2) {
 		return (!o1.equals(o2))
 				&& this.parentChildPairs.values().stream().anyMatch(set -> (set.contains(o1) && set.contains(o2)));
+	}
 
+	private boolean areStepSibling(Expr o1, Expr o2) {
+		return (!o1.equals(o2))
+				&& this.originalTransactionChildPairs.values().stream().anyMatch(set -> (set.contains(o1) && set.contains(o2)));
 	}
 
 	public List<Tuple<String, String>> getCycleTxns() {
@@ -264,6 +286,7 @@ public class Anomaly {
 			addData("\\l ttype:	" + ttypes);
 			addData("\\l {O}:		" + Arrays.asList(model.getSortUniverse(objs.getSort("O"))));
 			addData("\\l ParChld:	" + parentChildPairs);
+			addData("\\l OrigTxnChld:	" + originalTransactionChildPairs);
 			addData("\\l otype:	" + otypes);
 			addData("\\l isUpdate:	" + isUpdate);
 			addData("\\l WW:	" + WWPairs);
@@ -434,10 +457,13 @@ public class Anomaly {
 	public Map<String, FuncDecl> getFunctions() {
 		Expr[] Os = model.getSortUniverse(objs.getSort("O"));
 		Expr[] Ts = model.getSortUniverse(objs.getSort("T"));
+		Expr[] OTs = model.getSortUniverse(objs.getSort("OT"));
 		Map<String, FuncDecl> result = new HashMap<>();
 		for (FuncDecl f : model.getFuncDecls()) {
 			if (f.getName().toString().contains("parent"))
 				result.put("parent", f);
+			else if (f.getName().toString().contains("original_transaction"))
+				result.put("original_transaction", f);
 			else if (f.getName().toString().equals("vis"))
 				result.put("vis", f);
 			else if (f.getName().toString().equals("WW_O"))
@@ -586,6 +612,22 @@ public class Anomaly {
 		ArrayList<Expr> child;
 		for (Expr o : Os) {
 			t = model.eval(parent.apply(o), true);
+			child = result.get(t);
+			if (child == null)
+				child = new ArrayList<Expr>();
+			child.add(o);
+			result.put(t, child);
+		}
+		return result;
+	}
+
+	private Map<Expr, ArrayList<Expr>> getOriginalTransactionChild(FuncDecl originalTransaction) {
+		Expr[] Os = model.getSortUniverse(objs.getSort("O"));
+		Map<Expr, ArrayList<Expr>> result = new HashMap<>();
+		Expr t;
+		ArrayList<Expr> child;
+		for (Expr o : Os) {
+			t = model.eval(originalTransaction.apply(o), true);
 			child = result.get(t);
 			if (child == null)
 				child = new ArrayList<Expr>();
