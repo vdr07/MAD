@@ -137,6 +137,20 @@ public class DynamicAssertsions {
 		return x;
 	}
 
+	public BoolExpr mk_not_step_siblings(String stmt, String stmt2) {
+		FuncDecl stepSibling = objs.getfuncs("step_sibling");
+		FuncDecl otype = objs.getfuncs("otype");
+		BoolExpr lhs1 = ctx.mkEq(ctx.mkApp(otype, o1), ctx.mkApp(objs.getConstructor("OType", stmt)));
+		BoolExpr lhs2 = ctx.mkEq(ctx.mkApp(otype, o2), ctx.mkApp(objs.getConstructor("OType", stmt2)));
+		BoolExpr lhs = ctx.mkAnd(lhs1, lhs2); 
+		BoolExpr rhs1 = ctx.mkNot((BoolExpr) ctx.mkApp(stepSibling, o1, o2));
+		BoolExpr rhs2 = ctx.mkNot((BoolExpr) ctx.mkApp(stepSibling, o2, o1));
+		BoolExpr rhs = ctx.mkAnd(rhs1, rhs2);
+		BoolExpr body = ctx.mkImplies(lhs, rhs);
+		Quantifier x = ctx.mkForall(new Expr[] { o1, o2 }, body, 1, null, null, null, null);
+		return x;
+	}
+
 	public BoolExpr mk_limit_txn_instances(int limit) {
 		Expr[] Ts = new Expr[limit + 1];
 		for (int i = 0; i < limit + 1; i++)

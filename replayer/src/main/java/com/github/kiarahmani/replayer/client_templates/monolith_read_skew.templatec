@@ -45,28 +45,34 @@ public class Client {
 		}
 	}
 
-	public void update_vars_to_50(int key1, int key2) throws SQLException {
-		PreparedStatement stmt1 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
-		stmt1.setInt(1, 50);
-		stmt1.setInt(2, key1);
-		stmt1.executeUpdate();
+	public void update_vars(int key1, int key2, int amount1, int amount2) throws SQLException {
+		if (amount1 + amount2 < 1000 ) {
+			PreparedStatement stmt1 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
+			stmt1.setInt(1, amount1);
+			stmt1.setInt(2, key1);
+			stmt1.executeUpdate();
 
-		PreparedStatement stmt2 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
-		stmt2.setInt(1, 50);
-		stmt2.setInt(2, key2);
-		stmt2.executeUpdate();
+			PreparedStatement stmt2 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
+			stmt2.setInt(1, amount2);
+			stmt2.setInt(2, key2);
+			stmt2.executeUpdate();
+		}
 	}
 
-	public void update_vars_to_100(int key1, int key2) throws SQLException {
-		PreparedStatement stmt1 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
-		stmt1.setInt(1, 100);
-		stmt1.setInt(2, key1);
-		stmt1.executeUpdate();
+	public void read_vars(int key1, int key2) throws SQLException {
+		PreparedStatement stmt1 = connect.prepareStatement("SELECT value " + "FROM " + "ACCOUNTS" + " WHERE id = ?");
+		stmt1.setInt(1, key1);
+		ResultSet rs1 = stmt1.executeQuery();
+		rs1.next();
+		int read_val1 = rs1.getInt("VALUE");
 
-		PreparedStatement stmt2 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
-		stmt2.setInt(1, 100);
-		stmt2.setInt(2, key2);
-		stmt2.executeUpdate();
+		PreparedStatement stmt2 = connect.prepareStatement("SELECT value " + "FROM " + "ACCOUNTS" + " WHERE id = ?");
+		stmt2.setInt(1, key2);
+		ResultSet rs2 = stmt2.executeQuery();
+		rs2.next();
+		int read_val2 = rs2.getInt("VALUE");
+
+		System.out.println(read_val1);
+		System.out.println(read_val2);
 	}
-
 }

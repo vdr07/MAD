@@ -1,28 +1,17 @@
-package com.github.kiarahmani.replayer;
+package benchmarks.monolith_dirty_write;
 
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+import ar.DependsOn;
+
+import java.sql.*;
 import java.util.Properties;
-import java.util.Random;
 
-import com.github.adejanovski.cassandra.jdbc.CassandraConnection;
-
-public class Client {
+public class monolith_dirty_write {
 	private Connection connect = null;
-	private Statement stmt = null;
-	private ResultSet rs = null;
+	private int _ISOLATION = Connection.TRANSACTION_READ_COMMITTED;
 	private int id;
 	Properties p;
 
-	public Client(int id) {
+	public monolith_dirty_write(int id) {
 		this.id = id;
 		p = new Properties();
 		p.setProperty("id", String.valueOf(this.id));
@@ -33,14 +22,6 @@ public class Client {
 			Driver driver = DriverManager.getDriver("jdbc:mydriver://");
 			connect = driver.connect("", p);
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void close() {
-		try {
-			connect.close();
-		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -68,5 +49,4 @@ public class Client {
 		stmt2.setInt(2, key2);
 		stmt2.executeUpdate();
 	}
-
 }

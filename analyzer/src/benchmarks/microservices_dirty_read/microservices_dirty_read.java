@@ -1,17 +1,17 @@
-package benchmarks.dirty_read_chopped;
+package benchmarks.microservices_dirty_read;
 
 import ar.ChoppedTransaction;
 
 import java.sql.*;
 import java.util.Properties;
 
-public class dirty_read_chopped {
+public class microservices_dirty_read {
 	private Connection connect = null;
 	private int _ISOLATION = Connection.TRANSACTION_READ_COMMITTED;
 	private int id;
 	Properties p;
 
-	public dirty_read_chopped(int id) {
+	public microservices_dirty_read(int id) {
 		this.id = id;
 		p = new Properties();
 		p.setProperty("id", String.valueOf(this.id));

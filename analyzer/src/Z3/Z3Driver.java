@@ -50,9 +50,10 @@ public class Z3Driver {
 	File file;
 	FileWriter writer;
 	PrintWriter printer;
-	Expr vo1, vo2, vt1, vt2;
+	Expr vo1, vo2, vt1, vt2, vot1, vot2;
 	private boolean findCore;
 	int globalIter = 1;
+	HashMap<String, String> mapTxnToOrigTxn;
 
 	// constructor
 	public Z3Driver(Application app, ArrayList<Table> tables, boolean findCore) {
@@ -88,7 +89,10 @@ public class Z3Driver {
 		vo2 = ctx.mkFreshConst("o", objs.getSort("O"));
 		vt1 = ctx.mkFreshConst("t", objs.getSort("T"));
 		vt2 = ctx.mkFreshConst("t", objs.getSort("T"));
+		vot1 = ctx.mkFreshConst("ot", objs.getSort("OT"));
+		vot2 = ctx.mkFreshConst("ot", objs.getSort("OT"));
 
+		mapTxnToOrigTxn = new HashMap<String, String>();
 	}
 
 	private void HeaderZ3(String s) {
@@ -258,6 +262,7 @@ public class Z3Driver {
 					addAssertion("op_types_orig_" + origTxnName + "_" + stmtName,
 						dynamicAssertions.op_types_to_original_transaction_type(origTxnName, stmtName));
 			}
+			mapTxnToOrigTxn.put(name, origTxnName);
 		}
 		// make sure the otime assignment follows the program order
 		for (Transaction txn : app.getTxns()) {
@@ -265,8 +270,8 @@ public class Z3Driver {
 			for (int j = 1; j < map.size(); j++)
 				for (int i = j; i <= map.size(); i++) {
 					if (map.get(i + 1) != null) {
-						addAssertion("otime_follows_po_" + i + "_" + j + map.get(i),
-								dynamicAssertions.otime_follows_po(map.get(j), map.get(i + 1)));
+						addAssertion("not_step_siblings_" + map.get(j) + "_" + map.get(i+1),
+								dynamicAssertions.mk_not_step_siblings(map.get(j), map.get(i + 1)));
 					}
 				}
 		}
@@ -276,7 +281,7 @@ public class Z3Driver {
 			for (int j = 1; j < map.size(); j++)
 				for (int i = j; i <= map.size(); i++) {
 					if (map.get(i + 1) != null) {
-						addAssertion("otime_follows_po2_" + i + "_" + j + map.get(i),
+						addAssertion("otime_follows_po_" + i + "_" + j + map.get(i),
 								dynamicAssertions.otime_follows_po(map.get(j), map.get(i + 1)));
 					}
 				}
@@ -526,16 +531,23 @@ public class Z3Driver {
 				BoolExpr rhs = ctx.mkOr(conditions.toArray(new BoolExpr[conditions.size()]));
 				BoolExpr lhs1 = ctx.mkEq(ctx.mkApp(objs.getfuncs("parent"), vo1), vt1);
 				BoolExpr lhs2 = ctx.mkEq(ctx.mkApp(objs.getfuncs("parent"), vo2), vt2);
-				BoolExpr lhs3 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ttype"), vt1),
+				BoolExpr lhs3 = ctx.mkEq(ctx.mkApp(objs.getfuncs("original_transaction"), vo1), vot1);
+				BoolExpr lhs4 = ctx.mkEq(ctx.mkApp(objs.getfuncs("original_transaction"), vo2), vot2);
+				BoolExpr lhs5 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ttype"), vt1),
 						ctx.mkApp(objs.getConstructor("TType", t1.getName().toString())));
-				BoolExpr lhs4 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ttype"), vt2),
+				BoolExpr lhs6 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ttype"), vt2),
 						ctx.mkApp(objs.getConstructor("TType", t2.getName().toString())));
-				BoolExpr lhs5 = ctx.mkNot(ctx.mkEq(vo1, vo2));
-				BoolExpr lhs6 = ctx.mkNot(ctx.mkEq(vt1, vt2));
-				BoolExpr lhs7 = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_O"), vo1, vo2);
-				BoolExpr lhs = ctx.mkAnd(lhs1, lhs2, lhs3, lhs4, lhs5, lhs6, lhs7);
+				BoolExpr lhs7 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ottype"), vot1),
+						ctx.mkApp(objs.getConstructor("OTType", mapTxnToOrigTxn.get(t1.getName().toString()))));
+				BoolExpr lhs8 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ottype"), vot2),
+						ctx.mkApp(objs.getConstructor("OTType", mapTxnToOrigTxn.get(t2.getName().toString()))));
+				BoolExpr lhs9 = ctx.mkNot(ctx.mkEq(vo1, vo2));
+				BoolExpr lhs10 = ctx.mkNot(ctx.mkEq(vt1, vt2));
+				BoolExpr lhs11 = ctx.mkNot(ctx.mkEq(vot1, vot2));
+				BoolExpr lhs12 = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_O"), vo1, vo2);
+				BoolExpr lhs = ctx.mkAnd(lhs1, lhs2, lhs3, lhs4, lhs5, lhs6, lhs7, lhs8, lhs9, lhs10, lhs11, lhs12);
 				BoolExpr body = ctx.mkImplies(lhs, rhs);
-				Quantifier rw_then = ctx.mkForall(new Expr[]{vo1, vo2, vt1, vt2}, body, 1, null, null, null, null);
+				Quantifier rw_then = ctx.mkForall(new Expr[]{vo1, vo2, vt1, vt2, vot1, vot2}, body, 1, null, null, null, null);
 				String rule_name = t1.getName().toString() + "-" + t2.getName().toString() + "-rw-then";
 				addAssertion(rule_name, rw_then);
 			}
@@ -553,18 +565,25 @@ public class Z3Driver {
 				BoolExpr rhs = ctx.mkOr(conditions.toArray(new BoolExpr[conditions.size()]));
 				BoolExpr lhs1 = ctx.mkEq(ctx.mkApp(objs.getfuncs("parent"), vo1), vt1);
 				BoolExpr lhs2 = ctx.mkEq(ctx.mkApp(objs.getfuncs("parent"), vo2), vt2);
-				BoolExpr lhs3 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ttype"), vt1),
+				BoolExpr lhs3 = ctx.mkEq(ctx.mkApp(objs.getfuncs("original_transaction"), vo1), vot1);
+				BoolExpr lhs4 = ctx.mkEq(ctx.mkApp(objs.getfuncs("original_transaction"), vo2), vot2);
+				BoolExpr lhs5 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ttype"), vt1),
 						ctx.mkApp(objs.getConstructor("TType", t1.getName().toString())));
-				BoolExpr lhs4 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ttype"), vt2),
+				BoolExpr lhs6 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ttype"), vt2),
 						ctx.mkApp(objs.getConstructor("TType", t2.getName().toString())));
-				BoolExpr lhs5 = ctx.mkNot(ctx.mkEq(vo1, vo2));
-				BoolExpr lhs6 = ctx.mkNot(ctx.mkEq(vt1, vt2));
-				BoolExpr lhs7 = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_O"), vo1, vo2);
-				BoolExpr lhs = ctx.mkAnd(lhs1, lhs2, lhs3, lhs4, lhs5, lhs6, lhs7);
+				BoolExpr lhs7 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ottype"), vot1),
+						ctx.mkApp(objs.getConstructor("OTType", mapTxnToOrigTxn.get(t1.getName().toString()))));
+				BoolExpr lhs8 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ottype"), vot2),
+						ctx.mkApp(objs.getConstructor("OTType", mapTxnToOrigTxn.get(t2.getName().toString()))));
+				BoolExpr lhs9 = ctx.mkNot(ctx.mkEq(vo1, vo2));
+				BoolExpr lhs10 = ctx.mkNot(ctx.mkEq(vt1, vt2));
+				BoolExpr lhs11 = ctx.mkNot(ctx.mkEq(vot1, vot2));
+				BoolExpr lhs12 = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_O"), vo1, vo2);
+				BoolExpr lhs = ctx.mkAnd(lhs1, lhs2, lhs3, lhs4, lhs5, lhs6, lhs7, lhs8, lhs9, lhs10, lhs11, lhs12);
 				BoolExpr body = ctx.mkImplies(lhs, rhs);
-				Quantifier rw_then = ctx.mkForall(new Expr[]{vo1, vo2, vt1, vt2}, body, 1, null, null, null, null);
+				Quantifier wr_then = ctx.mkForall(new Expr[]{vo1, vo2, vt1, vt2, vot1, vot2}, body, 1, null, null, null, null);
 				String rule_name = t1.getName().toString() + "-" + t2.getName().toString() + "-wr-then";
-				addAssertion(rule_name, rw_then);
+				addAssertion(rule_name, wr_then);
 			}
 	}
 
@@ -578,16 +597,23 @@ public class Z3Driver {
 				BoolExpr rhs = ctx.mkOr(conditions.toArray(new BoolExpr[conditions.size()]));
 				BoolExpr lhs1 = ctx.mkEq(ctx.mkApp(objs.getfuncs("parent"), vo1), vt1);
 				BoolExpr lhs2 = ctx.mkEq(ctx.mkApp(objs.getfuncs("parent"), vo2), vt2);
-				BoolExpr lhs3 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ttype"), vt1),
+				BoolExpr lhs3 = ctx.mkEq(ctx.mkApp(objs.getfuncs("original_transaction"), vo1), vot1);
+				BoolExpr lhs4 = ctx.mkEq(ctx.mkApp(objs.getfuncs("original_transaction"), vo2), vot2);
+				BoolExpr lhs5 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ttype"), vt1),
 						ctx.mkApp(objs.getConstructor("TType", t1.getName().toString())));
-				BoolExpr lhs4 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ttype"), vt2),
+				BoolExpr lhs6 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ttype"), vt2),
 						ctx.mkApp(objs.getConstructor("TType", t2.getName().toString())));
-				BoolExpr lhs5 = ctx.mkNot(ctx.mkEq(vo1, vo2));
-				BoolExpr lhs6 = ctx.mkNot(ctx.mkEq(vt1, vt2));
-				BoolExpr lhs7 = (BoolExpr) ctx.mkApp(objs.getfuncs("WW_O"), vo1, vo2);
-				BoolExpr lhs = ctx.mkAnd(lhs1, lhs2, lhs3, lhs4, lhs5, lhs6, lhs7);
+				BoolExpr lhs7 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ottype"), vot1),
+						ctx.mkApp(objs.getConstructor("OTType", mapTxnToOrigTxn.get(t1.getName().toString()))));
+				BoolExpr lhs8 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ottype"), vot2),
+						ctx.mkApp(objs.getConstructor("OTType", mapTxnToOrigTxn.get(t2.getName().toString()))));
+				BoolExpr lhs9 = ctx.mkNot(ctx.mkEq(vo1, vo2));
+				BoolExpr lhs10 = ctx.mkNot(ctx.mkEq(vt1, vt2));
+				BoolExpr lhs11 = ctx.mkNot(ctx.mkEq(vot1, vot2));
+				BoolExpr lhs12 = (BoolExpr) ctx.mkApp(objs.getfuncs("WW_O"), vo1, vo2);
+				BoolExpr lhs = ctx.mkAnd(lhs1, lhs2, lhs3, lhs4, lhs5, lhs6, lhs7, lhs8, lhs9, lhs10, lhs11, lhs12);
 				BoolExpr body = ctx.mkImplies(lhs, rhs);
-				Quantifier ww_then = ctx.mkForall(new Expr[]{vo1, vo2, vt1, vt2}, body, 1, null, null, null, null);
+				Quantifier ww_then = ctx.mkForall(new Expr[]{vo1, vo2, vt1, vt2, vot1, vot2}, body, 1, null, null, null, null);
 				String rule_name = t1.getName().toString() + "-" + t2.getName().toString() + "-ww-then";
 				addAssertion(rule_name, ww_then);
 			}

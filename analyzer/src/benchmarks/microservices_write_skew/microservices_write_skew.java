@@ -1,0 +1,54 @@
+package benchmarks.microservices_write_skew;
+
+import ar.ChoppedTransaction;
+
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Properties;
+
+public class microservices_write_skew {
+	private Connection connect = null;
+	private int _ISOLATION = Connection.TRANSACTION_READ_COMMITTED;
+	private int id;
+	Properties p;
+
+	public microservices_write_skew(int id) {
+		this.id = id;
+		p = new Properties();
+		p.setProperty("id", String.valueOf(this.id));
+		Object o;
+		try {
+			o = Class.forName("MyDriver").newInstance();
+			DriverManager.registerDriver((Driver) o);
+			Driver driver = DriverManager.getDriver("jdbc:mydriver://");
+			connect = driver.connect("", p);
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@ChoppedTransaction(originalTransaction="update_var", microservice="update_invariant_var")
+	public void get_var_val(int key1) throws SQLException {
+		// read account 1
+		PreparedStatement stmt = connect.prepareStatement("SELECT value " + "FROM " + "ACCOUNTS" + " WHERE id = ?");
+		stmt.setInt(1, key1);
+		ResultSet rs = stmt.executeQuery();
+		rs.next();
+		int read_val = rs.getInt("VALUE");
+	}
+
+	@ChoppedTransaction(originalTransaction="update_var", microservice="update_invariant_var")
+	public void update_var_val(int read_val, int key2, int amount2) throws SQLException {
+		// update account 2
+		if (read_val + amount2 < 1000 ) {
+			PreparedStatement stmt1 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
+			stmt1.setInt(1, amount2);
+			stmt1.setInt(2, key2);
+			stmt1.executeUpdate();
+		}
+	}
+}

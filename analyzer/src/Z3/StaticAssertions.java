@@ -220,7 +220,7 @@ public class StaticAssertions {
 
 	public BoolExpr mk_linearizable() {
 		BoolExpr lhs = (BoolExpr) ctx.mkApp(objs.getfuncs("ar"), o1, o2);
-		BoolExpr rhs = (BoolExpr) ctx.mkApp(objs.getfuncs("vis"), o2, o1);
+		BoolExpr rhs = (BoolExpr) ctx.mkApp(objs.getfuncs("vis"), o1, o2);
 		BoolExpr body = ctx.mkImplies(lhs, rhs);
 		Quantifier x = ctx.mkForall(new Expr[]{o1, o2}, body, 1, null, null, null, null);
 		return x;
@@ -252,18 +252,6 @@ public class StaticAssertions {
 
 	public Quantifier mk_irreflx_ar() {
 		BoolExpr body = (BoolExpr) ctx.mkApp(objs.getfuncs("ar"), o1, o1);
-		Quantifier x = ctx.mkForall(new Expr[]{o1}, ctx.mkNot(body), 1, null, null, null, null);
-		return x;
-	}
-
-	public Quantifier mk_irreflx_sibling() {
-		BoolExpr body = (BoolExpr) ctx.mkApp(objs.getfuncs("sibling"), o1, o1);
-		Quantifier x = ctx.mkForall(new Expr[]{o1}, ctx.mkNot(body), 1, null, null, null, null);
-		return x;
-	}
-
-	public Quantifier mk_irreflx_stepsibling() {
-		BoolExpr body = (BoolExpr) ctx.mkApp(objs.getfuncs("step_sibling"), o1, o1);
 		Quantifier x = ctx.mkForall(new Expr[]{o1}, ctx.mkNot(body), 1, null, null, null, null);
 		return x;
 	}
@@ -323,10 +311,11 @@ public class StaticAssertions {
 		BoolExpr eqP = ctx.mkEq(o1P, o2P);
 		BoolExpr eqT = ctx.mkEq(o1T, o2T);
 
-		BoolExpr body01 = ctx.mkAnd(ctx.mkEq(o1P, o2P), ctx.mkGt(o2T, o1T), o1IU, ctx.mkNot(o2IU));
+		BoolExpr body011 = ctx.mkAnd(ctx.mkEq(o1P, o2P), ctx.mkGt(o2T, o1T), o1IU, ctx.mkNot(o2IU));
+		BoolExpr body012 = ctx.mkAnd(ctx.mkEq(o1P, o2P), ctx.mkGt(o2T, o1T));
 		BoolExpr body02 = (BoolExpr) ctx.mkApp(objs.getfuncs("vis"), o1, o2);
-		BoolExpr body0 = ctx.mkImplies(body01, body02);
-		BoolExpr body1 = ctx.mkImplies(body02, body01);
+		BoolExpr body0 = ctx.mkImplies(body011, body02);
+		BoolExpr body1 = ctx.mkImplies(body02, body012);
 		BoolExpr body2 = ctx.mkImplies(ctx.mkAnd(eqP, ctx.mkNot(eqO)), ctx.mkNot(eqT));
 		BoolExpr body3 = ctx.mkGt(o1T, ctx.mkInt(0));
 		BoolExpr body4 = ctx.mkImplies(ctx.mkNot(eqP), ctx.mkNot(body02));

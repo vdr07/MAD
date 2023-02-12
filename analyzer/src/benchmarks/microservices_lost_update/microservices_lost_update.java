@@ -1,17 +1,17 @@
-package benchmarks.dirty_read_monolith;
+package benchmarks.microservices_lost_update;
 
-import ar.DependsOn;
+import ar.ChoppedTransaction;
 
 import java.sql.*;
 import java.util.Properties;
 
-public class dirty_read_monolith {
+public class microservices_lost_update {
 	private Connection connect = null;
 	private int _ISOLATION = Connection.TRANSACTION_READ_COMMITTED;
 	private int id;
 	Properties p;
 
-	public dirty_read_monolith(int id) {
+	public microservices_lost_update(int id) {
 		this.id = id;
 		p = new Properties();
 		p.setProperty("id", String.valueOf(this.id));
@@ -26,23 +26,21 @@ public class dirty_read_monolith {
 		}
 	}
 
-	public void transaction(int key1, int key2, int val1, int val2) throws SQLException {
-		PreparedStatement stmt1 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
-		stmt1.setInt(1, val1);
-		stmt1.setInt(2, key1);
-		stmt1.executeUpdate();
-
-		PreparedStatement stmt2 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
-		stmt2.setInt(1, val2);
-		stmt2.setInt(2, key2);
-		stmt2.executeUpdate();
-	}
-
-	public void read_key(int key1) throws SQLException {
+	@ChoppedTransaction(originalTransaction="increment_5", microservice="incrementing_by_5")
+	public void get_var_increment_5(int key) throws SQLException {
 		PreparedStatement stmt = connect.prepareStatement("SELECT value " + "FROM " + "ACCOUNTS" + " WHERE id = ?");
-		stmt.setInt(1, key1);
+		stmt.setInt(1, key);
 		ResultSet rs = stmt.executeQuery();
 		rs.next();
 		int read_val = rs.getInt("VALUE");
+		int incremented_val = read_val + 5;
+	}
+
+	@ChoppedTransaction(originalTransaction="increment_5", microservice="incrementing_by_5")
+	public void do_increment_5(int key, int incremented_val) throws SQLException {
+		PreparedStatement stmt2 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
+		stmt2.setInt(1, incremented_val);
+		stmt2.setInt(2, key);
+		stmt2.executeUpdate();
 	}
 }
