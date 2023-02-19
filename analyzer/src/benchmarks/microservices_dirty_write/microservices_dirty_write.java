@@ -26,7 +26,7 @@ public class microservices_dirty_write {
 		}
 	}
 
-	@ChoppedTransaction(originalTransaction="update_vars_to_50", microservice="update_to_50")
+	@ChoppedTransaction(originalTransaction="update_vars_to_50", microservice="m1")
 	public void update_var1_to_50(int key1) throws SQLException {
 		PreparedStatement stmt1 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
 		stmt1.setInt(1, 50);
@@ -34,7 +34,7 @@ public class microservices_dirty_write {
 		stmt1.executeUpdate();
 	}
 
-	@ChoppedTransaction(originalTransaction="update_vars_to_50", microservice="update_to_50")
+	@ChoppedTransaction(originalTransaction="update_vars_to_50", microservice="m2")
 	public void update_var2_to_50(int key2) throws SQLException {
 		PreparedStatement stmt2 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
 		stmt2.setInt(1, 50);
@@ -42,6 +42,7 @@ public class microservices_dirty_write {
 		stmt2.executeUpdate();
 	}
 
+	@ChoppedTransaction(microservice="m3")
 	public void update_vars_to_100(int key1, int key2) throws SQLException {
 		PreparedStatement stmt1 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
 		stmt1.setInt(1, 100);

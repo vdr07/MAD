@@ -130,7 +130,9 @@ public class GimpToAppOne extends GimpToApp {
 			}
 		}
 
-		if(txn.getOriginalTransaction() == null) txn.setOriginalTransaction(name);
+		if(txn.getOriginalTransaction() == null || txn.getOriginalTransaction().equals("")) txn.setOriginalTransaction(name);
+
+		if(txn.getMicroservice() == null) txn.setMicroservice("_MONOLITH_");
 
 		// if (ConstantArgs.DEBUG_MODE)
 		// printExpressions(unitHandler);

@@ -100,6 +100,16 @@ public class DynamicAssertsions {
 		return x;
 	}
 
+	public BoolExpr op_types_to_microservice_type(String name, String stmtName) {
+		BoolExpr rhs = ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), o1),
+				ctx.mkApp(objs.getConstructor("MType", name)));
+		BoolExpr lhs = (BoolExpr) ctx.mkEq(ctx.mkApp(objs.getfuncs("otype"), o1),
+				ctx.mkApp(objs.getConstructor("OType", stmtName)));
+		BoolExpr body = ctx.mkImplies(lhs, rhs);
+		Quantifier x = ctx.mkForall(new Expr[] { o1 }, body, 1, null, null, null, null);
+		return x;
+	}
+
 	public BoolExpr same_transaction(String txnName, String stmt1, String stmt2) {
 		BoolExpr rhs1 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ttype"), ctx.mkApp(objs.getfuncs("parent"), o1)),
 				ctx.mkApp(objs.getConstructor("TType", txnName)));
@@ -771,7 +781,9 @@ public class DynamicAssertsions {
 		String dep = "X";
 		// a base sibling edge must exist
 		depExprs[0] = ctx.mkAnd((BoolExpr) ctx.mkApp(objs.getfuncs("X"), Os[0], Os[1]),
-				ctx.mkXor((BoolExpr) ctx.mkApp(objs.getfuncs("sibling"), Os[0], Os[1]),
+				ctx.mkXor(ctx.mkAnd((BoolExpr) ctx.mkApp(objs.getfuncs("sibling"), Os[0], Os[1]),
+						ctx.mkOr(ctx.mkNot(ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), Os[1]), ctx.mkApp(objs.getfuncs("mtype"), Os[2]))),
+						ctx.mkNot(ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), Os[length - 1]), ctx.mkApp(objs.getfuncs("mtype"), Os[0]))))),
 					(BoolExpr) ctx.mkApp(objs.getfuncs("step_sibling"), Os[0], Os[1])));
 		depExprs[1] = (BoolExpr) ctx.mkApp(objs.getfuncs("D"), Os[1], Os[2]);
 		depExprs[length - 1] = (BoolExpr) ctx.mkApp(objs.getfuncs("D"), Os[length - 1], Os[0]);

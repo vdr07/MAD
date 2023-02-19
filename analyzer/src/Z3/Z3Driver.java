@@ -152,6 +152,7 @@ public class Z3Driver {
 		objs.addDataType("TType", mkDataType("TType", app.getAllTxnNames()));
 		objs.addDataType("OType", mkDataType("OType", app.getAllStmtTypes()));
 		objs.addDataType("OTType", mkDataType("OTType", app.getAllOrigTxnNames()));
+		objs.addDataType("MType", mkDataType("MType", app.getAllMicroNames()));
 
 		// =====================================================================================================================================================
 		HeaderZ3("STATIC FUNCTIONS & PROPS");
@@ -166,6 +167,7 @@ public class Z3Driver {
 		objs.addFunc("ttype", ctx.mkFuncDecl("ttype", objs.getSort("T"), objs.getDataTypes("TType")));
 		objs.addFunc("otype", ctx.mkFuncDecl("otype", objs.getSort("O"), objs.getDataTypes("OType")));
 		objs.addFunc("ottype", ctx.mkFuncDecl("ottype", objs.getSort("OT"), objs.getDataTypes("OTType")));
+		objs.addFunc("mtype", ctx.mkFuncDecl("mtype", objs.getSort("O"), objs.getDataTypes("MType")));
 		objs.addFunc("is_update", ctx.mkFuncDecl("is_update", objs.getSort("O"), objs.getSort("Bool")));
 		objs.addFunc("parent", ctx.mkFuncDecl("parent", objs.getSort("O"), objs.getSort("T")));
 		objs.addFunc("original_transaction", ctx.mkFuncDecl("original_transaction", objs.getSort("O"), objs.getSort("OT")));
@@ -220,7 +222,7 @@ public class Z3Driver {
 		//addAssertion("tcc", staticAssrtions.mk_trans_causal_cons());
 		addAssertion("read_committed", staticAssrtions.mk_read_comm());
 		addAssertion("repeatable_read", staticAssrtions.mk_rep_read());
-		addAssertion("linearizability", staticAssrtions.mk_linearizable());
+		//addAssertion("linearizability", staticAssrtions.mk_linearizable());
 		/* _________________________________________ */
 
 
@@ -250,6 +252,7 @@ public class Z3Driver {
 		for (Transaction txn : app.getTxns()) {
 			String name = txn.getName();
 			String origTxnName = txn.getOriginalTransaction();
+			String microName = txn.getMicroservice();
 			for (String stmtName : txn.getStmtNames()) {
 				addAssertion("op_types_" + name + "_" + stmtName,
 						dynamicAssertions.op_types_to_parent_type(name, stmtName));
@@ -258,9 +261,11 @@ public class Z3Driver {
 						addAssertion("same_transaction", dynamicAssertions.same_transaction(name, stmtName, stmtName2));
 					}
 				}*/
-				if(origTxnName != null)
-					addAssertion("op_types_orig_" + origTxnName + "_" + stmtName,
-						dynamicAssertions.op_types_to_original_transaction_type(origTxnName, stmtName));
+				addAssertion("op_types_orig_" + origTxnName + "_" + stmtName,
+					dynamicAssertions.op_types_to_original_transaction_type(origTxnName, stmtName));
+				
+				addAssertion("op_types_micro_" + microName + "_" + stmtName,
+					dynamicAssertions.op_types_to_microservice_type(microName, stmtName));
 			}
 			mapTxnToOrigTxn.put(name, origTxnName);
 		}
@@ -698,8 +703,8 @@ public class Z3Driver {
 					e.printStackTrace();
 				}
 
-				for (BoolExpr ass : dynamicAssertions.mk_versioning_props(tables))
-					addAssertion("versioning_props" + (iter++), ass);
+				//for (BoolExpr ass : dynamicAssertions.mk_versioning_props(tables))
+				//	addAssertion("versioning_props" + (iter++), ass);
 				HeaderZ3("NEW CYCLE ASSERTIONS");
 				// dependency assertions
 				addAssertion("gen_dep", staticAssrtions.mk_gen_dep());

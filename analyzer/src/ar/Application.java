@@ -91,4 +91,17 @@ public class Application {
 		}
 		return result;
 	}
+
+	public String[] getAllMicroNames() {
+		List<String> result = new ArrayList<String>();
+		int size = 0;
+		for (Transaction t : this.txns) {
+			String microserviceName = t.getMicroservice();
+			if(microserviceName != null && !result.contains(microserviceName)) {
+				result.add(microserviceName);
+				size++;
+			}
+		}
+		return result.toArray(new String[size]);
+	}
 }

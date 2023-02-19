@@ -1,6 +1,6 @@
 package benchmarks.monolith_dirty_read;
 
-import ar.DependsOn;
+import ar.ChoppedTransaction;
 
 import java.sql.*;
 import java.util.Properties;

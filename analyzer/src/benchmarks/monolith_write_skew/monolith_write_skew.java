@@ -1,11 +1,8 @@
 package benchmarks.monolith_write_skew;
 
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import ar.ChoppedTransaction;
+
+import java.sql.*;
 import java.util.Properties;
 
 public class monolith_write_skew {

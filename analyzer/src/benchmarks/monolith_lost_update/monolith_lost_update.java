@@ -1,6 +1,6 @@
 package benchmarks.monolith_lost_update;
 
-import ar.DependsOn;
+import ar.ChoppedTransaction;
 
 import java.sql.*;
 import java.util.Properties;

@@ -26,7 +26,7 @@ public class microservices_lost_update {
 		}
 	}
 
-	@ChoppedTransaction(originalTransaction="increment_5", microservice="incrementing_by_5")
+	@ChoppedTransaction(originalTransaction="increment_5", microservice="incrementing_by_5_1")
 	public void get_var_increment_5(int key) throws SQLException {
 		PreparedStatement stmt = connect.prepareStatement("SELECT value " + "FROM " + "ACCOUNTS" + " WHERE id = ?");
 		stmt.setInt(1, key);
@@ -36,7 +36,7 @@ public class microservices_lost_update {
 		int incremented_val = read_val + 5;
 	}
 
-	@ChoppedTransaction(originalTransaction="increment_5", microservice="incrementing_by_5")
+	@ChoppedTransaction(originalTransaction="increment_5", microservice="incrementing_by_5_2")
 	public void do_increment_5(int key, int incremented_val) throws SQLException {
 		PreparedStatement stmt2 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
 		stmt2.setInt(1, incremented_val);

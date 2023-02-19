@@ -2,12 +2,7 @@ package benchmarks.microservices_read_skew;
 
 import ar.ChoppedTransaction;
 
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Properties;
 
 public class microservices_read_skew {

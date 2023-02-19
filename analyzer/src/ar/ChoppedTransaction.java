@@ -1,6 +1,6 @@
 package ar;
 
 public @interface ChoppedTransaction {
-	String originalTransaction();
+	String originalTransaction() default "";
 	String microservice();
 }
