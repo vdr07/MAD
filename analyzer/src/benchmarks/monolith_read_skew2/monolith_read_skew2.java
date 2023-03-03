@@ -1,17 +1,17 @@
-package benchmarks.monolith_read_skew;
+package benchmarks.monolith_read_skew2;
 
 import ar.ChoppedTransaction;
 
 import java.sql.*;
 import java.util.Properties;
 
-public class monolith_read_skew {
+public class monolith_read_skew2 {
 	private Connection connect = null;
 	private int _ISOLATION = Connection.TRANSACTION_READ_COMMITTED;
 	private int id;
 	Properties p;
 
-	public monolith_read_skew(int id) {
+	public monolith_read_skew2(int id) {
 		this.id = id;
 		p = new Properties();
 		p.setProperty("id", String.valueOf(this.id));
@@ -29,27 +29,27 @@ public class monolith_read_skew {
 	@ChoppedTransaction(microservice="m1")
 	public void update_vars(int key1, int key2, int amount1, int amount2) throws SQLException {
 		if (amount1 + amount2 < 1000 ) {
-			PreparedStatement stmt1 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
+			PreparedStatement stmt1 = connect.prepareStatement("UPDATE X SET value = ?" + " WHERE id = ?");
 			stmt1.setInt(1, amount1);
 			stmt1.setInt(2, key1);
 			stmt1.executeUpdate();
 
-			PreparedStatement stmt2 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
+			PreparedStatement stmt2 = connect.prepareStatement("UPDATE Y SET value = ?" + " WHERE id = ?");
 			stmt2.setInt(1, amount2);
 			stmt2.setInt(2, key2);
 			stmt2.executeUpdate();
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
+	@ChoppedTransaction(microservice="m2")
 	public void read_vars(int key1, int key2) throws SQLException {
-		PreparedStatement stmt1 = connect.prepareStatement("SELECT value " + "FROM " + "ACCOUNTS" + " WHERE id = ?");
+		PreparedStatement stmt1 = connect.prepareStatement("SELECT value " + "FROM " + "X" + " WHERE id = ?");
 		stmt1.setInt(1, key1);
 		ResultSet rs1 = stmt1.executeQuery();
 		rs1.next();
 		int read_val1 = rs1.getInt("VALUE");
 
-		PreparedStatement stmt2 = connect.prepareStatement("SELECT value " + "FROM " + "ACCOUNTS" + " WHERE id = ?");
+		PreparedStatement stmt2 = connect.prepareStatement("SELECT value " + "FROM " + "Y" + " WHERE id = ?");
 		stmt2.setInt(1, key2);
 		ResultSet rs2 = stmt2.executeQuery();
 		rs2.next();

@@ -1,0 +1,75 @@
+package com.github.kiarahmani.replayer;
+
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.Random;
+
+import com.github.adejanovski.cassandra.jdbc.CassandraConnection;
+
+public class Client {
+	private Connection connect = null;
+	private Statement stmt = null;
+	private ResultSet rs = null;
+	private int id;
+	Properties p;
+
+	public Client(int id) {
+		this.id = id;
+		p = new Properties();
+		p.setProperty("id", String.valueOf(this.id));
+		Object o;
+		try {
+			o = Class.forName("MyDriver").newInstance();
+			DriverManager.registerDriver((Driver) o);
+			Driver driver = DriverManager.getDriver("jdbc:mydriver://");
+			connect = driver.connect("", p);
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void close() {
+		try {
+			connect.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void place_order(int order_id, int product_id) throws SQLException {
+		PreparedStatement stmt = connect.prepareStatement("INSERT INTO ORDERS VALUES (?,?)");
+		stmt.setInt(1, order_id);
+		stmt.setString(2, "pending");
+		stmt.executeUpdate();
+
+		PreparedStatement stmt2 = connect.prepareStatement("SELECT quantity " + "FROM " + "PRODUCTS" + " WHERE id = ?");
+		stmt2.setInt(1, product_id);
+		ResultSet rs = stmt2.executeQuery();
+		rs.next();
+		int product_quantity = rs.getInt("QUANTITY");
+
+		if(product_quantity > 0) {
+			PreparedStatement stmt3 = connect.prepareStatement("UPDATE ORDERS SET state = ?" + " WHERE id = ?");
+			stmt3.setString(1, "successful");
+			stmt3.setInt(2, order_id);
+			stmt3.executeUpdate();
+		}
+	}
+
+	public void check_order(int order_id) throws SQLException {
+		PreparedStatement stmt = connect.prepareStatement("SELECT state " + "FROM " + "ORDERS" + " WHERE id = ?");
+		stmt.setInt(1, order_id);
+		ResultSet rs = stmt.executeQuery();
+		rs.next();
+		int order_state = rs.getInt("STATE");
+	}
+}

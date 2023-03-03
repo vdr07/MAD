@@ -1,17 +1,17 @@
-package benchmarks.monolith_dirty_write;
+package benchmarks.microservices_dirty_write2;
 
 import ar.ChoppedTransaction;
 
 import java.sql.*;
 import java.util.Properties;
 
-public class monolith_dirty_write {
+public class microservices_dirty_write2 {
 	private Connection connect = null;
 	private int _ISOLATION = Connection.TRANSACTION_READ_COMMITTED;
 	private int id;
 	Properties p;
 
-	public monolith_dirty_write(int id) {
+	public microservices_dirty_write2(int id) {
 		this.id = id;
 		p = new Properties();
 		p.setProperty("id", String.valueOf(this.id));
@@ -26,27 +26,30 @@ public class monolith_dirty_write {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
-	public void update_vars_to_50(int key1, int key2) throws SQLException {
-		PreparedStatement stmt1 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
+	@ChoppedTransaction(originalTransaction="update_vars_to_50", microservice="m1")
+	public void update_var1_to_50(int key1) throws SQLException {
+		PreparedStatement stmt1 = connect.prepareStatement("UPDATE X SET value = ?" + " WHERE id = ?");
 		stmt1.setInt(1, 50);
 		stmt1.setInt(2, key1);
 		stmt1.executeUpdate();
+	}
 
-		PreparedStatement stmt2 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
+	@ChoppedTransaction(originalTransaction="update_vars_to_50", microservice="m2")
+	public void update_var2_to_50(int key2) throws SQLException {
+		PreparedStatement stmt2 = connect.prepareStatement("UPDATE Y SET value = ?" + " WHERE id = ?");
 		stmt2.setInt(1, 50);
 		stmt2.setInt(2, key2);
 		stmt2.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
+	@ChoppedTransaction(microservice="m3")
 	public void update_vars_to_100(int key1, int key2) throws SQLException {
-		PreparedStatement stmt1 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
+		PreparedStatement stmt1 = connect.prepareStatement("UPDATE X SET value = ?" + " WHERE id = ?");
 		stmt1.setInt(1, 100);
 		stmt1.setInt(2, key1);
 		stmt1.executeUpdate();
 
-		PreparedStatement stmt2 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
+		PreparedStatement stmt2 = connect.prepareStatement("UPDATE Y SET value = ?" + " WHERE id = ?");
 		stmt2.setInt(1, 100);
 		stmt2.setInt(2, key2);
 		stmt2.executeUpdate();

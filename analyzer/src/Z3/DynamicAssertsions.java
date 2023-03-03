@@ -161,6 +161,20 @@ public class DynamicAssertsions {
 		return x;
 	}
 
+	public BoolExpr mk_only_siblings(String stmt, String stmt2) {
+		FuncDecl sibling = objs.getfuncs("sibling");
+		FuncDecl otype = objs.getfuncs("otype");
+		BoolExpr lhs1 = ctx.mkEq(ctx.mkApp(otype, o1), ctx.mkApp(objs.getConstructor("OType", stmt)));
+		BoolExpr lhs2 = ctx.mkEq(ctx.mkApp(otype, o2), ctx.mkApp(objs.getConstructor("OType", stmt2)));
+		BoolExpr lhs = ctx.mkAnd(lhs1, lhs2); 
+		BoolExpr rhs1 = (BoolExpr) ctx.mkApp(sibling, o1, o2);
+		BoolExpr rhs2 = (BoolExpr) ctx.mkApp(sibling, o2, o1);
+		BoolExpr rhs = ctx.mkOr(rhs1, rhs2);
+		BoolExpr body = ctx.mkImplies(lhs, rhs);
+		Quantifier x = ctx.mkForall(new Expr[] { o1, o2 }, body, 1, null, null, null, null);
+		return x;
+	}
+
 	public BoolExpr mk_limit_txn_instances(int limit) {
 		Expr[] Ts = new Expr[limit + 1];
 		for (int i = 0; i < limit + 1; i++)
@@ -785,6 +799,11 @@ public class DynamicAssertsions {
 						ctx.mkOr(ctx.mkNot(ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), Os[1]), ctx.mkApp(objs.getfuncs("mtype"), Os[2]))),
 						ctx.mkNot(ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), Os[length - 1]), ctx.mkApp(objs.getfuncs("mtype"), Os[0]))))),
 					(BoolExpr) ctx.mkApp(objs.getfuncs("step_sibling"), Os[0], Os[1])));
+				/*ctx.mkXor((BoolExpr) ctx.mkApp(objs.getfuncs("sibling"), Os[0], Os[1]),
+						(BoolExpr) ctx.mkApp(objs.getfuncs("step_sibling"), Os[0], Os[1])));*/
+		//
+		// TODO - Expandir para ser "pelo menos uma das relações não é entre o mesmo microservico" 
+		//
 		depExprs[1] = (BoolExpr) ctx.mkApp(objs.getfuncs("D"), Os[1], Os[2]);
 		depExprs[length - 1] = (BoolExpr) ctx.mkApp(objs.getfuncs("D"), Os[length - 1], Os[0]);
 		for (int i = 2; i < length - 1; i++) {

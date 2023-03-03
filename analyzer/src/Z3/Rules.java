@@ -58,7 +58,9 @@ public class Rules {
 		Transaction txn1 = app.getTxnByName(t1.getName().toString());
 		Transaction txn2 = app.getTxnByName(t2.getName().toString());
 		List<BoolExpr> result = new ArrayList<BoolExpr>();
-		for (Statement o1 : txn1.getStmts())
+		//for (Statement o1 : txn1.getStmts())
+		for (int i = txn1.getStmts().size() - 1; i >= 0; i--) {
+			Statement o1 = txn1.getStmts().get(i);
 			for (Statement o2 : txn2.getStmts()) {
 				// generate constarints shared beween cases:
 				BoolExpr otypeCond1 = ctx.mkEq(ctx.mkApp(objs.getfuncs("otype"), vo1),
@@ -233,6 +235,7 @@ public class Rules {
 					}
 				}
 			}
+		}
 		return result;
 	}
 
@@ -311,14 +314,25 @@ public class Rules {
 		Transaction txn2 = app.getTxnByName(t2.getName().toString());
 		List<BoolExpr> result = new ArrayList<BoolExpr>();
 		// these have to be removed
-		for (Statement o1 : txn1.getStmts())
+		List<Table> seenUpdatedTables = new ArrayList<Table>();
+		//for (Statement o1 : txn1.getStmts())
+		for (int i = txn1.getStmts().size() - 1; i >= 0; i--) {
+			Statement o1 = txn1.getStmts().get(i);
+			Query q1 = ((InvokeStmt) o1).getQuery();
+
+			if(q1.getKind() == Kind.UPDATE) {
+				if(seenUpdatedTables.contains(q1.getTable()))
+					continue;
+				else
+					seenUpdatedTables.add(q1.getTable());
+			}
 			for (Statement o2 : txn2.getStmts()) {
 				// generate constarints sharet beween cases:
 				BoolExpr otypeCond1 = ctx.mkEq(ctx.mkApp(objs.getfuncs("otype"), vo1),
 						ctx.mkApp(objs.getConstructor("OType", ((InvokeStmt) o1).getType().toString())));
 				BoolExpr otypeCond2 = ctx.mkEq(ctx.mkApp(objs.getfuncs("otype"), vo2),
 						ctx.mkApp(objs.getConstructor("OType", ((InvokeStmt) o2).getType().toString())));
-				Query q1 = ((InvokeStmt) o1).getQuery();
+				//Query q1 = ((InvokeStmt) o1).getQuery();
 				Query q2 = ((InvokeStmt) o2).getQuery();
 
 				// add the conditions if there is a common table between statements which is
@@ -478,6 +492,7 @@ public class Rules {
 					}
 				}
 			}
+		}
 		return result;
 	}
 
@@ -486,14 +501,26 @@ public class Rules {
 		Transaction txn1 = app.getTxnByName(t1.getName().toString());
 		Transaction txn2 = app.getTxnByName(t2.getName().toString());
 		List<BoolExpr> result = new ArrayList<BoolExpr>();
-		for (Statement o1 : txn1.getStmts())
+		List<Table> seenUpdatedTables = new ArrayList<Table>();
+		//for (Statement o1 : txn1.getStmts())
+		for (int i = txn1.getStmts().size() - 1; i >= 0; i--) {
+			Statement o1 = txn1.getStmts().get(i);
+			Query q1 = ((InvokeStmt) o1).getQuery();
+
+			if(q1.getKind() == Kind.UPDATE) {
+				if(seenUpdatedTables.contains(q1.getTable()))
+					continue;
+				else
+					seenUpdatedTables.add(q1.getTable());
+			}
+
 			for (Statement o2 : txn2.getStmts()) {
 				// generate constarints shared beween cases:
 				BoolExpr otypeCond1 = ctx.mkEq(ctx.mkApp(objs.getfuncs("otype"), vo1),
 						ctx.mkApp(objs.getConstructor("OType", ((InvokeStmt) o1).getType().toString())));
 				BoolExpr otypeCond2 = ctx.mkEq(ctx.mkApp(objs.getfuncs("otype"), vo2),
 						ctx.mkApp(objs.getConstructor("OType", ((InvokeStmt) o2).getType().toString())));
-				Query q1 = ((InvokeStmt) o1).getQuery();
+				//Query q1 = ((InvokeStmt) o1).getQuery();
 				Query q2 = ((InvokeStmt) o2).getQuery();
 
 				// add the conditions if there is a common table between statements
@@ -525,6 +552,7 @@ public class Rules {
 					}
 				}
 			}
+		}
 		return result;
 	}
 }

@@ -21,19 +21,17 @@ public class StaticAssertions {
 	}
 
 	public Quantifier mk_par_then_sib() {
-		BoolExpr lhs1 = ctx.mkEq(ctx.mkApp(objs.getfuncs("parent"), o1), ctx.mkApp(objs.getfuncs("parent"), o2));
-		BoolExpr lhs2 = ctx.mkNot(ctx.mkEq(ctx.mkApp(objs.getfuncs("original_transaction"), o1), ctx.mkApp(objs.getfuncs("original_transaction"), o2)));
+		BoolExpr lhs = ctx.mkEq(ctx.mkApp(objs.getfuncs("parent"), o1), ctx.mkApp(objs.getfuncs("parent"), o2));
 		BoolExpr rhs = (BoolExpr) ctx.mkApp(objs.getfuncs("sibling"), o1, o2);
-		BoolExpr body = ctx.mkImplies(ctx.mkAnd(lhs1, lhs2), rhs);
+		BoolExpr body = ctx.mkImplies(lhs, rhs);
 		Quantifier x = ctx.mkForall(new Expr[]{o1, o2}, body, 1, null, null, null, null);
 		return x;
 	}
 
 	public Quantifier mk_sib_then_par() {
-		BoolExpr rhs1 = ctx.mkEq(ctx.mkApp(objs.getfuncs("parent"), o1), ctx.mkApp(objs.getfuncs("parent"), o2));
-		BoolExpr rhs2 = ctx.mkNot(ctx.mkEq(ctx.mkApp(objs.getfuncs("original_transaction"), o1), ctx.mkApp(objs.getfuncs("original_transaction"), o2)));
+		BoolExpr rhs = ctx.mkEq(ctx.mkApp(objs.getfuncs("parent"), o1), ctx.mkApp(objs.getfuncs("parent"), o2));
 		BoolExpr lhs = (BoolExpr) ctx.mkApp(objs.getfuncs("sibling"), o1, o2);
-		BoolExpr body = ctx.mkImplies(lhs, ctx.mkAnd(rhs1, rhs2));
+		BoolExpr body = ctx.mkImplies(lhs, rhs);
 		Quantifier x = ctx.mkForall(new Expr[]{o1, o2}, body, 1, null, null, null, null);
 		return x;
 	}
@@ -199,11 +197,9 @@ public class StaticAssertions {
 	}
 
 	public BoolExpr mk_read_comm() {
-		BoolExpr lhs11 = ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), o1), ctx.mkApp(objs.getfuncs("mtype"), o2));
-		BoolExpr lhs12 = ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), o2), ctx.mkApp(objs.getfuncs("mtype"), o3));
-		BoolExpr lhs2 = (BoolExpr) ctx.mkApp(objs.getfuncs("sibling"), o1, o2);
-		BoolExpr lhs3 = (BoolExpr) ctx.mkApp(objs.getfuncs("vis"), o1, o3);
-		BoolExpr lhs = (BoolExpr) ctx.mkAnd(lhs11, lhs12, lhs2, lhs3);
+		BoolExpr lhs1 = (BoolExpr) ctx.mkApp(objs.getfuncs("sibling"), o1, o2);
+		BoolExpr lhs2 = (BoolExpr) ctx.mkApp(objs.getfuncs("vis"), o1, o3);
+		BoolExpr lhs = (BoolExpr) ctx.mkAnd(lhs1, lhs2);
 		BoolExpr rhs = (BoolExpr) ctx.mkApp(objs.getfuncs("vis"), o2, o3);
 		BoolExpr body = ctx.mkImplies(lhs, rhs);
 		Quantifier x = ctx.mkForall(new Expr[]{o1, o2, o3}, body, 1, null, null, null, null);
@@ -211,11 +207,9 @@ public class StaticAssertions {
 	}
 
 	public BoolExpr mk_rep_read() {
-		BoolExpr lhs11 = ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), o1), ctx.mkApp(objs.getfuncs("mtype"), o2));
-		BoolExpr lhs12 = ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), o2), ctx.mkApp(objs.getfuncs("mtype"), o3));
-		BoolExpr lhs2 = (BoolExpr) ctx.mkApp(objs.getfuncs("sibling"), o1, o2);
-		BoolExpr lhs3 = (BoolExpr) ctx.mkApp(objs.getfuncs("vis"), o3, o1);
-		BoolExpr lhs = (BoolExpr) ctx.mkAnd(lhs11, lhs12, lhs2, lhs3);
+		BoolExpr lhs1 = (BoolExpr) ctx.mkApp(objs.getfuncs("sibling"), o1, o2);
+		BoolExpr lhs2 = (BoolExpr) ctx.mkApp(objs.getfuncs("vis"), o3, o1);
+		BoolExpr lhs = (BoolExpr) ctx.mkAnd(lhs1, lhs2);
 		BoolExpr rhs = (BoolExpr) ctx.mkApp(objs.getfuncs("vis"), o3, o2);
 		BoolExpr body = ctx.mkImplies(lhs, rhs);
 		Quantifier x = ctx.mkForall(new Expr[]{o1, o2, o3}, body, 1, null, null, null, null);

@@ -269,7 +269,7 @@ public class Z3Driver {
 			}
 			mapTxnToOrigTxn.put(name, origTxnName);
 		}
-		// make sure the otime assignment follows the program order
+
 		for (Transaction txn : app.getTxns()) {
 			Map<Integer, String> map = txn.getStmtNamesMap();
 			for (int j = 1; j < map.size(); j++)
@@ -277,10 +277,13 @@ public class Z3Driver {
 					if (map.get(i + 1) != null) {
 						addAssertion("not_step_siblings_" + map.get(j) + "_" + map.get(i+1),
 								dynamicAssertions.mk_not_step_siblings(map.get(j), map.get(i + 1)));
+						//addAssertion("only_siblings_" + map.get(j) + "_" + map.get(i+1),
+						//		dynamicAssertions.mk_only_siblings(map.get(j), map.get(i + 1)));
 					}
 				}
 		}
 		
+		// make sure the otime assignment follows the program order
 		for (String origTxnName : app.getAllOrigTxnNames()) {
 			Map<Integer, String> map = app.getStmtNamesOrigTxnMap(origTxnName);
 			for (int j = 1; j < map.size(); j++)
