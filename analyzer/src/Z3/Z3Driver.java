@@ -221,7 +221,7 @@ public class Z3Driver {
 		//addAssertion("causal_consistency", staticAssrtions.mk_causal_cons_updates());
 		//addAssertion("tcc", staticAssrtions.mk_trans_causal_cons());
 		addAssertion("read_committed", staticAssrtions.mk_read_comm());
-		addAssertion("repeatable_read", staticAssrtions.mk_rep_read());
+		//addAssertion("repeatable_read", staticAssrtions.mk_rep_read());
 		//addAssertion("linearizability", staticAssrtions.mk_linearizable());
 		/* _________________________________________ */
 

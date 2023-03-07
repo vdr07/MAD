@@ -35,10 +35,10 @@ public class microservices_dirty_read {
 	}
 
 	@ChoppedTransaction(originalTransaction="transaction", microservice="m2")
-	public void transaction_2(int key2) throws SQLException {
+	public void transaction_2(int key1) throws SQLException {
 		PreparedStatement stmt2 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
 		stmt2.setInt(1, 100);
-		stmt2.setInt(2, key2);
+		stmt2.setInt(2, key1);
 		stmt2.executeUpdate();
 	}
 

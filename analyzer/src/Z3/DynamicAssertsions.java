@@ -795,7 +795,7 @@ public class DynamicAssertsions {
 		String dep = "X";
 		// a base sibling edge must exist
 		depExprs[0] = ctx.mkAnd((BoolExpr) ctx.mkApp(objs.getfuncs("X"), Os[0], Os[1]),
-				ctx.mkXor(ctx.mkAnd((BoolExpr) ctx.mkApp(objs.getfuncs("sibling"), Os[0], Os[1]),
+				ctx.mkOr(ctx.mkAnd((BoolExpr) ctx.mkApp(objs.getfuncs("sibling"), Os[0], Os[1]),
 						ctx.mkOr(ctx.mkNot(ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), Os[1]), ctx.mkApp(objs.getfuncs("mtype"), Os[2]))),
 						ctx.mkNot(ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), Os[length - 1]), ctx.mkApp(objs.getfuncs("mtype"), Os[0]))))),
 					(BoolExpr) ctx.mkApp(objs.getfuncs("step_sibling"), Os[0], Os[1])));

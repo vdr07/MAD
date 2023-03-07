@@ -26,6 +26,7 @@ public class monolith_write_skew {
 		}
 	}
 
+	@ChoppedTransaction(microservice="m1")
 	public void update_var(int key1, int key2, int amount2) throws SQLException {
 		// read account 1
 		PreparedStatement stmt = connect.prepareStatement("SELECT value " + "FROM " + "ACCOUNTS" + " WHERE id = ?");

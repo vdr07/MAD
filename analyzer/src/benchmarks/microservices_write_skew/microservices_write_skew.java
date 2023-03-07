@@ -26,7 +26,7 @@ public class microservices_write_skew {
 		}
 	}
 
-	@ChoppedTransaction(originalTransaction="update_var", microservice="update_invariant_var")
+	@ChoppedTransaction(originalTransaction="update_var", microservice="m1")
 	public void get_var_val(int key1) throws SQLException {
 		// read account 1
 		PreparedStatement stmt = connect.prepareStatement("SELECT value " + "FROM " + "ACCOUNTS" + " WHERE id = ?");
@@ -36,7 +36,7 @@ public class microservices_write_skew {
 		int read_val = rs.getInt("VALUE");
 	}
 
-	@ChoppedTransaction(originalTransaction="update_var", microservice="update_invariant_var")
+	@ChoppedTransaction(originalTransaction="update_var", microservice="m2")
 	public void update_var_val(int read_val, int key2, int amount2) throws SQLException {
 		// update account 2
 		if (read_val + amount2 < 1000 ) {

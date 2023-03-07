@@ -26,6 +26,7 @@ public class monolith_lost_update {
 		}
 	}
 
+	@ChoppedTransaction(microservice="m1")
 	public void increment_5(int key) throws SQLException {
 		PreparedStatement stmt = connect.prepareStatement("SELECT value " + "FROM " + "ACCOUNTS" + " WHERE id = ?");
 		stmt.setInt(1, key);
