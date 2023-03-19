@@ -27,27 +27,14 @@ public class monolith_dirty_write {
 	}
 
 	@ChoppedTransaction(microservice="m1")
-	public void update_vars_to_50(int key1, int key2) throws SQLException {
+	public void update_vars(int key1, int amount1, int key2, int amount2) throws SQLException {
 		PreparedStatement stmt1 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
-		stmt1.setInt(1, 50);
+		stmt1.setInt(1, amount1);
 		stmt1.setInt(2, key1);
 		stmt1.executeUpdate();
 
 		PreparedStatement stmt2 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
-		stmt2.setInt(1, 50);
-		stmt2.setInt(2, key2);
-		stmt2.executeUpdate();
-	}
-
-	@ChoppedTransaction(microservice="m1")
-	public void update_vars_to_100(int key1, int key2) throws SQLException {
-		PreparedStatement stmt1 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
-		stmt1.setInt(1, 100);
-		stmt1.setInt(2, key1);
-		stmt1.executeUpdate();
-
-		PreparedStatement stmt2 = connect.prepareStatement("UPDATE ACCOUNTS SET value = ?" + " WHERE id = ?");
-		stmt2.setInt(1, 100);
+		stmt2.setInt(1, amount2);
 		stmt2.setInt(2, key2);
 		stmt2.executeUpdate();
 	}

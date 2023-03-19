@@ -136,7 +136,8 @@ public class DynamicAssertsions {
 								ctx.mkEq(ctx.mkApp(originalTransaction, o1), ctx.mkApp(originalTransaction, o2)));
 		BoolExpr lhs2 = ctx.mkEq(ctx.mkApp(otype, o1), ctx.mkApp(objs.getConstructor("OType", stmt)));
 		BoolExpr lhs3 = ctx.mkEq(ctx.mkApp(otype, o2), ctx.mkApp(objs.getConstructor("OType", stmt2)));
-		BoolExpr lhs = ctx.mkAnd(lhs1, lhs2, lhs3);
+		BoolExpr lhs4 = ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), o1), ctx.mkApp(objs.getfuncs("mtype"), o2));
+		BoolExpr lhs = ctx.mkAnd(lhs1, lhs2, lhs3, lhs4);
 		BoolExpr rhs = ctx.mkGt((ArithExpr) ctx.mkApp(otime, o2), (ArithExpr) ctx.mkApp(otime, o1));
 		BoolExpr body1 = ctx.mkImplies(lhs, rhs);
 		BoolExpr body2 = ctx.mkImplies(ctx.mkAnd((BoolExpr) ctx.mkApp(ar, o1, o2), ctx.mkNot(ctx.mkEq(o1, o2))),
@@ -156,20 +157,6 @@ public class DynamicAssertsions {
 		BoolExpr rhs1 = ctx.mkNot((BoolExpr) ctx.mkApp(stepSibling, o1, o2));
 		BoolExpr rhs2 = ctx.mkNot((BoolExpr) ctx.mkApp(stepSibling, o2, o1));
 		BoolExpr rhs = ctx.mkAnd(rhs1, rhs2);
-		BoolExpr body = ctx.mkImplies(lhs, rhs);
-		Quantifier x = ctx.mkForall(new Expr[] { o1, o2 }, body, 1, null, null, null, null);
-		return x;
-	}
-
-	public BoolExpr mk_only_siblings(String stmt, String stmt2) {
-		FuncDecl sibling = objs.getfuncs("sibling");
-		FuncDecl otype = objs.getfuncs("otype");
-		BoolExpr lhs1 = ctx.mkEq(ctx.mkApp(otype, o1), ctx.mkApp(objs.getConstructor("OType", stmt)));
-		BoolExpr lhs2 = ctx.mkEq(ctx.mkApp(otype, o2), ctx.mkApp(objs.getConstructor("OType", stmt2)));
-		BoolExpr lhs = ctx.mkAnd(lhs1, lhs2); 
-		BoolExpr rhs1 = (BoolExpr) ctx.mkApp(sibling, o1, o2);
-		BoolExpr rhs2 = (BoolExpr) ctx.mkApp(sibling, o2, o1);
-		BoolExpr rhs = ctx.mkOr(rhs1, rhs2);
 		BoolExpr body = ctx.mkImplies(lhs, rhs);
 		Quantifier x = ctx.mkForall(new Expr[] { o1, o2 }, body, 1, null, null, null, null);
 		return x;
@@ -516,12 +503,16 @@ public class DynamicAssertsions {
 		BoolExpr[] allRhs = new BoolExpr[length];
 		for (int i = 0; i < length - 1; i++) {
 			String op = structure.get(i).x.contains("sibling") ? structure.get(i).x : structure.get(i).x + "_O";
-			allRhs[i] = op.contains("sibling") ? (BoolExpr) ctx.mkApp(objs.getfuncs("X"), Os[i], Os[i + 1])
+			allRhs[i] = op.contains("sibling") 
+					? ctx.mkAnd((BoolExpr) ctx.mkApp(objs.getfuncs("X"), Os[i], Os[i + 1]),
+						ctx.mkNot((BoolExpr) ctx.mkApp(objs.getfuncs("D"), Os[i], Os[i + 1])))
 					: (BoolExpr) ctx.mkApp(objs.getfuncs("D"), Os[i], Os[i + 1]);
 		}
 		String op = structure.get(length - 1).x.contains("sibling") ? structure.get(length - 1).x : structure.get(length - 1).x + "_O";
-		allRhs[length - 1] = op.contains("sibling") ? (BoolExpr) ctx.mkApp(objs.getfuncs("X"), Os[length - 1], Os[0])
-				: (BoolExpr) ctx.mkApp(objs.getfuncs("D"), Os[length - 1], Os[0]);
+		allRhs[length - 1] = op.contains("sibling") 
+					? ctx.mkAnd((BoolExpr) ctx.mkApp(objs.getfuncs("X"), Os[length - 1], Os[0]),
+							ctx.mkNot((BoolExpr) ctx.mkApp(objs.getfuncs("D"), Os[length - 1], Os[0])))
+					: (BoolExpr) ctx.mkApp(objs.getfuncs("D"), Os[length - 1], Os[0]);
 		BoolExpr rhs = ctx.mkAnd(allRhs);
 		Expr body = ctx.mkImplies(lhs, ctx.mkNot(rhs));
 		Quantifier x = ctx.mkForall(Os, body, 1, null, null, null, null);
@@ -554,9 +545,6 @@ public class DynamicAssertsions {
 			cycleTxns = unVersionedAnml.getCycleTxns();
 			isStepTwo = (structure != null && structure.size() > 0 && structure.size() == Os.length);
 			System.out.println("structure: "+structure);
-			System.out.println("completeStructure: "+completeStructure);
-			System.out.println("cycleTxns: "+cycleTxns);
-			System.out.println("isStepTwo: "+isStepTwo);
 		}
 		for (int i = 0; i < length; i++)
 			Os[i] = ctx.mkFreshConst("o", objs.getSort("O"));
@@ -799,20 +787,15 @@ public class DynamicAssertsions {
 						ctx.mkOr(ctx.mkNot(ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), Os[1]), ctx.mkApp(objs.getfuncs("mtype"), Os[2]))),
 						ctx.mkNot(ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), Os[length - 1]), ctx.mkApp(objs.getfuncs("mtype"), Os[0]))))),
 					(BoolExpr) ctx.mkApp(objs.getfuncs("step_sibling"), Os[0], Os[1])));
-				/*ctx.mkXor((BoolExpr) ctx.mkApp(objs.getfuncs("sibling"), Os[0], Os[1]),
+				/*ctx.mkOr((BoolExpr) ctx.mkApp(objs.getfuncs("sibling"), Os[0], Os[1]),
 						(BoolExpr) ctx.mkApp(objs.getfuncs("step_sibling"), Os[0], Os[1])));*/
 		//
 		// TODO - Expandir para ser "pelo menos uma das relações não é entre o mesmo microservico" 
 		//
 		depExprs[1] = (BoolExpr) ctx.mkApp(objs.getfuncs("D"), Os[1], Os[2]);
 		depExprs[length - 1] = (BoolExpr) ctx.mkApp(objs.getfuncs("D"), Os[length - 1], Os[0]);
-		for (int i = 2; i < length - 1; i++) {
+		for (int i = 2; i < length - 1; i++)
 			depExprs[i] = (BoolExpr) ctx.mkApp(objs.getfuncs(dep), Os[i], Os[i + 1]);
-			//if (dep.equals("X"))
-			//	dep = "D";
-			//else
-			dep = "X";
-		}
 	}
 
 	// LOOSE CYCLE ENFORCEMENT (4)

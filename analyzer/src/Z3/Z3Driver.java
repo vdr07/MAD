@@ -54,6 +54,7 @@ public class Z3Driver {
 	private boolean findCore;
 	int globalIter = 1;
 	HashMap<String, String> mapTxnToOrigTxn;
+	HashMap<String, String> mapTxnToMicroTxn;
 
 	// constructor
 	public Z3Driver(Application app, ArrayList<Table> tables, boolean findCore) {
@@ -93,6 +94,7 @@ public class Z3Driver {
 		vot2 = ctx.mkFreshConst("ot", objs.getSort("OT"));
 
 		mapTxnToOrigTxn = new HashMap<String, String>();
+		mapTxnToMicroTxn = new HashMap<String, String>();
 	}
 
 	private void HeaderZ3(String s) {
@@ -268,6 +270,7 @@ public class Z3Driver {
 					dynamicAssertions.op_types_to_microservice_type(microName, stmtName));
 			}
 			mapTxnToOrigTxn.put(name, origTxnName);
+			mapTxnToMicroTxn.put(name, microName);
 		}
 
 		for (Transaction txn : app.getTxns()) {
@@ -277,8 +280,6 @@ public class Z3Driver {
 					if (map.get(i + 1) != null) {
 						addAssertion("not_step_siblings_" + map.get(j) + "_" + map.get(i+1),
 								dynamicAssertions.mk_not_step_siblings(map.get(j), map.get(i + 1)));
-						//addAssertion("only_siblings_" + map.get(j) + "_" + map.get(i+1),
-						//		dynamicAssertions.mk_only_siblings(map.get(j), map.get(i + 1)));
 					}
 				}
 		}
@@ -549,11 +550,15 @@ public class Z3Driver {
 						ctx.mkApp(objs.getConstructor("OTType", mapTxnToOrigTxn.get(t1.getName().toString()))));
 				BoolExpr lhs8 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ottype"), vot2),
 						ctx.mkApp(objs.getConstructor("OTType", mapTxnToOrigTxn.get(t2.getName().toString()))));
-				BoolExpr lhs9 = ctx.mkNot(ctx.mkEq(vo1, vo2));
-				BoolExpr lhs10 = ctx.mkNot(ctx.mkEq(vt1, vt2));
-				BoolExpr lhs11 = ctx.mkNot(ctx.mkEq(vot1, vot2));
-				BoolExpr lhs12 = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_O"), vo1, vo2);
-				BoolExpr lhs = ctx.mkAnd(lhs1, lhs2, lhs3, lhs4, lhs5, lhs6, lhs7, lhs8, lhs9, lhs10, lhs11, lhs12);
+				BoolExpr lhs9 = ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), vo1),
+						ctx.mkApp(objs.getConstructor("MType", mapTxnToMicroTxn.get(t1.getName().toString()))));
+				BoolExpr lhs10 = ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), vo2),
+						ctx.mkApp(objs.getConstructor("MType", mapTxnToMicroTxn.get(t2.getName().toString()))));
+				BoolExpr lhs11 = ctx.mkNot(ctx.mkEq(vo1, vo2));
+				BoolExpr lhs12 = ctx.mkNot(ctx.mkEq(vt1, vt2));
+				BoolExpr lhs13 = ctx.mkNot(ctx.mkEq(vot1, vot2));
+				BoolExpr lhs14 = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_O"), vo1, vo2);
+				BoolExpr lhs = ctx.mkAnd(lhs1, lhs2, lhs3, lhs4, lhs5, lhs6, lhs7, lhs8, lhs9, lhs10, lhs11, lhs12, lhs13, lhs14);
 				BoolExpr body = ctx.mkImplies(lhs, rhs);
 				Quantifier rw_then = ctx.mkForall(new Expr[]{vo1, vo2, vt1, vt2, vot1, vot2}, body, 1, null, null, null, null);
 				String rule_name = t1.getName().toString() + "-" + t2.getName().toString() + "-rw-then";
@@ -583,11 +588,15 @@ public class Z3Driver {
 						ctx.mkApp(objs.getConstructor("OTType", mapTxnToOrigTxn.get(t1.getName().toString()))));
 				BoolExpr lhs8 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ottype"), vot2),
 						ctx.mkApp(objs.getConstructor("OTType", mapTxnToOrigTxn.get(t2.getName().toString()))));
-				BoolExpr lhs9 = ctx.mkNot(ctx.mkEq(vo1, vo2));
-				BoolExpr lhs10 = ctx.mkNot(ctx.mkEq(vt1, vt2));
-				BoolExpr lhs11 = ctx.mkNot(ctx.mkEq(vot1, vot2));
-				BoolExpr lhs12 = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_O"), vo1, vo2);
-				BoolExpr lhs = ctx.mkAnd(lhs1, lhs2, lhs3, lhs4, lhs5, lhs6, lhs7, lhs8, lhs9, lhs10, lhs11, lhs12);
+				BoolExpr lhs9 = ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), vo1),
+						ctx.mkApp(objs.getConstructor("MType", mapTxnToMicroTxn.get(t1.getName().toString()))));
+				BoolExpr lhs10 = ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), vo2),
+						ctx.mkApp(objs.getConstructor("MType", mapTxnToMicroTxn.get(t2.getName().toString()))));
+				BoolExpr lhs11 = ctx.mkNot(ctx.mkEq(vo1, vo2));
+				BoolExpr lhs12 = ctx.mkNot(ctx.mkEq(vt1, vt2));
+				BoolExpr lhs13 = ctx.mkNot(ctx.mkEq(vot1, vot2));
+				BoolExpr lhs14 = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_O"), vo1, vo2);
+				BoolExpr lhs = ctx.mkAnd(lhs1, lhs2, lhs3, lhs4, lhs5, lhs6, lhs7, lhs8, lhs9, lhs10, lhs11, lhs12, lhs13, lhs14);
 				BoolExpr body = ctx.mkImplies(lhs, rhs);
 				Quantifier wr_then = ctx.mkForall(new Expr[]{vo1, vo2, vt1, vt2, vot1, vot2}, body, 1, null, null, null, null);
 				String rule_name = t1.getName().toString() + "-" + t2.getName().toString() + "-wr-then";
@@ -615,11 +624,15 @@ public class Z3Driver {
 						ctx.mkApp(objs.getConstructor("OTType", mapTxnToOrigTxn.get(t1.getName().toString()))));
 				BoolExpr lhs8 = ctx.mkEq(ctx.mkApp(objs.getfuncs("ottype"), vot2),
 						ctx.mkApp(objs.getConstructor("OTType", mapTxnToOrigTxn.get(t2.getName().toString()))));
-				BoolExpr lhs9 = ctx.mkNot(ctx.mkEq(vo1, vo2));
-				BoolExpr lhs10 = ctx.mkNot(ctx.mkEq(vt1, vt2));
-				BoolExpr lhs11 = ctx.mkNot(ctx.mkEq(vot1, vot2));
-				BoolExpr lhs12 = (BoolExpr) ctx.mkApp(objs.getfuncs("WW_O"), vo1, vo2);
-				BoolExpr lhs = ctx.mkAnd(lhs1, lhs2, lhs3, lhs4, lhs5, lhs6, lhs7, lhs8, lhs9, lhs10, lhs11, lhs12);
+				BoolExpr lhs9 = ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), vo1),
+						ctx.mkApp(objs.getConstructor("MType", mapTxnToMicroTxn.get(t1.getName().toString()))));
+				BoolExpr lhs10 = ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), vo2),
+						ctx.mkApp(objs.getConstructor("MType", mapTxnToMicroTxn.get(t2.getName().toString()))));
+				BoolExpr lhs11 = ctx.mkNot(ctx.mkEq(vo1, vo2));
+				BoolExpr lhs12 = ctx.mkNot(ctx.mkEq(vt1, vt2));
+				BoolExpr lhs13 = ctx.mkNot(ctx.mkEq(vot1, vot2));
+				BoolExpr lhs14 = (BoolExpr) ctx.mkApp(objs.getfuncs("WW_O"), vo1, vo2);
+				BoolExpr lhs = ctx.mkAnd(lhs1, lhs2, lhs3, lhs4, lhs5, lhs6, lhs7, lhs8, lhs9, lhs10, lhs11, lhs12, lhs13, lhs14);
 				BoolExpr body = ctx.mkImplies(lhs, rhs);
 				Quantifier ww_then = ctx.mkForall(new Expr[]{vo1, vo2, vt1, vt2, vot1, vot2}, body, 1, null, null, null, null);
 				String rule_name = t1.getName().toString() + "-" + t2.getName().toString() + "-ww-then";
@@ -653,10 +666,10 @@ public class Z3Driver {
 				int iter530 = 0;
 				for (Anomaly anml : seenAnmls)
 					excludeAnomaly(anml, iter530++);
-				for (List<Tuple<String, Tuple<String, String>>> strc : seenStructures) {
-					excludeAnomalyFromStructure(strc, iter530++);
+				// Redudant loop since the structures will be the same as the anomalies
+				//for (List<Tuple<String, Tuple<String, String>>> strc : seenStructures)
+				//	excludeAnomalyFromStructure(strc, iter530++);
 
-				}
 				try {
 					// rules
 					slv.push();

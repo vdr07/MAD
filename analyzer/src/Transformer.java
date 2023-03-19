@@ -100,6 +100,7 @@ public class Transformer extends BodyTransformer {
 		}
 		long analysis_begin_time = System.currentTimeMillis();
 		List<Anomaly> seenAnmls = new ArrayList<>();
+		int numAnmls = 0;
 		// Outermost loop to iterate over different partition sizes
 		while (ConstantArgs._current_partition_size <= ConstantArgs._MAX_NUM_PARTS) {
 			LOG.info("Begin partition size " + ConstantArgs._current_partition_size + "");
@@ -142,13 +143,14 @@ public class Transformer extends BodyTransformer {
 						if (anml1 != null) {
 							LOG.info("Unversioned anomaly generated: " + anml1);
 							anml1.generateCycleStructure();
+							seenAnmls.add(anml1);
 							// Versioned analysis
 							ConstantArgs._current_version_enforcement = true;
 							anml2 = zdr.analyze(2, null, seenAnmls, includedTables, anml1);
 							if (anml2 != null) {
 
 								anml2.generateCycleStructure();
-								seenAnmls.add(anml2);
+								numAnmls++;
 								seenStructures.addStructure(anml2.getCycleStructure());
 								seenStructures.writeToCSV(seenStructures.size(), iter - 1, anml2);
 								long anml2_finish_time = System.currentTimeMillis();
@@ -164,7 +166,9 @@ public class Transformer extends BodyTransformer {
 										LOG.info("No structurally similar anomaly exists");
 									while (anml3 != null) {
 										anml3.generateCycleStructure();
+										System.out.println("structure3: "+anml3.getCycleStructure());
 										seenAnmls.add(anml3);
+										numAnmls++;
 										seenStructures.addStructure(anml3.getCycleStructure());
 										seenStructures.writeToCSV(seenStructures.size(), iter - 1, anml3);
 										LOG.info("A structurally similar anomaly generated (" + seenStructures.size()
@@ -183,7 +187,7 @@ public class Transformer extends BodyTransformer {
 							LOG.info("No anomaly was found");
 						}
 						// update global variables for the next round
-						if (anml2 == null || anml1 == null) {
+						if (/*anml2 == null || */anml1 == null) {
 							LOG.info("Search completed for anomalies of length: " + ConstantArgs._Current_Cycle_Length);
 							ConstantArgs._Current_Cycle_Length++;
 						}
@@ -196,7 +200,7 @@ public class Transformer extends BodyTransformer {
 		}
 		long analysis_finish_time = System.currentTimeMillis();
 
-		printStats(app, tables, seenAnmls.size(), (analysis_finish_time - analysis_begin_time),
+		printStats(app, tables, numAnmls, (analysis_finish_time - analysis_begin_time),
 				(analysis_finish_time - analysis_begin_time) / (iter - 1));
 	}
 

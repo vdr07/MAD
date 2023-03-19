@@ -1,0 +1,36 @@
+#!/bin/bash
+
+echo "Monolith Dirty Read"
+make benchmark=monolith_dirty_read | grep "ç"
+./clotho.sh --analyze monolith_dirty_read | grep "Anomalies found"
+echo "Microservices Dirty Read"
+make benchmark=microservices_dirty_read | grep "ç"
+./clotho.sh --analyze microservices_dirty_read | grep "Anomalies found"
+
+echo "Monolith Dirty Write"
+make benchmark=monolith_dirty_write | grep "ç"
+./clotho.sh --analyze monolith_dirty_write | grep "Anomalies found"
+echo "Microservices Dirty Write"
+make benchmark=microservices_dirty_write | grep "ç"
+./clotho.sh --analyze microservices_dirty_write | grep "Anomalies found"
+
+echo "Monolith Lost Update"
+make benchmark=monolith_lost_update | grep "ç"
+./clotho.sh --analyze monolith_lost_update | grep "Anomalies found"
+echo "Microservices Lost Update"
+make benchmark=microservices_lost_update | grep "ç"
+./clotho.sh --analyze microservices_lost_update | grep "Anomalies found"
+
+echo "Monolith Read Skew"
+make benchmark=monolith_read_skew | grep "ç"
+./clotho.sh --analyze monolith_read_skew | grep "Anomalies found"
+echo "Microservices Read Skew"
+make benchmark=microservices_read_skew | grep "ç"
+./clotho.sh --analyze microservices_read_skew | grep "Anomalies found"
+
+echo "Monolith Write Skew"
+make benchmark=monolith_write_skew | grep "ç"
+./clotho.sh --analyze monolith_write_skew | grep "Anomalies found"
+echo "Microservices Write Skew"
+make benchmark=microservices_write_skew | grep "ç"
+./clotho.sh --analyze microservices_write_skew | grep "Anomalies found"
