@@ -107,9 +107,11 @@ public class Anomaly {
 		WRPairs = getWRPairs(functions.get("WR_O"));
 		RWPairs = getRWPairs(functions.get("RW_O"));
 		visPairs = getVisPairs(functions.get("vis"));
+		//System.out.println("vis: "+visPairs);
 		cycle = getCycle(functions.get("D"));
 		otypes = getOType(functions.get("otype"));
 		otimes = getOTime(functions.get("otime"));
+		//System.out.println("otimes: "+otimes);
 		opart = getOPart(functions.get("opart"));
 		ttypes = getTType(functions.get("ttype"));
 		isUpdate = getIsUpdate(functions.get("is_update"));
@@ -158,7 +160,7 @@ public class Anomaly {
 			Expr y = this.cycle.get(e);
 			Expr t = model.eval(parentFunc.apply(e), true);
 			String eType = model.eval(otypeFunc.apply(e), true).toString();
-			// System.out.println("---->>>" + eType);
+			//System.out.println(e+" == "+eType);
 			completeStructure.put(new Tuple<String, String>(t.toString(), eType), txnToLeftAloneChildren.get(t));
 			txnToLeftAloneChildren.remove(t);
 			Expr firstParent = t;
@@ -177,6 +179,7 @@ public class Anomaly {
 					System.out.println("~~~~>>" + cycle);
 					System.out.println("~~~~>>" + y);
 					System.out.println("~~~~>>" + e);
+					System.out.println("---->>>" + eType);
 				}
 
 				Tuple<String, String> newTuple = new Tuple<String, String>(

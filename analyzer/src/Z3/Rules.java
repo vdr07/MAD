@@ -61,7 +61,8 @@ public class Rules {
 		Transaction txn1 = app.getTxnByName(t1.getName().toString());
 		Transaction txn2 = app.getTxnByName(t2.getName().toString());
 		List<BoolExpr> result = new ArrayList<BoolExpr>();
-		Map<Statement, BoolExpr> txnParamsRestrictions = get_params_restrictions(txn1, vt1);
+		Map<Statement, BoolExpr> txnParamsRestrictions1 = get_params_restrictions(txn1, vt1);
+		Map<Statement, BoolExpr> txnParamsRestrictions2 = get_params_restrictions(txn2, vt2);
 		for (int i = txn1.getStmts().size() - 1; i >= 0; i--) {
 			Statement o1 = txn1.getStmts().get(i);
 			Query q1 = ((InvokeStmt) o1).getQuery();
@@ -108,10 +109,11 @@ public class Rules {
 									? ctx.mkAnd(getVersionCondsRW(txn2, vt2, vo2, vo1, q2, rowVar))
 									: ctx.mkTrue();
 							
-							BoolExpr nonConflictingParams = txnParamsRestrictions.get(o1);
+							BoolExpr nonConflictingParams1 = txnParamsRestrictions1.get(o1);
+							BoolExpr nonConflictingParams2 = txnParamsRestrictions2.get(o2);
 														
 							Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2,
-									versionCond2, pathCond1, pathCond2, aliveCond, rwOnTableCond, nonConflictingParams);
+									versionCond2, pathCond1, pathCond2, aliveCond, rwOnTableCond, nonConflictingParams1, nonConflictingParams2);
 							BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null,
 									null);
 							result.add(rowExistsCond);
@@ -307,7 +309,8 @@ public class Rules {
 		Transaction txn1 = app.getTxnByName(t1.getName().toString());
 		Transaction txn2 = app.getTxnByName(t2.getName().toString());
 		List<BoolExpr> result = new ArrayList<BoolExpr>();
-		Map<Statement, BoolExpr> txnParamsRestrictions = get_params_restrictions(txn1, vt1);
+		Map<Statement, BoolExpr> txnParamsRestrictions1 = get_params_restrictions(txn1, vt1);
+		Map<Statement, BoolExpr> txnParamsRestrictions2 = get_params_restrictions(txn2, vt2);
 		for (int i = txn1.getStmts().size() - 1; i >= 0; i--) {
 			Statement o1 = txn1.getStmts().get(i);
 			Query q1 = ((InvokeStmt) o1).getQuery();
@@ -353,10 +356,11 @@ public class Rules {
 								? ctx.mkAnd(getVersionCondsWR(txn1, vt1, vo1, q1, rowVar))
 								: ctx.mkTrue();
 						
-						BoolExpr nonConflictingParams = txnParamsRestrictions.get(o1);
+						BoolExpr nonConflictingParams1 = txnParamsRestrictions1.get(o1);
+						BoolExpr nonConflictingParams2 = txnParamsRestrictions2.get(o2);
 
 						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2,
-								versionCond1, pathCond1, pathCond2, aliveCond, notNullCond, wrOnTableCond, nonConflictingParams);
+								versionCond1, pathCond1, pathCond2, aliveCond, notNullCond, wrOnTableCond, nonConflictingParams1, nonConflictingParams2);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						result.add(rowExistsCond);
 						//
@@ -414,10 +418,11 @@ public class Rules {
 						BoolExpr wrAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_Alive_" + tableName),
 								rowVar, vo1, vo2);
 
-						BoolExpr nonConflictingParams = txnParamsRestrictions.get(o1);
+						BoolExpr nonConflictingParams1 = txnParamsRestrictions1.get(o1);
+						BoolExpr nonConflictingParams2 = txnParamsRestrictions2.get(o2);
 						
 						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2,
-								pathCond1, pathCond2, aliveCond1, aliveCond2, notNullCond, wrAliveOnTableCond, nonConflictingParams);
+								pathCond1, pathCond2, aliveCond1, aliveCond2, notNullCond, wrAliveOnTableCond, nonConflictingParams1, nonConflictingParams2);
 
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						result.add(rowExistsCond);
@@ -435,10 +440,11 @@ public class Rules {
 						BoolExpr wrAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_Alive_" + tableName),
 								rowVar, vo1, vo2);
 						
-						BoolExpr nonConflictingParams = txnParamsRestrictions.get(o1);
+						BoolExpr nonConflictingParams1 = txnParamsRestrictions1.get(o1);
+						BoolExpr nonConflictingParams2 = txnParamsRestrictions2.get(o2);
 
 						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2,
-								pathCond1, pathCond2, aliveCond1, aliveCond2, wrAliveOnTableCond, nonConflictingParams);
+								pathCond1, pathCond2, aliveCond1, aliveCond2, wrAliveOnTableCond, nonConflictingParams1, nonConflictingParams2);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						result.add(rowExistsCond);
 						//
@@ -494,7 +500,8 @@ public class Rules {
 		Transaction txn1 = app.getTxnByName(t1.getName().toString());
 		Transaction txn2 = app.getTxnByName(t2.getName().toString());
 		List<BoolExpr> result = new ArrayList<BoolExpr>();
-		Map<Statement, BoolExpr> txnParamsRestrictions = get_params_restrictions(txn1, vt1);
+		Map<Statement, BoolExpr> txnParamsRestrictions1 = get_params_restrictions(txn1, vt1);
+		Map<Statement, BoolExpr> txnParamsRestrictions2 = get_params_restrictions(txn2, vt2);
 		for (int i = txn1.getStmts().size() - 1; i >= 0; i--) {
 			Statement o1 = txn1.getStmts().get(i);
 			Query q1 = ((InvokeStmt) o1).getQuery();
@@ -531,10 +538,11 @@ public class Rules {
 						BoolExpr aliveCond1 = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo1);
 						BoolExpr aliveCond2 = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo2);
 
-						BoolExpr nonConflictingParams = txnParamsRestrictions.get(o1);
+						BoolExpr nonConflictingParams1 = txnParamsRestrictions1.get(o1);
+						BoolExpr nonConflictingParams2 = txnParamsRestrictions2.get(o2);
 
 						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2,
-								pathCond1, pathCond2, aliveCond1, aliveCond2, wwOnTableCond, nonConflictingParams);
+								pathCond1, pathCond2, aliveCond1, aliveCond2, wwOnTableCond, nonConflictingParams1, nonConflictingParams2);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						result.add(rowExistsCond);
 					}
@@ -548,19 +556,23 @@ public class Rules {
 		Map<Statement, BoolExpr> result = new HashMap<Statement, BoolExpr>();
 		Map<Table, List<Expr>> seenParams = new HashMap<Table, List<Expr>>();
 		String txnName = txn.getName();
+		// Iterate over the operations starting from the final op
 		for (int i = txn.getStmts().size() - 1; i >= 0; i--) {
 			Statement o = txn.getStmts().get(i);
 			Query q = ((InvokeStmt) o).getQuery();
 
+			// Check if any operation already accessed the current table
 			if(!seenParams.containsKey(q.getTable())) {
 				List<Expr> tableSeenParams = new ArrayList<Expr>();
 				seenParams.put(q.getTable(), tableSeenParams);
 			}
 			
+			// Create the where clause param
 			BinOpExp whClause = (BinOpExp) q.getWhClause();
 			ParamValExp pave = (ParamValExp) whClause.e2;
 			Expr paramExpr = ctx.mkApp(objs.getfuncs(txnName + "_PARAM_" + pave.getName()), txnExpr);
 
+			// Express that the current param needs to be different from all the previous seen params
 			BoolExpr[] diffParams = new BoolExpr[seenParams.get(q.getTable()).size()+1];
 			for (int j = 0; j < seenParams.get(q.getTable()).size(); j++) {
 				Expr seenParam = seenParams.get(q.getTable()).get(j);
@@ -570,8 +582,10 @@ public class Rules {
 			diffParams[seenParams.get(q.getTable()).size()] = ctx.mkTrue();
 			BoolExpr nonConflictingParams = ctx.mkAnd(diffParams);
 
+			// Store in the result the assertion expressing that this op param needs to be different from the other ops
 			result.put(o, nonConflictingParams);
 
+			// Add the current param to the list of seen params for the current table
 			List<Expr> tableSeenParams = seenParams.get(q.getTable());
 			tableSeenParams.add(paramExpr);
 			seenParams.put(q.getTable(), tableSeenParams);

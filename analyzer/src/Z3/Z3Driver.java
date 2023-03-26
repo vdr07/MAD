@@ -222,7 +222,7 @@ public class Z3Driver {
 		//addAssertion("causal_vis", staticAssrtions.mk_causal_vis());
 		//addAssertion("causal_consistency", staticAssrtions.mk_causal_cons_updates());
 		//addAssertion("tcc", staticAssrtions.mk_trans_causal_cons());
-		addAssertion("read_committed", staticAssrtions.mk_read_comm());
+		//addAssertion("read_committed", staticAssrtions.mk_read_comm());
 		//addAssertion("repeatable_read", staticAssrtions.mk_rep_read());
 		//addAssertion("linearizability", staticAssrtions.mk_linearizable());
 		/* _________________________________________ */
@@ -310,7 +310,6 @@ public class Z3Driver {
 								ctx.mkFuncDecl(
 										io1.getType().toString() + "_" + io2.getType().toString() + "_conflict_rows",
 										new Sort[]{oSort, oSort}, objs.getSort(tableName)));
-
 					}
 			}
 		}

@@ -136,8 +136,7 @@ public class DynamicAssertsions {
 								ctx.mkEq(ctx.mkApp(originalTransaction, o1), ctx.mkApp(originalTransaction, o2)));
 		BoolExpr lhs2 = ctx.mkEq(ctx.mkApp(otype, o1), ctx.mkApp(objs.getConstructor("OType", stmt)));
 		BoolExpr lhs3 = ctx.mkEq(ctx.mkApp(otype, o2), ctx.mkApp(objs.getConstructor("OType", stmt2)));
-		BoolExpr lhs4 = ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), o1), ctx.mkApp(objs.getfuncs("mtype"), o2));
-		BoolExpr lhs = ctx.mkAnd(lhs1, lhs2, lhs3, lhs4);
+		BoolExpr lhs = ctx.mkAnd(lhs1, lhs2, lhs3);
 		BoolExpr rhs = ctx.mkGt((ArithExpr) ctx.mkApp(otime, o2), (ArithExpr) ctx.mkApp(otime, o1));
 		BoolExpr body1 = ctx.mkImplies(lhs, rhs);
 		BoolExpr body2 = ctx.mkImplies(ctx.mkAnd((BoolExpr) ctx.mkApp(ar, o1, o2), ctx.mkNot(ctx.mkEq(o1, o2))),

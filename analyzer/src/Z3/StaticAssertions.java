@@ -314,7 +314,7 @@ public class StaticAssertions {
 		BoolExpr body011 = ctx.mkAnd(ctx.mkEq(o1P, o2P), ctx.mkGt(o2T, o1T), o1IU, ctx.mkNot(o2IU));
 		BoolExpr body012 = ctx.mkAnd(ctx.mkEq(o1P, o2P), ctx.mkGt(o2T, o1T));
 		BoolExpr body02 = (BoolExpr) ctx.mkApp(objs.getfuncs("vis"), o1, o2);
-		BoolExpr body0 = ctx.mkImplies(body011, body02);
+		BoolExpr body0 = ctx.mkImplies(ctx.mkAnd(body011, ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), o1), ctx.mkApp(objs.getfuncs("mtype"), o2))), body02);
 		BoolExpr body1 = ctx.mkImplies(body02, body012);
 		BoolExpr body2 = ctx.mkImplies(ctx.mkAnd(eqP, ctx.mkNot(eqO)), ctx.mkNot(eqT));
 		BoolExpr body3 = ctx.mkGt(o1T, ctx.mkInt(0));
