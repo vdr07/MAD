@@ -32,6 +32,19 @@ public class Application {
 		return this.txns.stream().filter(t -> t.getName().equals(txnName)).findAny().get();
 	}
 
+	public Transaction[] getTxnsByOrigTxnName(String origTxnName) {
+		List<Transaction> result = new ArrayList<Transaction>();
+		int size = 0;
+		for (Transaction t : this.txns) {
+			String originalTransactionName = t.getOriginalTransaction();
+			if(originalTransactionName.equals(origTxnName)) {
+				result.add(t);
+				size++;
+			}
+		}
+		return result.toArray(new Transaction[size]);
+	}
+
 	public String[] getAllStmtTypes() {
 		List<String> result = new ArrayList<String>();
 		int size = 0;

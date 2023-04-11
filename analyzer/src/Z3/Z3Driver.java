@@ -222,9 +222,9 @@ public class Z3Driver {
 		//addAssertion("causal_vis", staticAssrtions.mk_causal_vis());
 		//addAssertion("causal_consistency", staticAssrtions.mk_causal_cons_updates());
 		//addAssertion("tcc", staticAssrtions.mk_trans_causal_cons());
-		//addAssertion("read_committed", staticAssrtions.mk_read_comm());
-		//addAssertion("repeatable_read", staticAssrtions.mk_rep_read());
-		//addAssertion("linearizability", staticAssrtions.mk_linearizable());
+		addAssertion("read_committed", staticAssrtions.mk_read_comm());
+		addAssertion("repeatable_read", staticAssrtions.mk_rep_read());
+		addAssertion("linearizability", staticAssrtions.mk_linearizable());
 		/* _________________________________________ */
 
 
@@ -374,6 +374,9 @@ public class Z3Driver {
 			for (ParamValExp p : txn.getParams().values()) {
 				String label = txn.getName() + "_PARAM_" + p.getName();
 				objs.addFunc(label, ctx.mkFuncDecl(label, new Sort[]{objs.getSort("T")},
+						objs.getSort(p.getType().toZ3String())));
+				label = txn.getName() + "_ORIG_PARAM_" + p.getName();
+				objs.addFunc(label, ctx.mkFuncDecl(label, new Sort[]{objs.getSort("OT")},
 						objs.getSort(p.getType().toZ3String())));
 			}
 			SubHeaderZ3("?");
@@ -532,10 +535,9 @@ public class Z3Driver {
 		Map<String, FuncDecl> Ts = objs.getAllTTypes();
 		for (FuncDecl t1 : Ts.values()) {
 			for (FuncDecl t2 : Ts.values()) {
-				List<BoolExpr> conditions = ruleGenerator.return_conditions_rw_then(t1, t2, vo1, vo2, vt1, vt2,
+				List<BoolExpr> conditions = ruleGenerator.return_conditions_rw_then(t1, t2, vo1, vo2, vt1, vt2, vot1, vot2,
 						includedTables);
 				conditions.add(ctx.mkFalse());
-				// conditions.add(ctx.mkTrue());
 				BoolExpr rhs = ctx.mkOr(conditions.toArray(new BoolExpr[conditions.size()]));
 				BoolExpr lhs1 = ctx.mkEq(ctx.mkApp(objs.getfuncs("parent"), vo1), vt1);
 				BoolExpr lhs2 = ctx.mkEq(ctx.mkApp(objs.getfuncs("parent"), vo2), vt2);
@@ -571,7 +573,7 @@ public class Z3Driver {
 		Map<String, FuncDecl> Ts = objs.getAllTTypes();
 		for (FuncDecl t1 : Ts.values())
 			for (FuncDecl t2 : Ts.values()) {
-				List<BoolExpr> conditions = ruleGenerator.return_conditions_wr_then(t1, t2, vo1, vo2, vt1, vt2,
+				List<BoolExpr> conditions = ruleGenerator.return_conditions_wr_then(t1, t2, vo1, vo2, vt1, vt2, vot1, vot2,
 						includedTables);
 				conditions.add(ctx.mkFalse());
 				BoolExpr rhs = ctx.mkOr(conditions.toArray(new BoolExpr[conditions.size()]));
@@ -607,7 +609,7 @@ public class Z3Driver {
 		Map<String, FuncDecl> Ts = objs.getAllTTypes();
 		for (FuncDecl t1 : Ts.values())
 			for (FuncDecl t2 : Ts.values()) {
-				List<BoolExpr> conditions = ruleGenerator.return_conditions_ww_then(t1, t2, vo1, vo2, vt1, vt2,
+				List<BoolExpr> conditions = ruleGenerator.return_conditions_ww_then(t1, t2, vo1, vo2, vt1, vt2, vot1, vot2,
 						includedTables);
 				conditions.add(ctx.mkFalse());
 				BoolExpr rhs = ctx.mkOr(conditions.toArray(new BoolExpr[conditions.size()]));
@@ -637,7 +639,6 @@ public class Z3Driver {
 				String rule_name = t1.getName().toString() + "-" + t2.getName().toString() + "-ww-then";
 				addAssertion(rule_name, ww_then);
 			}
-
 	}
 
 	private void thenWR(Set<Table> includedTables) {
@@ -718,8 +719,8 @@ public class Z3Driver {
 					e.printStackTrace();
 				}
 
-				//for (BoolExpr ass : dynamicAssertions.mk_versioning_props(tables))
-				//	addAssertion("versioning_props" + (iter++), ass);
+				for (BoolExpr ass : dynamicAssertions.mk_versioning_props(tables))
+					addAssertion("versioning_props" + (iter++), ass);
 				HeaderZ3("NEW CYCLE ASSERTIONS");
 				// dependency assertions
 				addAssertion("gen_dep", staticAssrtions.mk_gen_dep());

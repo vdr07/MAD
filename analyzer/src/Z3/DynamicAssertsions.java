@@ -331,7 +331,7 @@ public class DynamicAssertsions {
 	public BoolExpr mk_lww(String tName) {
 		Expr r1 = ctx.mkFreshConst("r", objs.getSort(tName));
 		BoolExpr rhs1 = (BoolExpr) ctx.mkApp(objs.getfuncs("WW_O_" + tName), r1, o2, o3);
-		BoolExpr lhs1 = ctx.mkAnd(ctx.mkNot(ctx.mkXor((BoolExpr) ctx.mkApp(objs.getfuncs("sibling"), o2, o3),
+		BoolExpr lhs1 = ctx.mkAnd(ctx.mkNot(ctx.mkOr((BoolExpr) ctx.mkApp(objs.getfuncs("sibling"), o2, o3),
 					(BoolExpr) ctx.mkApp(objs.getfuncs("step_sibling"), o2, o3))),
 				(BoolExpr) ctx.mkApp(objs.getfuncs("WR_O_" + tName), r1, o2, o1),
 				(BoolExpr) ctx.mkApp(objs.getfuncs("RW_O_" + tName), r1, o1, o3));
@@ -444,7 +444,7 @@ public class DynamicAssertsions {
 			// WR then version increases
 			lhs = (BoolExpr) ctx.mkApp(wrFunc, r, o1, o2);
 			rhs = ctx.mkEq(ctx.mkApp(verFunc, r, o2), 
-					ctx.mkBVAdd((BitVecExpr) ctx.mkApp(verFunc, r, o1), ctx.mkBV(1, ConstantArgs._MAX_BV_)));
+					ctx.mkBVAdd((BitVecExpr) ctx.mkApp(verFunc, r, o1), ctx.mkBV(0, ConstantArgs._MAX_BV_)));
 			body = ctx.mkImplies(lhs, rhs);
 			x = ctx.mkForall(new Expr[] { r, o1, o2 }, body, 1, null, null, null, null);
 			result.add(x);
@@ -543,7 +543,6 @@ public class DynamicAssertsions {
 			completeStructure = unVersionedAnml.getCompleteStructure();
 			cycleTxns = unVersionedAnml.getCycleTxns();
 			isStepTwo = (structure != null && structure.size() > 0 && structure.size() == Os.length);
-			System.out.println("structure: "+structure);
 		}
 		for (int i = 0; i < length; i++)
 			Os[i] = ctx.mkFreshConst("o", objs.getSort("O"));
@@ -782,12 +781,8 @@ public class DynamicAssertsions {
 		String dep = "X";
 		// a base sibling edge must exist
 		depExprs[0] = ctx.mkAnd((BoolExpr) ctx.mkApp(objs.getfuncs("X"), Os[0], Os[1]),
-				ctx.mkOr(ctx.mkAnd((BoolExpr) ctx.mkApp(objs.getfuncs("sibling"), Os[0], Os[1]),
-						ctx.mkOr(ctx.mkNot(ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), Os[1]), ctx.mkApp(objs.getfuncs("mtype"), Os[2]))),
-						ctx.mkNot(ctx.mkEq(ctx.mkApp(objs.getfuncs("mtype"), Os[length - 1]), ctx.mkApp(objs.getfuncs("mtype"), Os[0]))))),
+				ctx.mkOr((BoolExpr) ctx.mkApp(objs.getfuncs("sibling"), Os[0], Os[1]),
 					(BoolExpr) ctx.mkApp(objs.getfuncs("step_sibling"), Os[0], Os[1])));
-				/*ctx.mkOr((BoolExpr) ctx.mkApp(objs.getfuncs("sibling"), Os[0], Os[1]),
-						(BoolExpr) ctx.mkApp(objs.getfuncs("step_sibling"), Os[0], Os[1])));*/
 		//
 		// TODO - Expandir para ser "pelo menos uma das relações não é entre o mesmo microservico" 
 		//

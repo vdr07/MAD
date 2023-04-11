@@ -44,6 +44,10 @@ public class DeclaredObjects {
 		return this.constructors.get("OType");
 	}
 
+	public Map<String, FuncDecl> getAllOTTypes() {
+		return this.constructors.get("OTType");
+	}
+
 	public FuncDecl getConstructor(String type, String cnstrctrName) {
 		return this.constructors.get(type).get(cnstrctrName);
 	}

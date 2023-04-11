@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import utils.Tuple;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,6 +41,41 @@ public class Transformer extends BodyTransformer {
 	private static final String irOptionName = "ir";
 	private CFGIntermediateRep ir;
 	static ArrayList<Body> bodies;
+
+	private static final List<String> dirtyReadPattern = List.of("X", "WR", "RW");
+	//private static final List<String> choppedDirtyReadPattern = List.of("step_sibling", "WR", "RW");
+	//private static final List<String> nonRepeatableReadPattern = List.of("X", "RW", "WR");
+	//private static final List<String> choppedNonRepeatableReadPattern = List.of("step_sibling", "RW", "WR");
+	private static final List<String> dirtyWritePattern = List.of("X", "WW", "WW");
+	private static final List<String> dirtyWritePattern2 = List.of("X", "WW", "X", "WW");
+	//private static final List<String> choppedDirtyWritePattern = List.of("step_sibling", "WW", "WW");
+	private static final List<String> lostUpdateWriteSkewPattern = List.of("X", "RW", "X", "RW");
+	private static final List<String> lostUpdatePattern2 = List.of("X", "RW", "WW");
+	//private static final List<String> choppedLostUpdateWriteSkewPattern = List.of("step_sibling", "RW", "step_sibling", "RW");
+	private static final List<String> readSkewPattern = List.of("X", "RW", "X", "WR");
+	private static final List<String> readSkewPattern2 = List.of("X", "WR", "X", "RW");
+	//private static final List<String> choppedReadSkewPattern = List.of("step_sibling", "RW", "step_sibling", "WR");
+	private static final List<String> UnknownPattern = List.of("OTHER");
+
+	private static final Map<List<String>, String> structure2anmlName;
+    static {
+        Map<List<String>, String> auxMap = new HashMap<List<String>, String>();
+        auxMap.put(dirtyReadPattern, "Dirty Reads");
+		//auxMap.put(choppedDirtyReadPattern, "Dirty Read");
+		//auxMap.put(nonRepeatableReadPattern, "Non-repeatable Read");
+		//auxMap.put(choppedNonRepeatableReadPattern, "Non-repeatable Read");
+		auxMap.put(dirtyWritePattern, "Dirty Writes");
+		auxMap.put(dirtyWritePattern2, "Dirty Writes");
+		//auxMap.put(choppedDirtyWritePattern, "Dirty Write");
+		auxMap.put(lostUpdateWriteSkewPattern, "Lost Updates/Write Skews");
+		auxMap.put(lostUpdatePattern2, "Lost Updates");
+		//auxMap.put(choppedLostUpdateWriteSkewPattern, "Lost Update/Write Skew");
+		auxMap.put(readSkewPattern, "Read Skews");
+		auxMap.put(readSkewPattern2, "Read Skews");
+		//auxMap.put(choppedReadSkewPattern, "Read Skew");
+		auxMap.put(UnknownPattern, "Others");
+        structure2anmlName = auxMap;
+    }
 
 	@Override
 	protected void internalTransform(Body b, String phaseName, Map<String, String> options) {
@@ -82,7 +118,8 @@ public class Transformer extends BodyTransformer {
 		}
 		end_fec = System.currentTimeMillis();
 		if (ConstantArgs.EXTRACT_ONLY) {
-			printStats(app, tables, -1, -1, -1);
+			Map<String, Integer> anmlsCountersEmpty = new HashMap<String, Integer>();
+			printStats(app, tables, anmlsCountersEmpty, -1, -1, -1);
 			return;
 		}
 
@@ -100,7 +137,7 @@ public class Transformer extends BodyTransformer {
 		}
 		long analysis_begin_time = System.currentTimeMillis();
 		List<Anomaly> seenAnmls = new ArrayList<>();
-		int numAnmls = 0;
+		List<Anomaly> seenVersAnmls = new ArrayList<>();
 		// Outermost loop to iterate over different partition sizes
 		while (ConstantArgs._current_partition_size <= ConstantArgs._MAX_NUM_PARTS) {
 			LOG.info("Begin partition size " + ConstantArgs._current_partition_size + "");
@@ -143,6 +180,7 @@ public class Transformer extends BodyTransformer {
 						if (anml1 != null) {
 							LOG.info("Unversioned anomaly generated: " + anml1);
 							anml1.generateCycleStructure();
+							System.out.println("structure1: "+anml1.getCycleStructure());
 							seenAnmls.add(anml1);
 							// Versioned analysis
 							ConstantArgs._current_version_enforcement = true;
@@ -150,7 +188,7 @@ public class Transformer extends BodyTransformer {
 							if (anml2 != null) {
 
 								anml2.generateCycleStructure();
-								numAnmls++;
+								seenVersAnmls.add(anml2);
 								seenStructures.addStructure(anml2.getCycleStructure());
 								seenStructures.writeToCSV(seenStructures.size(), iter - 1, anml2);
 								long anml2_finish_time = System.currentTimeMillis();
@@ -168,7 +206,7 @@ public class Transformer extends BodyTransformer {
 										anml3.generateCycleStructure();
 										System.out.println("structure3: "+anml3.getCycleStructure());
 										seenAnmls.add(anml3);
-										numAnmls++;
+										seenVersAnmls.add(anml3);
 										seenStructures.addStructure(anml3.getCycleStructure());
 										seenStructures.writeToCSV(seenStructures.size(), iter - 1, anml3);
 										LOG.info("A structurally similar anomaly generated (" + seenStructures.size()
@@ -200,7 +238,34 @@ public class Transformer extends BodyTransformer {
 		}
 		long analysis_finish_time = System.currentTimeMillis();
 
-		printStats(app, tables, numAnmls, (analysis_finish_time - analysis_begin_time),
+		Map<String, Integer> anmlsCounters = new HashMap<String, Integer>();
+		for(String anmlName : structure2anmlName.values())
+			anmlsCounters.put(anmlName, 0);
+
+		Integer currentCounterValue = 0;
+		String anmlName = "";
+		for (Anomaly seenVersAnml : seenVersAnmls) {
+			List<String> edges = new ArrayList<>();
+			for (Tuple<String, Tuple<String, String>> edge : seenVersAnml.getCycleStructure()) {
+				if(edge.x.contains("sibling")) {
+					edges.add("X");
+				} else {
+					edges.add(edge.x);
+				}
+			}
+
+			// Unknown anomaly
+			if(!structure2anmlName.containsKey(edges)) {
+				edges.clear();
+				edges.add("OTHER");
+			}
+
+			anmlName = structure2anmlName.get(edges);
+			currentCounterValue = anmlsCounters.get(anmlName);
+			anmlsCounters.put(anmlName, ++currentCounterValue);
+		}
+
+		printStats(app, tables, anmlsCounters, seenVersAnmls.size(), (analysis_finish_time - analysis_begin_time),
 				(analysis_finish_time - analysis_begin_time) / (iter - 1));
 	}
 
@@ -231,8 +296,8 @@ public class Transformer extends BodyTransformer {
 	}
 
 	// Print analysis stats
-	private static void printStats(Application app, ArrayList<Table> tables, int anmlCount, long modelsTime,
-			long avgExt) {
+	private static void printStats(Application app, ArrayList<Table> tables, Map<String, Integer> anmlsCounters, int anmlCount, 
+			long modelsTime, long avgExt) {
 		System.out.println("\n------------------------------------------------------"
 				+ "\n 			     Schema\n"
 				+ "------------------------------------------------------");
@@ -242,8 +307,18 @@ public class Transformer extends BodyTransformer {
 		app.printApp();
 		System.out.println("\n\n\n\n===========================================");
 		System.out.println("=== AR compile time:	" + (end_fec - start_fec) + "ms");
-
-		System.out.println("=== Anomalies found:	" + anmlCount);
+		
+		System.out.println("-------------------------------------------");
+		for(String anmlName : anmlsCounters.keySet().stream().sorted().collect(Collectors.toList())) {
+			if(anmlName.equals("Lost Updates/Write Skews"))
+				System.out.println("+++ " + anmlName + " found:	" + anmlsCounters.get(anmlName));
+			else if(!anmlName.equals("Others"))
+				System.out.println("+++ " + anmlName + " found:		" + anmlsCounters.get(anmlName));
+		}
+		System.out.println("+++ Others found:			" + anmlsCounters.get("Others"));
+		System.out.println("-------------------------------------------");
+		
+		System.out.println("=== Total anomalies found:	" + anmlCount);
 		System.out.println("=== Analysis time:		" + modelsTime + " ms");
 		//System.out.println("=== Avg Ext. Time:		" + avgExt + " ms");
 

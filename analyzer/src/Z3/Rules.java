@@ -57,14 +57,15 @@ public class Rules {
 	//
 	////////////////////////
 	public List<BoolExpr> return_conditions_rw_then(FuncDecl t1, FuncDecl t2, Expr vo1, Expr vo2, Expr vt1, Expr vt2,
-			Set<Table> includedTables) throws UnexoectedOrUnhandledConditionalExpression {
+			Expr vot1, Expr vot2, Set<Table> includedTables) throws UnexoectedOrUnhandledConditionalExpression {
+		List<BoolExpr> result = new ArrayList<BoolExpr>();
 		Transaction txn1 = app.getTxnByName(t1.getName().toString());
 		Transaction txn2 = app.getTxnByName(t2.getName().toString());
-		List<BoolExpr> result = new ArrayList<BoolExpr>();
+		String origTxn1Name = txn1.getOriginalTransaction();
 		Map<Statement, BoolExpr> txnParamsRestrictions1 = get_params_restrictions(txn1, vt1);
 		Map<Statement, BoolExpr> txnParamsRestrictions2 = get_params_restrictions(txn2, vt2);
-		for (int i = txn1.getStmts().size() - 1; i >= 0; i--) {
-			Statement o1 = txn1.getStmts().get(i);
+		Map<Statement, BoolExpr> origTxnParamsRestrictions1 = get_chopped_params_restrictions(origTxn1Name, vot1);
+		for (Statement o1 : txn1.getStmts()) {
 			Query q1 = ((InvokeStmt) o1).getQuery();
 			
 			for (Statement o2 : txn2.getStmts()) {	
@@ -99,6 +100,10 @@ public class Rules {
 									q1.getWhClause());
 							BoolExpr whereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getName(), vt2, rowVar, vo2,
 									q2.getWhClause());
+							BoolExpr origTxnWhereClause1 = (BoolExpr) z3Util.irCondToZ3Expr(txn1.getName()+"_ORIG", vot1, rowVar, vo1,
+									q1.getWhClause());
+							BoolExpr origTxnWhereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getName()+"_ORIG", vot2, rowVar, vo2,
+									q2.getWhClause());
 							BoolExpr aliveCond = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar,
 									vo2);
 							BoolExpr rwOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_O_" + tableName), rowVar,
@@ -111,9 +116,11 @@ public class Rules {
 							
 							BoolExpr nonConflictingParams1 = txnParamsRestrictions1.get(o1);
 							BoolExpr nonConflictingParams2 = txnParamsRestrictions2.get(o2);
+							BoolExpr nonConflictingOrigParams1 = origTxnParamsRestrictions1.get(o1);
 														
 							Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2,
-									versionCond2, pathCond1, pathCond2, aliveCond, rwOnTableCond, nonConflictingParams1, nonConflictingParams2);
+									origTxnWhereClause1, origTxnWhereClause2, versionCond2, pathCond1, pathCond2, aliveCond, rwOnTableCond,
+									nonConflictingParams1, nonConflictingParams2, nonConflictingOrigParams1);
 							BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null,
 									null);
 							result.add(rowExistsCond);
@@ -122,6 +129,8 @@ public class Rules {
 					} else if (q1.getKind() == Kind.SELECT && q2.getKind() == Kind.INSERT) {
 						String lhsVarName = ((RowSetVarExp) q1.getsVar()).getName();
 						BoolExpr whereClause1 = (BoolExpr) z3Util.irCondToZ3Expr(txn1.getName(), vt1, rowVar, vo1,
+								q1.getWhClause());
+						BoolExpr origTxnWhereClause1 = (BoolExpr) z3Util.irCondToZ3Expr(txn1.getName()+"_ORIG", vot1, rowVar, vo1,
 								q1.getWhClause());
 						BoolExpr aliveCond = ctx
 								.mkNot((BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo1));
@@ -139,8 +148,8 @@ public class Rules {
 											q2.getI_values().get(iter++)));
 
 						BoolExpr allInsertedRowCond = ctx.mkAnd(insertedRowConds);
-						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, pathCond1,
-								pathCond2, allInsertedRowCond, aliveCond, notNullCond, rwAliveOnTableCond);
+						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, origTxnWhereClause1,
+									pathCond1, pathCond2, allInsertedRowCond, aliveCond, notNullCond, rwAliveOnTableCond);
 
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						result.add(rowExistsCond);
@@ -148,34 +157,43 @@ public class Rules {
 						//
 					} else if (q1.getKind() == Kind.SELECT && q2.getKind() == Kind.DELETE) {
 						String lhsVarName = ((RowSetVarExp) q1.getsVar()).getName();
-						BoolExpr whereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getName(), vt2, rowVar, vo2,
-								q2.getWhClause());
 						BoolExpr whereClause1 = (BoolExpr) z3Util.irCondToZ3Expr(txn1.getName(), vt1, rowVar, vo1,
 								q1.getWhClause());
+						BoolExpr whereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getName(), vt2, rowVar, vo2,
+								q2.getWhClause());
+						BoolExpr origTxnWhereClause1 = (BoolExpr) z3Util.irCondToZ3Expr(txn1.getName()+"_ORIG", vot1, rowVar, vo1,
+								q1.getWhClause());
+						BoolExpr origTxnWhereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getName()+"_ORIG", vot2, rowVar, vo2,
+								q2.getWhClause());
 						BoolExpr aliveCond = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo2);
 						BoolExpr notNullCond = (BoolExpr) ctx
 								.mkApp(objs.getfuncs(txn1.getName() + "_" + lhsVarName + "_isNull"), vo1);
 						BoolExpr rwAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_Alive_" + tableName),
 								rowVar, vo1, vo2);
 
-						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2,
-								pathCond1, pathCond2, aliveCond, notNullCond, rwAliveOnTableCond);
+						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2, 
+								origTxnWhereClause1, origTxnWhereClause2, pathCond1, pathCond2, aliveCond, notNullCond, 
+								rwAliveOnTableCond);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						result.add(rowExistsCond);
 						//
 					} else if (q1.getKind() == Kind.UPDATE && q2.getKind() == Kind.DELETE) {
 
-						BoolExpr whereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getName(), vt2, rowVar, vo2,
-								q2.getWhClause());
 						BoolExpr whereClause1 = (BoolExpr) z3Util.irCondToZ3Expr(txn1.getName(), vt1, rowVar, vo1,
 								q1.getWhClause());
+						BoolExpr whereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getName(), vt2, rowVar, vo2,
+								q2.getWhClause());
+						BoolExpr origTxnWhereClause1 = (BoolExpr) z3Util.irCondToZ3Expr(txn1.getName()+"_ORIG", vot1, rowVar, vo1,
+								q1.getWhClause());
+						BoolExpr origTxnWhereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getName()+"_ORIG", vot2, rowVar, vo2,
+								q2.getWhClause());								
 						BoolExpr aliveCond2 = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo2);
 						BoolExpr aliveCond1 = ctx
 								.mkNot((BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo1));
 						BoolExpr rwAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_Alive_" + tableName),
 								rowVar, vo1, vo2);
-						Expr body = ctx.mkAnd(otypeCond1, otypeCond2, whereClause1, whereClause2, pathCond1, pathCond2,
-								aliveCond1, aliveCond2, rwAliveOnTableCond);
+						Expr body = ctx.mkAnd(otypeCond1, otypeCond2, whereClause1, whereClause2, origTxnWhereClause1,
+								origTxnWhereClause2, pathCond1, pathCond2, aliveCond1, aliveCond2, rwAliveOnTableCond);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						if (ConstantArgs._DEP_ONLY_ON_READ_WRITES) //XXX
 							result.add(ctx.mkEq(ctx.mkInt(1), ctx.mkInt(2)));
@@ -185,6 +203,8 @@ public class Rules {
 					} else if (q1.getKind() == Kind.UPDATE && q2.getKind() == Kind.INSERT) {
 						BoolExpr whereClause1 = (BoolExpr) z3Util.irCondToZ3Expr(txn1.getName(), vt1, rowVar, vo1,
 								q1.getWhClause());
+						BoolExpr origTxnWhereClause1 = (BoolExpr) z3Util.irCondToZ3Expr(txn1.getName()+"_ORIG", vot1, rowVar, vo1,
+								q1.getWhClause());						
 						BoolExpr aliveCond1 = ctx
 								.mkNot((BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo1));
 						BoolExpr rwAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_Alive_" + tableName),
@@ -198,8 +218,8 @@ public class Rules {
 									z3Util.irCondToZ3Expr(txn2.getName(), vt2, rowVar, vo2,
 											q2.getI_values().get(iter++)));
 						BoolExpr allInsertedRowCond = ctx.mkAnd(insertedRowConds);
-						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, pathCond1,
-								pathCond2, aliveCond1, allInsertedRowCond, rwAliveOnTableCond);
+						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, origTxnWhereClause1,
+								pathCond1, pathCond2, aliveCond1, allInsertedRowCond, rwAliveOnTableCond);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						if (ConstantArgs._DEP_ONLY_ON_READ_WRITES)
 							result.add(ctx.mkEq(ctx.mkInt(1), ctx.mkInt(2)));
@@ -207,6 +227,8 @@ public class Rules {
 							result.add(rowExistsCond);
 					} else if (q1.getKind() == Kind.DELETE && q2.getKind() == Kind.INSERT) {
 						BoolExpr whereClause1 = (BoolExpr) z3Util.irCondToZ3Expr(txn1.getName(), vt1, rowVar, vo1,
+								q1.getWhClause());
+						BoolExpr origTxnWhereClause1 = (BoolExpr) z3Util.irCondToZ3Expr(txn1.getName()+"_ORIG", vot1, rowVar, vo1,
 								q1.getWhClause());
 						BoolExpr aliveCond1 = ctx
 								.mkNot((BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo1));
@@ -221,8 +243,8 @@ public class Rules {
 									z3Util.irCondToZ3Expr(txn2.getName(), vt2, rowVar, vo2,
 											q2.getI_values().get(iter++)));
 						BoolExpr allInsertedRowCond = ctx.mkAnd(insertedRowConds);
-						Expr body = ctx.mkAnd(rowConflictCond, rowConflictCond, otypeCond1, otypeCond2, whereClause1,
-								pathCond1, pathCond2, aliveCond1, allInsertedRowCond, rwAliveOnTableCond);
+						Expr body = ctx.mkAnd(rowConflictCond, rowConflictCond, otypeCond1, otypeCond2, whereClause1, 
+								origTxnWhereClause1, pathCond1, pathCond2, aliveCond1, allInsertedRowCond, rwAliveOnTableCond);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						if (ConstantArgs._DEP_ONLY_ON_READ_WRITES)
 							result.add(ctx.mkEq(ctx.mkInt(1), ctx.mkInt(2)));
@@ -305,14 +327,15 @@ public class Rules {
 	//
 	////////////////////////
 	public List<BoolExpr> return_conditions_wr_then(FuncDecl t1, FuncDecl t2, Expr vo1, Expr vo2, Expr vt1, Expr vt2,
-			Set<Table> includedTables) throws UnexoectedOrUnhandledConditionalExpression {
+			Expr vot1, Expr vot2, Set<Table> includedTables) throws UnexoectedOrUnhandledConditionalExpression {
+		List<BoolExpr> result = new ArrayList<BoolExpr>();
 		Transaction txn1 = app.getTxnByName(t1.getName().toString());
 		Transaction txn2 = app.getTxnByName(t2.getName().toString());
-		List<BoolExpr> result = new ArrayList<BoolExpr>();
+		String origTxn1Name = txn1.getOriginalTransaction();
 		Map<Statement, BoolExpr> txnParamsRestrictions1 = get_params_restrictions(txn1, vt1);
 		Map<Statement, BoolExpr> txnParamsRestrictions2 = get_params_restrictions(txn2, vt2);
-		for (int i = txn1.getStmts().size() - 1; i >= 0; i--) {
-			Statement o1 = txn1.getStmts().get(i);
+		Map<Statement, BoolExpr> origTxnParamsRestrictions1 = get_chopped_params_restrictions(origTxn1Name, vot1);
+		for (Statement o1 : txn1.getStmts()) {
 			Query q1 = ((InvokeStmt) o1).getQuery();
 
 			for (Statement o2 : txn2.getStmts()) {
@@ -345,6 +368,10 @@ public class Rules {
 								q1.getWhClause());
 						BoolExpr whereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getName(), vt2, rowVar, vo2,
 								q2.getWhClause());
+						BoolExpr origTxnWhereClause1 = (BoolExpr) z3Util.irCondToZ3Expr(txn1.getName()+"_ORIG", vot1, rowVar, vo1,
+								q1.getWhClause());
+						BoolExpr origTxnWhereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getName()+"_ORIG", vot2, rowVar, vo2,
+								q2.getWhClause());	
 						BoolExpr wrOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_O_" + tableName), rowVar, vo1,
 								vo2);
 						BoolExpr aliveCond = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo1);
@@ -358,9 +385,11 @@ public class Rules {
 						
 						BoolExpr nonConflictingParams1 = txnParamsRestrictions1.get(o1);
 						BoolExpr nonConflictingParams2 = txnParamsRestrictions2.get(o2);
+						BoolExpr nonConflictingOrigParams1 = origTxnParamsRestrictions1.get(o1);
 
 						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2,
-								versionCond1, pathCond1, pathCond2, aliveCond, notNullCond, wrOnTableCond, nonConflictingParams1, nonConflictingParams2);
+								origTxnWhereClause1, origTxnWhereClause2, versionCond1, pathCond1, pathCond2, aliveCond, notNullCond, 
+								wrOnTableCond, nonConflictingParams1, nonConflictingParams2, nonConflictingOrigParams1);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						result.add(rowExistsCond);
 						//
@@ -408,6 +437,10 @@ public class Rules {
 								q1.getWhClause());
 						BoolExpr whereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getName(), vt2, rowVar, vo2,
 								q2.getWhClause());
+						BoolExpr origTxnWhereClause1 = (BoolExpr) z3Util.irCondToZ3Expr(txn1.getName()+"_ORIG", vot1, rowVar, vo1,
+								q1.getWhClause());
+						BoolExpr origTxnWhereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getName()+"_ORIG", vot2, rowVar, vo2,
+								q2.getWhClause());
 						BoolExpr aliveCond1 = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo1);
 						BoolExpr aliveCond2 = ctx
 								.mkNot((BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo2));
@@ -420,9 +453,11 @@ public class Rules {
 
 						BoolExpr nonConflictingParams1 = txnParamsRestrictions1.get(o1);
 						BoolExpr nonConflictingParams2 = txnParamsRestrictions2.get(o2);
-						
+						BoolExpr nonConflictingOrigParams1 = origTxnParamsRestrictions1.get(o1);
+
 						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2,
-								pathCond1, pathCond2, aliveCond1, aliveCond2, notNullCond, wrAliveOnTableCond, nonConflictingParams1, nonConflictingParams2);
+								origTxnWhereClause1, origTxnWhereClause2, pathCond1, pathCond2, aliveCond1, aliveCond2, notNullCond,
+								wrAliveOnTableCond, nonConflictingParams1, nonConflictingParams2, nonConflictingOrigParams1);
 
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						result.add(rowExistsCond);
@@ -433,6 +468,10 @@ public class Rules {
 								q1.getWhClause());
 						BoolExpr whereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getName(), vt2, rowVar, vo2,
 								q2.getWhClause());
+						BoolExpr origTxnWhereClause1 = (BoolExpr) z3Util.irCondToZ3Expr(txn1.getName()+"_ORIG", vot1, rowVar, vo1,
+								q1.getWhClause());
+						BoolExpr origTxnWhereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getName()+"_ORIG", vot2, rowVar, vo2,
+								q2.getWhClause());
 						BoolExpr aliveCond1 = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo1);
 						BoolExpr aliveCond2 = ctx
 								.mkNot((BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo2));
@@ -442,34 +481,18 @@ public class Rules {
 						
 						BoolExpr nonConflictingParams1 = txnParamsRestrictions1.get(o1);
 						BoolExpr nonConflictingParams2 = txnParamsRestrictions2.get(o2);
-
+						BoolExpr nonConflictingOrigParams1 = origTxnParamsRestrictions1.get(o1);
+						
 						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2,
-								pathCond1, pathCond2, aliveCond1, aliveCond2, wrAliveOnTableCond, nonConflictingParams1, nonConflictingParams2);
+								origTxnWhereClause1, origTxnWhereClause2, pathCond1, pathCond2, aliveCond1, aliveCond2, wrAliveOnTableCond,
+								nonConflictingParams1, nonConflictingParams2, nonConflictingOrigParams1);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						result.add(rowExistsCond);
 						//
 					} else if (q1.getKind() == Kind.INSERT && q2.getKind() == Kind.UPDATE) {
 						BoolExpr whereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getName(), vt2, rowVar, vo2,
 								q2.getWhClause());
-						BoolExpr aliveCond = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo2);
-						BoolExpr wrAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_Alive_" + tableName),
-								rowVar, vo1, vo2);
-						BoolExpr[] insertedRowConds = new BoolExpr[table.getColumns().size()];
-						int iter = 0;
-						Expr version = ctx.mkApp(objs.getfuncs(tableName + "_VERSION"), rowVar, vo1);
-						for (Column c : table.getColumns())
-							insertedRowConds[iter] = ctx.mkEq(
-									ctx.mkApp(objs.getfuncs(tableName + "_PROJ_" + c.getName()), rowVar, version),
-									z3Util.irCondToZ3Expr(txn1.getName(), vt1, rowVar, vo1,
-											q1.getI_values().get(iter++)));
-
-						BoolExpr allInsertedRowCond = ctx.mkAnd(insertedRowConds);
-						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause2, pathCond1,
-								pathCond2, allInsertedRowCond, aliveCond, wrAliveOnTableCond);
-						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
-						result.add(rowExistsCond);
-					} else if (q1.getKind() == Kind.INSERT && q2.getKind() == Kind.DELETE) {
-						BoolExpr whereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getName(), vt2, rowVar, vo2,
+						BoolExpr origTxnWhereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getName()+"_ORIG", vot2, rowVar, vo2,
 								q2.getWhClause());
 						BoolExpr aliveCond = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo2);
 						BoolExpr wrAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_Alive_" + tableName),
@@ -484,8 +507,30 @@ public class Rules {
 											q1.getI_values().get(iter++)));
 
 						BoolExpr allInsertedRowCond = ctx.mkAnd(insertedRowConds);
-						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause2, pathCond1,
-								pathCond2, allInsertedRowCond, aliveCond, wrAliveOnTableCond);
+						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause2, origTxnWhereClause2, 
+								pathCond1, pathCond2, allInsertedRowCond, aliveCond, wrAliveOnTableCond);
+						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
+						result.add(rowExistsCond);
+					} else if (q1.getKind() == Kind.INSERT && q2.getKind() == Kind.DELETE) {
+						BoolExpr whereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getName(), vt2, rowVar, vo2,
+								q2.getWhClause());
+						BoolExpr origTxnWhereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getName()+"_ORIG", vot2, rowVar, vo2,
+								q2.getWhClause());
+						BoolExpr aliveCond = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo2);
+						BoolExpr wrAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_Alive_" + tableName),
+								rowVar, vo1, vo2);
+						BoolExpr[] insertedRowConds = new BoolExpr[table.getColumns().size()];
+						int iter = 0;
+						Expr version = ctx.mkApp(objs.getfuncs(tableName + "_VERSION"), rowVar, vo1);
+						for (Column c : table.getColumns())
+							insertedRowConds[iter] = ctx.mkEq(
+									ctx.mkApp(objs.getfuncs(tableName + "_PROJ_" + c.getName()), rowVar, version),
+									z3Util.irCondToZ3Expr(txn1.getName(), vt1, rowVar, vo1,
+											q1.getI_values().get(iter++)));
+
+						BoolExpr allInsertedRowCond = ctx.mkAnd(insertedRowConds);
+						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause2, origTxnWhereClause2,
+								pathCond1, pathCond2, allInsertedRowCond, aliveCond, wrAliveOnTableCond);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						result.add(rowExistsCond);
 					}
@@ -496,14 +541,15 @@ public class Rules {
 	}
 
 	public List<BoolExpr> return_conditions_ww_then(FuncDecl t1, FuncDecl t2, Expr vo1, Expr vo2, Expr vt1, Expr vt2,
-			Set<Table> includedTables) throws UnexoectedOrUnhandledConditionalExpression {
+			Expr vot1, Expr vot2, Set<Table> includedTables) throws UnexoectedOrUnhandledConditionalExpression {
+		List<BoolExpr> result = new ArrayList<BoolExpr>();
 		Transaction txn1 = app.getTxnByName(t1.getName().toString());
 		Transaction txn2 = app.getTxnByName(t2.getName().toString());
-		List<BoolExpr> result = new ArrayList<BoolExpr>();
+		String origTxn1Name = txn1.getOriginalTransaction();
 		Map<Statement, BoolExpr> txnParamsRestrictions1 = get_params_restrictions(txn1, vt1);
 		Map<Statement, BoolExpr> txnParamsRestrictions2 = get_params_restrictions(txn2, vt2);
-		for (int i = txn1.getStmts().size() - 1; i >= 0; i--) {
-			Statement o1 = txn1.getStmts().get(i);
+		Map<Statement, BoolExpr> origTxnParamsRestrictions1 = get_chopped_params_restrictions(origTxn1Name, vot1);
+		for (Statement o1 : txn1.getStmts()) {
 			Query q1 = ((InvokeStmt) o1).getQuery();
 
 			for (Statement o2 : txn2.getStmts()) {
@@ -533,6 +579,10 @@ public class Rules {
 								q1.getWhClause());
 						BoolExpr whereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getName(), vt2, rowVar, vo2,
 								q2.getWhClause());
+						BoolExpr origTxnWhereClause1 = (BoolExpr) z3Util.irCondToZ3Expr(txn1.getName()+"_ORIG", vot1, rowVar, vo1,
+								q1.getWhClause());
+						BoolExpr origTxnWhereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getName()+"_ORIG", vot2, rowVar, vo2,
+								q2.getWhClause());
 						BoolExpr wwOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WW_O_" + tableName), rowVar, vo1,
 								vo2);
 						BoolExpr aliveCond1 = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo1);
@@ -540,9 +590,11 @@ public class Rules {
 
 						BoolExpr nonConflictingParams1 = txnParamsRestrictions1.get(o1);
 						BoolExpr nonConflictingParams2 = txnParamsRestrictions2.get(o2);
+						BoolExpr nonConflictingOrigParams1 = origTxnParamsRestrictions1.get(o1);
 
-						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2,
-								pathCond1, pathCond2, aliveCond1, aliveCond2, wwOnTableCond, nonConflictingParams1, nonConflictingParams2);
+						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2, 
+								origTxnWhereClause1, origTxnWhereClause2, pathCond1, pathCond2, aliveCond1, aliveCond2, wwOnTableCond,
+								nonConflictingParams1, nonConflictingParams2, nonConflictingOrigParams1);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						result.add(rowExistsCond);
 					}
@@ -555,10 +607,9 @@ public class Rules {
 	private Map<Statement, BoolExpr> get_params_restrictions(Transaction txn, Expr txnExpr) throws UnexoectedOrUnhandledConditionalExpression {
 		Map<Statement, BoolExpr> result = new HashMap<Statement, BoolExpr>();
 		Map<Table, List<Expr>> seenParams = new HashMap<Table, List<Expr>>();
-		String txnName = txn.getName();
-		// Iterate over the operations starting from the final op
-		for (int i = txn.getStmts().size() - 1; i >= 0; i--) {
-			Statement o = txn.getStmts().get(i);
+
+		// Iterate over the operations starting from the first op
+		for (Statement o : txn.getStmts()) {
 			Query q = ((InvokeStmt) o).getQuery();
 
 			// Check if any operation already accessed the current table
@@ -569,8 +620,8 @@ public class Rules {
 			
 			// Create the where clause param
 			BinOpExp whClause = (BinOpExp) q.getWhClause();
-			ParamValExp pave = (ParamValExp) whClause.e2;
-			Expr paramExpr = ctx.mkApp(objs.getfuncs(txnName + "_PARAM_" + pave.getName()), txnExpr);
+			Expression pave = whClause.e2;
+			Expr paramExpr = z3Util.irCondToZ3Expr(txn.getName(), txnExpr, null, null, pave);
 
 			// Express that the current param needs to be different from all the previous seen params
 			BoolExpr[] diffParams = new BoolExpr[seenParams.get(q.getTable()).size()+1];
@@ -590,6 +641,48 @@ public class Rules {
 			tableSeenParams.add(paramExpr);
 			seenParams.put(q.getTable(), tableSeenParams);
 		}
+		return result;
+	}
+
+	private Map<Statement, BoolExpr> get_chopped_params_restrictions(String origTxnName, Expr origTxnExpr) throws UnexoectedOrUnhandledConditionalExpression {
+		Map<Statement, BoolExpr> result = new HashMap<Statement, BoolExpr>();
+		Map<Table, List<Expr>> seenParams = new HashMap<Table, List<Expr>>();
+
+		// Iterate over the chopped transactions of the original transaction
+		for(Transaction t : app.getTxnsByOrigTxnName(origTxnName))
+			// Iterate over the operations starting from the first op
+			for (Statement o : t.getStmts()) {
+				Query q = ((InvokeStmt) o).getQuery();
+
+				// Check if any operation already accessed the current table
+				if(!seenParams.containsKey(q.getTable())) {
+					List<Expr> tableSeenParams = new ArrayList<Expr>();
+					seenParams.put(q.getTable(), tableSeenParams);
+				}
+				
+				// Create the where clause orig param
+				BinOpExp whClause = (BinOpExp) q.getWhClause();
+				Expression pave = whClause.e2;
+				Expr paramExpr = z3Util.irCondToZ3Expr(t.getName() + "_ORIG", origTxnExpr, null, null, pave);
+
+				// Express that the current param needs to be different from all the previous seen params
+				BoolExpr[] diffParams = new BoolExpr[seenParams.get(q.getTable()).size()+1];
+				for (int j = 0; j < seenParams.get(q.getTable()).size(); j++) {
+					Expr seenParam = seenParams.get(q.getTable()).get(j);
+					BoolExpr diffParam = ctx.mkNot(ctx.mkEq(seenParam, paramExpr));
+					diffParams[j] = diffParam;
+				}
+				diffParams[seenParams.get(q.getTable()).size()] = ctx.mkTrue();
+				BoolExpr nonConflictingParams = ctx.mkAnd(diffParams);
+
+				// Store in the result the assertion expressing that this op param needs to be different from the other ops
+				result.put(o, nonConflictingParams);
+
+				// Add the current param to the list of seen params for the current table
+				List<Expr> tableSeenParams = seenParams.get(q.getTable());
+				tableSeenParams.add(paramExpr);
+				seenParams.put(q.getTable(), tableSeenParams);
+			}
 		return result;
 	}
 }
