@@ -188,6 +188,7 @@ public class Transformer extends BodyTransformer {
 							if (anml2 != null) {
 
 								anml2.generateCycleStructure();
+								System.out.println("structure3: "+anml2.getCycleStructure());
 								seenVersAnmls.add(anml2);
 								seenStructures.addStructure(anml2.getCycleStructure());
 								seenStructures.writeToCSV(seenStructures.size(), iter - 1, anml2);

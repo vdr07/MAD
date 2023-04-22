@@ -5,12 +5,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
+import ar.statement.Statement;
+
 // This class captures the intermediate representation of db-backed programs which are extracted from Gimple representations
 public class Application {
 	private ArrayList<Transaction> txns;
+	private ArrayList<OriginalTransaction> origTxns;
 
 	public Application() {
 		txns = new ArrayList<Transaction>();
+		origTxns = new ArrayList<OriginalTransaction>();
 	}
 
 	public ArrayList<Transaction> getTxns() {
@@ -19,6 +23,14 @@ public class Application {
 
 	public void addTxn(Transaction txn) {
 		this.txns.add(txn);
+	}
+
+	public ArrayList<OriginalTransaction> getOrigTxns() {
+		return this.origTxns;
+	}
+
+	public void addOrigTxn(OriginalTransaction origTxn) {
+		this.origTxns.add(origTxn);
 	}
 
 	public void printApp() {
@@ -32,6 +44,10 @@ public class Application {
 		return this.txns.stream().filter(t -> t.getName().equals(txnName)).findAny().get();
 	}
 
+	public OriginalTransaction getOrigTxnByName(String origTxnName) {
+		return this.origTxns.stream().filter(ot -> ot.getName().equals(origTxnName)).findAny().get();
+	}
+
 	public Transaction[] getTxnsByOrigTxnName(String origTxnName) {
 		List<Transaction> result = new ArrayList<Transaction>();
 		int size = 0;
@@ -43,6 +59,17 @@ public class Application {
 			}
 		}
 		return result.toArray(new Transaction[size]);
+	}
+
+	public Statement[] getAllStmts() {
+		List<Statement> result = new ArrayList<Statement>();
+		int size = 0;
+		for (Transaction t : this.txns)
+			for (Statement s : t.getStmts()) {
+				result.add(s);
+				size++;
+			}
+		return result.toArray(new Statement[size]);
 	}
 
 	public String[] getAllStmtTypes() {
@@ -78,12 +105,9 @@ public class Application {
 	public String[] getAllOrigTxnNames() {
 		List<String> result = new ArrayList<String>();
 		int size = 0;
-		for (Transaction t : this.txns) {
-			String originalTransactionName = t.getOriginalTransaction();
-			if(originalTransactionName != null && !result.contains(originalTransactionName)) {
-				result.add(originalTransactionName);
-				size++;
-			}
+		for (OriginalTransaction t : this.origTxns) {
+			result.add(t.getName());
+			size++;
 		}
 		return result.toArray(new String[size]);
 	}

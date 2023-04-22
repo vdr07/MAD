@@ -375,9 +375,6 @@ public class Z3Driver {
 				String label = txn.getName() + "_PARAM_" + p.getName();
 				objs.addFunc(label, ctx.mkFuncDecl(label, new Sort[]{objs.getSort("T")},
 						objs.getSort(p.getType().toZ3String())));
-				label = txn.getName() + "_ORIG_PARAM_" + p.getName();
-				objs.addFunc(label, ctx.mkFuncDecl(label, new Sort[]{objs.getSort("OT")},
-						objs.getSort(p.getType().toZ3String())));
 			}
 			SubHeaderZ3("?");
 			// define lhs assignees [[XXX not sure what this does -> might be a legacy

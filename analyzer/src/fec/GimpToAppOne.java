@@ -11,6 +11,7 @@ import exceptions.SqlTypeNotFoundException;
 import exceptions.UnknownUnitException;
 import ar.Application;
 import ar.Transaction;
+import ar.OriginalTransaction;
 import ar.Type;
 import ar.expression.vals.ParamValExp;
 import ar.ddl.Table;
@@ -41,6 +42,15 @@ public class GimpToAppOne extends GimpToApp {
 
 				if (txn != null)
 					app.addTxn(txn);
+				
+				String origTxnName = txn.getOriginalTransaction();
+				if (app.getOrigTxns().stream().filter(ot -> ot.getName().equals(origTxnName)).findFirst().isPresent()) {
+					app.getOrigTxnByName(origTxnName).addAllStmts(txn.getStmts());
+				} else {
+					OriginalTransaction origTxn = new OriginalTransaction(origTxnName);
+					origTxn.addAllStmts(txn.getStmts());
+					app.addOrigTxn(origTxn);
+				}
 			}
 		}
 		LOG.info("AR application successfully generated");
