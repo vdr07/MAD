@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -42,37 +43,37 @@ public class Transformer extends BodyTransformer {
 	private CFGIntermediateRep ir;
 	static ArrayList<Body> bodies;
 
-	private static final List<String> dirtyReadPattern = List.of("X", "WR", "RW");
 	//private static final List<String> choppedDirtyReadPattern = List.of("step_sibling", "WR", "RW");
 	//private static final List<String> nonRepeatableReadPattern = List.of("X", "RW", "WR");
 	//private static final List<String> choppedNonRepeatableReadPattern = List.of("step_sibling", "RW", "WR");
-	private static final List<String> dirtyWritePattern = List.of("X", "WW", "WW");
-	private static final List<String> dirtyWritePattern2 = List.of("X", "WW", "X", "WW");
 	//private static final List<String> choppedDirtyWritePattern = List.of("step_sibling", "WW", "WW");
-	private static final List<String> lostUpdateWriteSkewPattern = List.of("X", "RW", "X", "RW");
-	private static final List<String> lostUpdatePattern2 = List.of("X", "RW", "WW");
 	//private static final List<String> choppedLostUpdateWriteSkewPattern = List.of("step_sibling", "RW", "step_sibling", "RW");
-	private static final List<String> readSkewPattern = List.of("X", "RW", "X", "WR");
-	private static final List<String> readSkewPattern2 = List.of("X", "WR", "X", "RW");
 	//private static final List<String> choppedReadSkewPattern = List.of("step_sibling", "RW", "step_sibling", "WR");
-	private static final List<String> UnknownPattern = List.of("OTHER");
+	private static final List<String> dirtyReadPattern = Arrays.asList(new String[]{"X", "WR", "RW"});
+	private static final List<String> dirtyWritePattern = Arrays.asList(new String[]{"X", "WW", "WW"});
+	private static final List<String> dirtyWritePattern2 = Arrays.asList(new String[]{"X", "WW", "X", "WW"});
+	private static final List<String> lostUpdateWriteSkewPattern = Arrays.asList(new String[]{"X", "RW", "X", "RW"});
+	private static final List<String> lostUpdatePattern2 = Arrays.asList(new String[]{"X", "RW", "WW"});
+	private static final List<String> readSkewPattern = Arrays.asList(new String[]{"X", "RW", "X", "WR"});
+	private static final List<String> readSkewPattern2 = Arrays.asList(new String[]{"X", "WR", "X", "RW"});
+	private static final List<String> UnknownPattern = Arrays.asList(new String[]{"OTHER"});
 
 	private static final Map<List<String>, String> structure2anmlName;
     static {
         Map<List<String>, String> auxMap = new HashMap<List<String>, String>();
-        auxMap.put(dirtyReadPattern, "Dirty Reads");
 		//auxMap.put(choppedDirtyReadPattern, "Dirty Read");
 		//auxMap.put(nonRepeatableReadPattern, "Non-repeatable Read");
 		//auxMap.put(choppedNonRepeatableReadPattern, "Non-repeatable Read");
+		//auxMap.put(choppedDirtyWritePattern, "Dirty Write");
+		//auxMap.put(choppedLostUpdateWriteSkewPattern, "Lost Update/Write Skew");
+		//auxMap.put(choppedReadSkewPattern, "Read Skew");
+        auxMap.put(dirtyReadPattern, "Dirty Reads");
 		auxMap.put(dirtyWritePattern, "Dirty Writes");
 		auxMap.put(dirtyWritePattern2, "Dirty Writes");
-		//auxMap.put(choppedDirtyWritePattern, "Dirty Write");
 		auxMap.put(lostUpdateWriteSkewPattern, "Lost Updates/Write Skews");
 		auxMap.put(lostUpdatePattern2, "Lost Updates");
-		//auxMap.put(choppedLostUpdateWriteSkewPattern, "Lost Update/Write Skew");
 		auxMap.put(readSkewPattern, "Read Skews");
 		auxMap.put(readSkewPattern2, "Read Skews");
-		//auxMap.put(choppedReadSkewPattern, "Read Skew");
 		auxMap.put(UnknownPattern, "Others");
         structure2anmlName = auxMap;
     }

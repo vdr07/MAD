@@ -36,6 +36,7 @@ import soot.grimp.internal.GNeExpr;
 import soot.grimp.internal.GSubExpr;
 import soot.jimple.IntConstant;
 import soot.jimple.LongConstant;
+import soot.jimple.DoubleConstant;
 import soot.jimple.StringConstant;
 import soot.jimple.toolkits.infoflow.FakeJimpleLocal;
 
@@ -111,7 +112,9 @@ public class ValueToExpression {
 				return new ConstValExp(ic.value);
 			else
 				break;
-
+		case "DoubleConstant":
+			DoubleConstant dc = (DoubleConstant) v;
+			return new ConstValExp(dc.value);
 		case "LongConstant":
 			LongConstant lc = (LongConstant) v;
 			return new ConstValExp(lc.value);
@@ -122,7 +125,7 @@ public class ValueToExpression {
 			GInterfaceInvokeExpr iie = (GInterfaceInvokeExpr) v;
 			String mName = iie.getMethod().getName();
 			Expression result;
-			if (mName.equals("getInt") || mName.equals("getString") || mName.equals("getLong")) {
+			if (mName.equals("getInt") || mName.equals("getString") || mName.equals("getLong") || mName.equals("getDouble")) {
 				try {
 					RowVarExp rSet = (RowVarExp) data.getUTSEs().get(callerU).get(iie.getBase());
 					result = projectRow(rSet, iie.getArgs());

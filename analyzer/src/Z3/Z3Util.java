@@ -79,7 +79,16 @@ public class Z3Util {
 			return ctx.mkApp(loopVarFunc, txn, ctx.mkBV(loopCount, ConstantArgs._MAX_BV_));
 		case "UnknownExp":
 			UnknownExp ue = (UnknownExp) cond;
-			return ctx.mkApp(objs.getfuncs("abs_integer"), ctx.mkInt(absIntCount++));
+			Expr result;
+			if (ue.getName().contains("INT"))
+				result = ctx.mkApp(objs.getfuncs("abs_integer"), ctx.mkInt(absIntCount++));
+			else if (ue.getName().contains("STRING"))
+				result = ctx.mkApp(objs.getfuncs("abs_string"), ctx.mkInt(absStringCount++));
+			else if (ue.getName().contains("REAL"))
+				result = ctx.mkApp(objs.getfuncs("abs_real"), ctx.mkInt(absRealCount++));
+			else
+				result = ctx.mkApp(objs.getfuncs("abs_integer"), ctx.mkInt(absIntCount++));
+			return result;
 
 		case "BinOpExp":
 			BinOpExp boe = (BinOpExp) cond; {

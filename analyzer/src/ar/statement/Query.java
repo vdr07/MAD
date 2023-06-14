@@ -31,6 +31,7 @@ import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.util.TablesNamesFinder;
 import net.sf.jsqlparser.expression.JdbcParameter;
 import net.sf.jsqlparser.expression.LongValue;
+import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.expression.operators.conditional.*;
 import net.sf.jsqlparser.expression.operators.relational.*;
 
@@ -60,7 +61,7 @@ public class Query {
 	public Query(String query, UnitData data, ArrayList<Table> tables) {
 		this.data = data;
 		this.tables = tables;
-		this.text = query.substring(1, query.length() - 1);
+		this.text = query.substring(1, query.length() - 1).replaceAll("\\\\\'", "'");
 		//
 		// analyze the text and generate appropriate objects
 		try {
@@ -280,6 +281,9 @@ public class Query {
 			case "LongValue":
 				long lv = ((LongValue) clause).getValue();
 				return new ConstValExp(lv);
+			case "StringValue":
+				String sv = ((StringValue) clause).getValue();
+				return new ConstValExp(sv);
 			default:
 				throw new WhereClauseNotKnownException(
 						"Query.java.recExtractWC: clase node not handled yet: " + clause.getClass().getSimpleName());

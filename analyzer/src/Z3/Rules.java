@@ -62,9 +62,6 @@ public class Rules {
 		List<BoolExpr> result = new ArrayList<BoolExpr>();
 		Transaction txn1 = app.getTxnByName(t1.getName().toString());
 		Transaction txn2 = app.getTxnByName(t2.getName().toString());
-		Map<Tuple<Statement, Statement>, BoolExpr> tr1 = get_txn_conf_row_edges_restrictions(txn1, txn2, vo1, vo2, false);
-		Map<Tuple<Statement, Statement>, BoolExpr> tr2 = get_txn_conf_row_edges_restrictions(txn2, txn1, vo2, vo1, true);
-		Map<Tuple<Statement, Statement>, BoolExpr> tr3 = get_orig_txn_conf_row_edges_restrictions(txn1, txn2, vo1, vo2);
 		for (Statement o1 : txn1.getStmts()) {
 			Query q1 = ((InvokeStmt) o1).getQuery();
 			
@@ -94,11 +91,6 @@ public class Rules {
 							? ctx.mkEq(ctx.mkApp(funcConf, vo1, vo2), rowVar)
 							: ctx.mkTrue();
 
-					Tuple<Statement, Statement> pairRelatedstmts = new Tuple<Statement, Statement>(o1, o2);
-					Tuple<Statement, Statement> pairRelatedstmtsReverse = new Tuple<Statement, Statement>(o2, o1);
-					BoolExpr txn1ConfRowEdgesRestrictions = tr1.get(pairRelatedstmts);
-					BoolExpr txn2ConfRowEdgesRestrictions = tr2.get(pairRelatedstmtsReverse);
-					BoolExpr origTxn1ConfRowEdgesRestrictions = tr3.get(pairRelatedstmts);					
 					//
 					if (q1.getKind() == Kind.SELECT && q2.getKind() == Kind.UPDATE) {
 						if (!Collections.disjoint(q1.getS_columns(), q2.getU_updates().keySet())) {
@@ -117,8 +109,7 @@ public class Rules {
 									: ctx.mkTrue();
 
 							Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2,
-									versionCond2, pathCond1, pathCond2, aliveCond, rwOnTableCond, txn1ConfRowEdgesRestrictions,
-									txn2ConfRowEdgesRestrictions, origTxn1ConfRowEdgesRestrictions);
+									versionCond2, pathCond1, pathCond2, aliveCond, rwOnTableCond);
 							BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null,
 									null);
 							result.add(rowExistsCond);
@@ -145,8 +136,7 @@ public class Rules {
 
 						BoolExpr allInsertedRowCond = ctx.mkAnd(insertedRowConds);
 						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, pathCond1, 
-									pathCond2, allInsertedRowCond, aliveCond, notNullCond, rwAliveOnTableCond, 
-									txn1ConfRowEdgesRestrictions, txn2ConfRowEdgesRestrictions, origTxn1ConfRowEdgesRestrictions);
+									pathCond2, allInsertedRowCond, aliveCond, notNullCond, rwAliveOnTableCond);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						result.add(rowExistsCond);
 
@@ -164,8 +154,7 @@ public class Rules {
 								rowVar, vo1, vo2);
 
 						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2, 
-								pathCond1, pathCond2, aliveCond, notNullCond, rwAliveOnTableCond, 
-								txn1ConfRowEdgesRestrictions, txn2ConfRowEdgesRestrictions, origTxn1ConfRowEdgesRestrictions);
+								pathCond1, pathCond2, aliveCond, notNullCond, rwAliveOnTableCond);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						result.add(rowExistsCond);
 						//
@@ -181,8 +170,7 @@ public class Rules {
 						BoolExpr rwAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_Alive_" + tableName),
 								rowVar, vo1, vo2);
 						Expr body = ctx.mkAnd(otypeCond1, otypeCond2, whereClause1, whereClause2,
-								pathCond1, pathCond2, aliveCond1, aliveCond2, rwAliveOnTableCond,
-								txn1ConfRowEdgesRestrictions, txn2ConfRowEdgesRestrictions, origTxn1ConfRowEdgesRestrictions);
+								pathCond1, pathCond2, aliveCond1, aliveCond2, rwAliveOnTableCond);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						if (ConstantArgs._DEP_ONLY_ON_READ_WRITES) //XXX
 							result.add(ctx.mkEq(ctx.mkInt(1), ctx.mkInt(2)));
@@ -206,8 +194,7 @@ public class Rules {
 											q2.getI_values().get(iter++)));
 						BoolExpr allInsertedRowCond = ctx.mkAnd(insertedRowConds);
 						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1,
-								pathCond1, pathCond2, aliveCond1, allInsertedRowCond, rwAliveOnTableCond, 
-								txn1ConfRowEdgesRestrictions, txn2ConfRowEdgesRestrictions, origTxn1ConfRowEdgesRestrictions);
+								pathCond1, pathCond2, aliveCond1, allInsertedRowCond, rwAliveOnTableCond);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						if (ConstantArgs._DEP_ONLY_ON_READ_WRITES)
 							result.add(ctx.mkEq(ctx.mkInt(1), ctx.mkInt(2)));
@@ -230,8 +217,7 @@ public class Rules {
 											q2.getI_values().get(iter++)));
 						BoolExpr allInsertedRowCond = ctx.mkAnd(insertedRowConds);
 						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, 
-								pathCond1, pathCond2, aliveCond1, allInsertedRowCond, rwAliveOnTableCond,
-								txn1ConfRowEdgesRestrictions, txn2ConfRowEdgesRestrictions, origTxn1ConfRowEdgesRestrictions);
+								pathCond1, pathCond2, aliveCond1, allInsertedRowCond, rwAliveOnTableCond);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						if (ConstantArgs._DEP_ONLY_ON_READ_WRITES)
 							result.add(ctx.mkEq(ctx.mkInt(1), ctx.mkInt(2)));
@@ -318,9 +304,6 @@ public class Rules {
 		List<BoolExpr> result = new ArrayList<BoolExpr>();
 		Transaction txn1 = app.getTxnByName(t1.getName().toString());
 		Transaction txn2 = app.getTxnByName(t2.getName().toString());
-		Map<Tuple<Statement, Statement>, BoolExpr> tr1 = get_txn_conf_row_edges_restrictions(txn1, txn2, vo1, vo2, false);
-		Map<Tuple<Statement, Statement>, BoolExpr> tr2 = get_txn_conf_row_edges_restrictions(txn2, txn1, vo2, vo1, true);
-		Map<Tuple<Statement, Statement>, BoolExpr> tr3 = get_orig_txn_conf_row_edges_restrictions(txn1, txn2, vo1, vo2);
 		for (Statement o1 : txn1.getStmts()) {
 			Query q1 = ((InvokeStmt) o1).getQuery();
 
@@ -349,11 +332,6 @@ public class Rules {
 					FuncDecl funcConf = objs.getfuncs(relatedOps + "_conflict_rows");
 					BoolExpr rowConflictCond = ctx.mkEq(ctx.mkApp(funcConf, vo1, vo2), rowVar);
 
-					Tuple<Statement, Statement> pairRelatedstmts = new Tuple<Statement, Statement>(o1, o2);
-					Tuple<Statement, Statement> pairRelatedstmtsReverse = new Tuple<Statement, Statement>(o2, o1);
-					BoolExpr txn1ConfRowEdgesRestrictions = tr1.get(pairRelatedstmts);
-					BoolExpr txn2ConfRowEdgesRestrictions = tr2.get(pairRelatedstmtsReverse);
-					BoolExpr origTxn1ConfRowEdgesRestrictions = tr3.get(pairRelatedstmts);
 					//
 					if (q1.getKind() == Kind.UPDATE && q2.getKind() == Kind.SELECT) {
 						String lhsVarName = ((RowSetVarExp) q2.getsVar()).getName();
@@ -373,8 +351,7 @@ public class Rules {
 								: ctx.mkTrue();
 
 						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2,
-								versionCond1, pathCond1, pathCond2, aliveCond, notNullCond, wrOnTableCond, 
-								txn1ConfRowEdgesRestrictions, txn2ConfRowEdgesRestrictions, origTxn1ConfRowEdgesRestrictions);
+								versionCond1, pathCond1, pathCond2, aliveCond, notNullCond, wrOnTableCond);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						result.add(rowExistsCond);
 						//
@@ -402,8 +379,7 @@ public class Rules {
 
 						BoolExpr allInsertedRowCond = ctx.mkAnd(insertedRowConds);
 						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause2,
-								pathCond1, pathCond2, allInsertedRowCond, aliveCond, notNullCond, wrAliveOnTableCond,
-								txn1ConfRowEdgesRestrictions, txn2ConfRowEdgesRestrictions, origTxn1ConfRowEdgesRestrictions);
+								pathCond1, pathCond2, allInsertedRowCond, aliveCond, notNullCond, wrAliveOnTableCond);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						result.add(rowExistsCond);
 						//
@@ -424,8 +400,7 @@ public class Rules {
 								rowVar, vo1, vo2);
 
 						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2,
-								pathCond1, pathCond2, aliveCond1, aliveCond2, notNullCond, wrAliveOnTableCond, 
-								txn1ConfRowEdgesRestrictions, txn2ConfRowEdgesRestrictions, origTxn1ConfRowEdgesRestrictions);
+								pathCond1, pathCond2, aliveCond1, aliveCond2, notNullCond, wrAliveOnTableCond);
 
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						result.add(rowExistsCond);
@@ -444,8 +419,7 @@ public class Rules {
 								rowVar, vo1, vo2);
 						
 						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2,
-								pathCond1, pathCond2, aliveCond1, aliveCond2, wrAliveOnTableCond,
-								txn1ConfRowEdgesRestrictions, txn2ConfRowEdgesRestrictions, origTxn1ConfRowEdgesRestrictions);
+								pathCond1, pathCond2, aliveCond1, aliveCond2, wrAliveOnTableCond);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						result.add(rowExistsCond);
 						//
@@ -466,8 +440,7 @@ public class Rules {
 
 						BoolExpr allInsertedRowCond = ctx.mkAnd(insertedRowConds);
 						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause2, 
-								pathCond1, pathCond2, allInsertedRowCond, aliveCond, wrAliveOnTableCond,
-								txn1ConfRowEdgesRestrictions, txn2ConfRowEdgesRestrictions, origTxn1ConfRowEdgesRestrictions);
+								pathCond1, pathCond2, allInsertedRowCond, aliveCond, wrAliveOnTableCond);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						result.add(rowExistsCond);
 					} else if (q1.getKind() == Kind.INSERT && q2.getKind() == Kind.DELETE) {
@@ -487,8 +460,7 @@ public class Rules {
 
 						BoolExpr allInsertedRowCond = ctx.mkAnd(insertedRowConds);
 						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause2,
-								pathCond1, pathCond2, allInsertedRowCond, aliveCond, wrAliveOnTableCond,
-								txn1ConfRowEdgesRestrictions, txn2ConfRowEdgesRestrictions, origTxn1ConfRowEdgesRestrictions);
+								pathCond1, pathCond2, allInsertedRowCond, aliveCond, wrAliveOnTableCond);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						result.add(rowExistsCond);
 					}
@@ -503,9 +475,6 @@ public class Rules {
 		List<BoolExpr> result = new ArrayList<BoolExpr>();
 		Transaction txn1 = app.getTxnByName(t1.getName().toString());
 		Transaction txn2 = app.getTxnByName(t2.getName().toString());
-		Map<Tuple<Statement, Statement>, BoolExpr> tr1 = get_txn_conf_row_edges_restrictions(txn1, txn2, vo1, vo2, false);
-		Map<Tuple<Statement, Statement>, BoolExpr> tr2 = get_txn_conf_row_edges_restrictions(txn2, txn1, vo2, vo1, true);
-		Map<Tuple<Statement, Statement>, BoolExpr> tr3 = get_orig_txn_conf_row_edges_restrictions(txn1, txn2, vo1, vo2);
 		for (Statement o1 : txn1.getStmts()) {
 			Query q1 = ((InvokeStmt) o1).getQuery();
 
@@ -531,11 +500,6 @@ public class Rules {
 					FuncDecl funcConf = objs.getfuncs(relatedOps + "_conflict_rows");
 					BoolExpr rowConflictCond = ctx.mkEq(ctx.mkApp(funcConf, vo1, vo2), rowVar);
 
-					Tuple<Statement, Statement> pairRelatedstmts = new Tuple<Statement, Statement>(o1, o2);
-					Tuple<Statement, Statement> pairRelatedstmtsReverse = new Tuple<Statement, Statement>(o2, o1);
-					BoolExpr txn1ConfRowEdgesRestrictions = tr1.get(pairRelatedstmts);
-					BoolExpr txn2ConfRowEdgesRestrictions = tr2.get(pairRelatedstmtsReverse);
-					BoolExpr origTxn1ConfRowEdgesRestrictions = tr3.get(pairRelatedstmts);
 					//
 					if (q1.getKind() == Kind.UPDATE && q2.getKind() == Kind.UPDATE) {
 						BoolExpr whereClause1 = (BoolExpr) z3Util.irCondToZ3Expr(txn1.getName(), vt1, rowVar, vo1,
@@ -548,191 +512,11 @@ public class Rules {
 						BoolExpr aliveCond2 = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo2);
 
 						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2, 
-								pathCond1, pathCond2, aliveCond1, aliveCond2, wwOnTableCond,
-								txn1ConfRowEdgesRestrictions, txn2ConfRowEdgesRestrictions, origTxn1ConfRowEdgesRestrictions);
+								pathCond1, pathCond2, aliveCond1, aliveCond2, wwOnTableCond);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
 						result.add(rowExistsCond);
 					}
 				}
-			}
-		}
-		return result;
-	}
-
-	private Map<Tuple<Statement, Statement>, BoolExpr> get_txn_conf_row_edges_restrictions(Transaction txn1, Transaction txn2,
-			Expr vo1, Expr vo2, boolean reversed) throws UnexoectedOrUnhandledConditionalExpression {
-		Map<Tuple<Statement, Statement>, BoolExpr> result = new HashMap<Tuple<Statement, Statement>, BoolExpr>();
-		List<Tuple<Statement, Statement>> seenConfRowsExprs = new ArrayList<Tuple<Statement, Statement>>();
-
-		boolean first_stmt = true;
-		for (Statement o1 : txn1.getStmts()) {
-			for (Statement o2 : txn2.getStmts()) {
-				InvokeStmt io1 = (InvokeStmt) o1;
-				InvokeStmt io2 = (InvokeStmt) o2;
-				Query q1 = io1.getQuery();
-				Query q2 = io2.getQuery();
-
-				// the first statement does not have restrictions
-				if(first_stmt || !q1.getTable().equals(q2.getTable())) {
-					Tuple<Statement, Statement> pairRelatedstmts = new Tuple<Statement, Statement>(o1, o2);
-					result.put(pairRelatedstmts, ctx.mkTrue());
-					continue;
-				}
-
-				String relatedOps;
-				FuncDecl funcConf;
-				Expr confRowExpr;
-				if(!reversed) {
-					relatedOps = io1.getType() + "_" + io2.getType();
-					funcConf = objs.getfuncs(relatedOps + "_conflict_rows");
-					confRowExpr = ctx.mkApp(funcConf, vo1, vo2);
-				} else {
-					relatedOps = io2.getType() + "_" + io1.getType();
-					funcConf = objs.getfuncs(relatedOps + "_conflict_rows");
-					confRowExpr = ctx.mkApp(funcConf, vo2, vo1);
-				}
-
-				List<BoolExpr> diffConfRows = new ArrayList<BoolExpr>();
-				Expr vo3 = ctx.mkFreshConst("o", objs.getSort("O"));
-				Expr vo4 = ctx.mkFreshConst("o", objs.getSort("O"));
-
-				List<Statement> prevStmts = txn1.getStmts();
-				for (Statement o3 : prevStmts) {
-					if(o1.equals(o3))
-						break;
-					
-					for (Statement o4 : app.getAllStmts()) {
-						InvokeStmt leftStmt = (InvokeStmt) o3;
-						InvokeStmt rightStmt = (InvokeStmt) o4;
-						Query q3 = leftStmt.getQuery();
-						Query q4 = rightStmt.getQuery();
-
-						if(leftStmt.getType().equals(rightStmt.getType()) || 
-							(q3.getKind() == Kind.SELECT && q4.getKind() == Kind.SELECT) ||
-							!q3.getTable().equals(q4.getTable()) ||
-							!q1.getTable().equals(q3.getTable()))
-							continue;
-
-						String relatedSeenOps = leftStmt.getType() + "_" + rightStmt.getType();
-						FuncDecl seenFuncConf = objs.getfuncs(relatedSeenOps + "_conflict_rows");
-						BoolExpr otypeCond3 = ctx.mkEq(ctx.mkApp(objs.getfuncs("otype"), vo3),
-							ctx.mkApp(objs.getConstructor("OType", leftStmt.getType().toString())));
-						BoolExpr otypeCond4 = ctx.mkEq(ctx.mkApp(objs.getfuncs("otype"), vo4),
-							ctx.mkApp(objs.getConstructor("OType", rightStmt.getType().toString())));
-						Expr seenConfRow = ctx.mkApp(seenFuncConf, vo3, vo4);
-						BoolExpr diffConfRow = ctx.mkEq(confRowExpr, seenConfRow);
-						BoolExpr diffRowAccessed = ctx.mkAnd(otypeCond3, otypeCond4, diffConfRow);
-						diffConfRows.add(diffRowAccessed);
-
-						// reverse direction
-						String relatedSeenOpsReverse = rightStmt.getType() + "_" + leftStmt.getType();
-						FuncDecl seenFuncConfReverse = objs.getfuncs(relatedSeenOpsReverse + "_conflict_rows");
-						otypeCond3 = ctx.mkEq(ctx.mkApp(objs.getfuncs("otype"), vo3),
-							ctx.mkApp(objs.getConstructor("OType", rightStmt.getType().toString())));
-						otypeCond4 = ctx.mkEq(ctx.mkApp(objs.getfuncs("otype"), vo4),
-							ctx.mkApp(objs.getConstructor("OType", leftStmt.getType().toString())));	
-						seenConfRow = ctx.mkApp(seenFuncConfReverse, vo3, vo4);
-						diffConfRow = ctx.mkEq(confRowExpr, seenConfRow);
-						diffRowAccessed = ctx.mkAnd(otypeCond3, otypeCond4, diffConfRow);
-						diffConfRows.add(diffRowAccessed);
-					}
-				}
-				
-				BoolExpr nonConflictingConfRows1 = ctx.mkOr(diffConfRows.toArray(new BoolExpr[diffConfRows.size()]));
-
-				BoolExpr nonConflictingConfRow2 = ctx.mkExists(new Expr[] { vo3, vo4 }, nonConflictingConfRows1, 1, null, null, null,
-									null);
-
-				BoolExpr nonConflictingConfRows = ctx.mkNot(nonConflictingConfRow2);
-
-				Tuple<Statement, Statement> pairRelatedstmts = new Tuple<Statement, Statement>(o1, o2);
-				result.put(pairRelatedstmts, nonConflictingConfRows);
-			}
-			first_stmt = false;
-		}
-		return result;
-	}
-
-	private Map<Tuple<Statement, Statement>, BoolExpr> get_orig_txn_conf_row_edges_restrictions(Transaction txn1, Transaction txn2,
-			Expr vo1, Expr vo2) throws UnexoectedOrUnhandledConditionalExpression {
-		Map<Tuple<Statement, Statement>, BoolExpr> result = new HashMap<Tuple<Statement, Statement>, BoolExpr>();
-		List<Tuple<Statement, Statement>> seenConfRowsExprs = new ArrayList<Tuple<Statement, Statement>>();
-
-		for (Statement o1 : txn1.getStmts()) {
-			for (Statement o2 : txn2.getStmts()) {
-				InvokeStmt io1 = (InvokeStmt) o1;
-				InvokeStmt io2 = (InvokeStmt) o2;
-				Query q1 = io1.getQuery();
-				Query q2 = io2.getQuery();
-
-				if(!q1.getTable().equals(q2.getTable())) {
-					Tuple<Statement, Statement> pairRelatedstmts = new Tuple<Statement, Statement>(o1, o2);
-					result.put(pairRelatedstmts, ctx.mkTrue());
-					continue;
-				}
-
-				String relatedOps = io1.getType() + "_" + io2.getType();
-				FuncDecl funcConf = objs.getfuncs(relatedOps + "_conflict_rows");
-				Expr confRowExpr = ctx.mkApp(funcConf, vo1, vo2);
-
-				List<BoolExpr> diffConfRows = new ArrayList<BoolExpr>();
-				Expr vo3 = ctx.mkFreshConst("o", objs.getSort("O"));
-				Expr vo4 = ctx.mkFreshConst("o", objs.getSort("O"));
-
-				String origTxn1Name = txn1.getOriginalTransaction();
-				List<Statement> prevStmts = app.getOrigTxnByName(origTxn1Name).getStmts();
-				for (Statement o3 : prevStmts) {
-					if(o1.equals(o3))
-						break;
-					
-					for (Statement o4 : app.getAllStmts()) {
-						InvokeStmt leftStmt = (InvokeStmt) o3;
-						InvokeStmt rightStmt = (InvokeStmt) o4;
-						Query q3 = leftStmt.getQuery();
-						Query q4 = rightStmt.getQuery();
-
-						if(leftStmt.getType().equals(rightStmt.getType()) || 
-							(q3.getKind() == Kind.SELECT && q4.getKind() == Kind.SELECT) ||
-							!q3.getTable().equals(q4.getTable()) ||
-							!q1.getTable().equals(q3.getTable()))
-							continue;
-
-						String relatedSeenOps = leftStmt.getType() + "_" + rightStmt.getType();
-						FuncDecl seenFuncConf = objs.getfuncs(relatedSeenOps + "_conflict_rows");
-						BoolExpr otypeCond3 = ctx.mkEq(ctx.mkApp(objs.getfuncs("otype"), vo3),
-							ctx.mkApp(objs.getConstructor("OType", leftStmt.getType().toString())));
-						BoolExpr otypeCond4 = ctx.mkEq(ctx.mkApp(objs.getfuncs("otype"), vo4),
-							ctx.mkApp(objs.getConstructor("OType", rightStmt.getType().toString())));		
-						BoolExpr sameOrigTxn = ctx.mkEq(ctx.mkApp(objs.getfuncs("original_transaction"), vo1), ctx.mkApp(objs.getfuncs("original_transaction"), vo3));
-						Expr seenConfRow = ctx.mkApp(seenFuncConf, vo3, vo4);
-						BoolExpr diffConfRow = ctx.mkEq(confRowExpr, seenConfRow);
-						BoolExpr diffRowAccessed = ctx.mkAnd(otypeCond3, otypeCond4, sameOrigTxn, diffConfRow);
-						diffConfRows.add(diffRowAccessed);
-
-						// reverse direction
-						String relatedSeenOpsReverse = rightStmt.getType() + "_" + leftStmt.getType();
-						FuncDecl seenFuncConfReverse = objs.getfuncs(relatedSeenOpsReverse + "_conflict_rows");
-						otypeCond3 = ctx.mkEq(ctx.mkApp(objs.getfuncs("otype"), vo3),
-							ctx.mkApp(objs.getConstructor("OType", rightStmt.getType().toString())));
-						otypeCond4 = ctx.mkEq(ctx.mkApp(objs.getfuncs("otype"), vo4),
-							ctx.mkApp(objs.getConstructor("OType", leftStmt.getType().toString())));
-						sameOrigTxn = ctx.mkEq(ctx.mkApp(objs.getfuncs("original_transaction"), vo1), ctx.mkApp(objs.getfuncs("original_transaction"), vo4));
-						seenConfRow = ctx.mkApp(seenFuncConfReverse, vo3, vo4);
-						diffConfRow = ctx.mkEq(confRowExpr, seenConfRow);
-						diffRowAccessed = ctx.mkAnd(otypeCond3, otypeCond4, sameOrigTxn, diffConfRow);
-						diffConfRows.add(diffRowAccessed);
-					}
-				}
-				
-				BoolExpr nonConflictingConfRows1 = ctx.mkOr(diffConfRows.toArray(new BoolExpr[diffConfRows.size()]));
-
-				BoolExpr nonConflictingConfRow2 = ctx.mkExists(new Expr[] { vo3, vo4 }, nonConflictingConfRows1, 1, null, null, null,
-									null);
-
-				BoolExpr nonConflictingConfRows = ctx.mkNot(nonConflictingConfRow2);
-
-				Tuple<Statement, Statement> pairRelatedstmts = new Tuple<Statement, Statement>(o1, o2);
-				result.put(pairRelatedstmts, nonConflictingConfRows);
 			}
 		}
 		return result;

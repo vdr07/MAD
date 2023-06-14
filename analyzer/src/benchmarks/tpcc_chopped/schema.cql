@@ -1,31 +1,35 @@
-CREATE TABLE order_line (
-  ol_w_id INT,
-  ol_d_id INT,
-  ol_o_id INT,
-  ol_number INT,
-  ol_i_id INT,
+DROP KEYSPACE IF EXISTS testks ;
+
+create KEYSPACE testks WITH replication = {'class' : 'NetworkTopologyStrategy', 'DC1':1, 'DC2':1};
+
+CREATE TABLE testks.order_line (
+  ol_w_id BIGINT,
+  ol_d_id BIGINT,
+  ol_o_id BIGINT,
+  ol_number BIGINT,
+  ol_i_id BIGINT,
   ol_delivery_d TIME,
   ol_amount DOUBLE PRECISION,
-  ol_supply_w_id INT,
-  ol_quantity INT,
+  ol_supply_w_id BIGINT,
+  ol_quantity DOUBLE PRECISION,
   ol_dist_info VARCHAR(24),
   PRIMARY KEY (ol_w_id,ol_d_id,ol_o_id,ol_number)
 );
 
-CREATE TABLE new_order (
-  no_w_id INT,
-  no_d_id INT,
-  no_o_id INT,
+CREATE TABLE testks.new_order (
+  no_w_id BIGINT,
+  no_d_id BIGINT,
+  no_o_id BIGINT,
   PRIMARY KEY (no_w_id,no_d_id,no_o_id)
 );
 
-CREATE TABLE stock (
-  s_w_id INT,
-  s_i_id INT,
+CREATE TABLE testks.stock (
+  s_w_id BIGINT,
+  s_i_id BIGINT,
   s_quantity DOUBLE PRECISION,
   s_ytd DOUBLE PRECISION,
-  s_order_cnt INT,
-  s_remote_cnt INT,
+  s_order_cnt BIGINT,
+  s_remote_cnt BIGINT,
   s_data VARCHAR(50),
   s_dist_01 VARCHAR(24),
   s_dist_02 VARCHAR(24),
@@ -40,12 +44,12 @@ CREATE TABLE stock (
   PRIMARY KEY (s_w_id,s_i_id)
 );
 
-CREATE TABLE oorder (
-  o_w_id INT,
-  o_d_id INT,
-  o_id INT,
-  o_c_id INT,
-  o_carrier_id INT DEFAULT NULL,
+CREATE TABLE testks.oorder (
+  o_w_id BIGINT,
+  o_d_id BIGINT,
+  o_id BIGINT,
+  o_c_id BIGINT,
+  o_carrier_id BIGINT DEFAULT NULL,
   o_ol_cnt DOUBLE PRECISION,
   o_all_local DOUBLE PRECISION,
   o_entry_d TIME DEFAULT CURRENT_TIME,
@@ -53,22 +57,10 @@ CREATE TABLE oorder (
   UNIQUE (o_w_id,o_d_id,o_c_id,o_id)
 );
 
-CREATE TABLE history (
-  h_c_id INT,
-  h_c_d_id INT,
-  h_c_w_id INT,
-  h_d_id INT,
-  h_w_id INT,
-  h_date TIME DEFAULT CURRENT_TIME,
-  h_amount DOUBLE PRECISION,
-  h_data VARCHAR(24),
-  PRIMARY KEY (h_c_w_id,h_c_d_id,h_c_id,h_w_id,h_d_id)
-);
-
-CREATE TABLE customer (
-  c_w_id INT,
-  c_d_id INT,
-  c_id INT,
+CREATE TABLE testks.customer (
+  c_w_id BIGINT,
+  c_d_id BIGINT,
+  c_id BIGINT,
   c_discount DOUBLE PRECISION,
   c_credit VARCHAR(2),
   c_last VARCHAR(16),
@@ -76,8 +68,8 @@ CREATE TABLE customer (
   c_credit_lim DOUBLE PRECISION,
   c_balance DOUBLE PRECISION,
   c_ytd_payment DOUBLE PRECISION,
-  c_payment_cnt INT,
-  c_delivery_cnt INT,
+  c_payment_cnt BIGINT,
+  c_delivery_cnt BIGINT,
   c_street_1 VARCHAR(20),
   c_street_2 VARCHAR(20),
   c_city VARCHAR(20),
@@ -90,12 +82,12 @@ CREATE TABLE customer (
   PRIMARY KEY (c_w_id,c_d_id,c_id)
 );
 
-CREATE TABLE district (
-  d_w_id INT,
-  d_id INT,
+CREATE TABLE testks.district (
+  d_w_id BIGINT,
+  d_id BIGINT,
   d_ytd DOUBLE PRECISION,
   d_tax DOUBLE PRECISION,
-  d_next_o_id INT,
+  d_next_o_id BIGINT,
   d_name VARCHAR(10),
   d_street_1 VARCHAR(20),
   d_street_2 VARCHAR(20),
@@ -106,17 +98,17 @@ CREATE TABLE district (
 );
 
 
-CREATE TABLE item (
-  i_id INT,
+CREATE TABLE testks.item (
+  i_id BIGINT,
   i_name VARCHAR(24),
   i_price DOUBLE PRECISION,
   i_data VARCHAR(50),
-  i_im_id INT,
+  i_im_id BIGINT,
   PRIMARY KEY (i_id)
 );
 
-CREATE TABLE warehouse (
-  w_id INT,
+CREATE TABLE testks.warehouse (
+  w_id BIGINT,
   w_ytd DOUBLE PRECISION,
   w_tax DOUBLE PRECISION,
   w_name VARCHAR(10),
@@ -130,11 +122,10 @@ CREATE TABLE warehouse (
 
 ALTER TABLE district  ADD CONSTRAINT fkey_district_1 FOREIGN KEY(d_w_id) REFERENCES warehouse(w_id);
 ALTER TABLE customer ADD CONSTRAINT fkey_customer_1 FOREIGN KEY(c_w_id,c_d_id) REFERENCES district(d_w_id,d_id);
-ALTER TABLE history  ADD CONSTRAINT fkey_history_1 FOREIGN KEY(h_c_w_id,h_c_d_id,h_c_id) REFERENCES customer(c_w_id,c_d_id,c_id);
-ALTER TABLE history  ADD CONSTRAINT fkey_history_2 FOREIGN KEY(h_w_id,h_d_id) REFERENCES district(d_w_id,d_id);
 ALTER TABLE new_order ADD CONSTRAINT fkey_new_order_1 FOREIGN KEY(no_w_id,no_d_id,no_o_id) REFERENCES oorder(o_w_id,o_d_id,o_id);
 ALTER TABLE oorder ADD CONSTRAINT fkey_order_1 FOREIGN KEY(o_w_id,o_d_id,o_c_id) REFERENCES customer(c_w_id,c_d_id,c_id);
 ALTER TABLE order_line ADD CONSTRAINT fkey_order_line_1 FOREIGN KEY(ol_w_id,ol_d_id,ol_o_id) REFERENCES oorder(o_w_id,o_d_id,o_id);
 ALTER TABLE order_line ADD CONSTRAINT fkey_order_line_2 FOREIGN KEY(ol_supply_w_id,ol_i_id) REFERENCES stock(s_w_id,s_i_id);
 ALTER TABLE stock ADD CONSTRAINT fkey_stock_1 FOREIGN KEY(s_w_id) REFERENCES warehouse(w_id);
 ALTER TABLE stock ADD CONSTRAINT fkey_stock_2 FOREIGN KEY(s_i_id) REFERENCES item(i_id);
+

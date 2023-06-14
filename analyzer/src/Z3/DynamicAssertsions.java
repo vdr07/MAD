@@ -39,7 +39,7 @@ public class DynamicAssertsions {
 	Context ctx;
 	Application app;
 	DeclaredObjects objs;
-	Expr o1, o2, o3;
+	Expr o1, o2, o3, o4;
 	Z3Util z3Util;
 
 	public DynamicAssertsions(Context ctx, DeclaredObjects objs, Application app) {
@@ -50,6 +50,7 @@ public class DynamicAssertsions {
 		o1 = ctx.mkFreshConst("o", objs.getSort("O"));
 		o2 = ctx.mkFreshConst("o", objs.getSort("O"));
 		o3 = ctx.mkFreshConst("o", objs.getSort("O"));
+		o4 = ctx.mkFreshConst("o", objs.getSort("O"));
 	}
 
 	public Quantifier mk_oType_to_is_update(List<String> updateTypes) {
@@ -144,6 +145,47 @@ public class DynamicAssertsions {
 
 		BoolExpr body = ctx.mkAnd(body1, body2);
 		Quantifier x = ctx.mkForall(new Expr[] { o1, o2 }, body, 1, null, null, null, null);
+		return x;
+	}
+
+	public BoolExpr edges_restrictions(String stmt, String stmt2, String stmt3, String stmt4, int direction) {
+		FuncDecl otype = objs.getfuncs("otype");
+		String relatedO2O3 = stmt2 + "_" + stmt3;
+		FuncDecl funcConf = objs.getfuncs(relatedO2O3 + "_conflict_rows");
+		String relatedO4O1 = stmt4 + "_" + stmt;
+		FuncDecl funcConf2 = objs.getfuncs(relatedO4O1 + "_conflict_rows");
+		FuncDecl originalTransaction = objs.getfuncs("original_transaction");
+		FuncDecl parent = objs.getfuncs("parent");
+		FuncDecl vis = objs.getfuncs("vis");
+		BoolExpr lhs1 = ctx.mkEq(ctx.mkApp(otype, o1), ctx.mkApp(objs.getConstructor("OType", stmt)));
+		BoolExpr lhs2 = ctx.mkEq(ctx.mkApp(otype, o2), ctx.mkApp(objs.getConstructor("OType", stmt2)));
+		BoolExpr lhs3 = ctx.mkEq(ctx.mkApp(otype, o3), ctx.mkApp(objs.getConstructor("OType", stmt3)));
+		BoolExpr lhs4 = ctx.mkEq(ctx.mkApp(otype, o4), ctx.mkApp(objs.getConstructor("OType", stmt4)));
+		Expr confRowExpr = ctx.mkApp(funcConf, o2, o3);
+		Expr confRowExpr2 = ctx.mkApp(funcConf2, o4, o1);
+		BoolExpr lhs5 = ctx.mkEq(confRowExpr, confRowExpr2);
+		// 0 == restricting incoming edges; 1 == restricting outgoing edges; 
+		BoolExpr lhs6, lhs7, lhs8;
+		if (direction == 0) {
+			lhs6 = ctx.mkEq(ctx.mkApp(parent, o1), ctx.mkApp(parent, o2));
+			lhs7 = ctx.mkNot(ctx.mkEq(ctx.mkApp(parent, o1), ctx.mkApp(parent, o3)));
+			lhs8 = ctx.mkNot(ctx.mkEq(ctx.mkApp(parent, o2), ctx.mkApp(parent, o4)));
+		} else {
+			lhs6 = ctx.mkOr(ctx.mkEq(ctx.mkApp(originalTransaction, o1), ctx.mkApp(originalTransaction, o2)), ctx.mkEq(ctx.mkApp(parent, o1), ctx.mkApp(parent, o2)));
+			lhs7 = ctx.mkNot(ctx.mkEq(ctx.mkApp(originalTransaction, o1), ctx.mkApp(originalTransaction, o3)));
+			lhs8 = ctx.mkNot(ctx.mkEq(ctx.mkApp(originalTransaction, o2), ctx.mkApp(originalTransaction, o4)));
+		}
+		BoolExpr lhs9, rhs;
+		if (stmt.contains("-select#") || stmt2.contains("-select#")) {
+			lhs9 = (BoolExpr) ctx.mkApp(vis, o4, o1);
+			rhs = (BoolExpr) ctx.mkApp(vis, o3, o2);
+		} else {
+			lhs9 = (BoolExpr) ctx.mkApp(vis, o2, o3);
+			rhs = (BoolExpr) ctx.mkApp(vis, o1, o4);
+		}
+		BoolExpr lhs = ctx.mkAnd(lhs1, lhs2, lhs3, lhs4, lhs5, lhs6, lhs7, lhs8, lhs9);
+		BoolExpr body = ctx.mkImplies(lhs, rhs);
+		Quantifier x = ctx.mkForall(new Expr[] { o1, o2, o3, o4 }, body, 1, null, null, null, null);
 		return x;
 	}
 

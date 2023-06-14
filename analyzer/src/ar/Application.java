@@ -129,6 +129,23 @@ public class Application {
 		return result;
 	}
 
+	public Map<Integer, Statement> getStmtsOrigTxnMap(String origTxnName) {
+		Map<Integer, Statement> result = new HashMap<Integer, Statement>();
+		int iter = 1;
+		for (Transaction t : this.txns) {
+			try {
+				if(t.getOriginalTransaction().equals(origTxnName)) {
+					for (Statement s : t.getStmts()) {
+						result.put(iter, s);
+						iter += 1;
+					}
+				}
+			} catch (Exception e) {
+			}
+		}
+		return result;
+	}
+
 	public String[] getAllMicroNames() {
 		List<String> result = new ArrayList<String>();
 		int size = 0;

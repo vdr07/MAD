@@ -104,6 +104,7 @@ public class Anomaly {
 		parentChildPairs = getParentChild(functions.get("parent"));
 		originalTransactionChildPairs = getOriginalTransactionChild(functions.get("original_transaction"));
 		WWPairs = getWWPairs(functions.get("WW_O"));
+		//WWPairs = new HashMap<>();
 		WRPairs = getWRPairs(functions.get("WR_O"));
 		RWPairs = getRWPairs(functions.get("RW_O"));
 		visPairs = getVisPairs(functions.get("vis"));

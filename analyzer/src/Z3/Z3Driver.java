@@ -27,6 +27,8 @@ import ar.ddl.Column;
 import ar.ddl.Table;
 import ar.statement.InvokeStmt;
 import ar.statement.Statement;
+import ar.statement.Query;
+import ar.statement.Query.Kind;
 import cons.ConstantArgs;
 import soot.Value;
 import utils.Tuple;
@@ -312,6 +314,53 @@ public class Z3Driver {
 										new Sort[]{oSort, oSort}, objs.getSort(tableName)));
 					}
 			}
+		}
+
+		HeaderZ3("EDGES RESTRICTIONS");
+		for (String origTxnName : app.getAllOrigTxnNames()) {
+			Map<Integer, Statement> map = app.getStmtsOrigTxnMap(origTxnName);
+			for (int i = 2; i < map.size()+1; i++)
+				for (int j = 1; j < map.size()+1; j++) {
+					if (i == j)
+						break;
+					
+					Statement stmt = map.get(i);
+					InvokeStmt is = (InvokeStmt) stmt;
+					String sName = is.getType().toString();
+					Query q = is.getQuery();
+					
+					Statement stmt2 = map.get(j);
+					InvokeStmt is2 = (InvokeStmt) stmt2;
+					String s2Name = is2.getType().toString();
+					Query q2 = is2.getQuery();
+					
+					if(!q.getTable().equals(q2.getTable()))
+						continue;
+					for (Statement stmt3 : app.getAllStmts()) {
+						InvokeStmt is3 = (InvokeStmt) stmt3;
+						String s3Name = is3.getType().toString();
+						Query q3 = is3.getQuery();
+						
+						if((q2.getKind() == Kind.SELECT && q3.getKind() == Kind.SELECT) || (!q2.getTable().equals(q3.getTable())))
+							continue;
+						for (Statement stmt4 : app.getAllStmts()) {
+							InvokeStmt is4 = (InvokeStmt) stmt4;
+							String s4Name = is4.getType().toString();
+							Query q4 = is4.getQuery();
+							if((q.getKind() == Kind.SELECT && q4.getKind() == Kind.SELECT) || (!q.getTable().equals(q4.getTable())))
+								continue;
+							// Assuming that q2 and q3 acess the same table
+							// Assuming that q and q4 acess the same table
+							// q and q3 need to acess the same table, otherwise the conflict rows will be incompatible
+							if(!q.getTable().equals(q3.getTable()))
+								continue;
+							addAssertion("incoming_edges_restrictions_" + sName + "_" + s2Name + "_" + s3Name + "_" + s4Name,
+								dynamicAssertions.edges_restrictions(sName, s2Name, s3Name, s4Name, 0));
+							addAssertion("outgoing_edges_restrictions_" + sName + "_" + s2Name + "_" + s3Name + "_" + s4Name,
+								dynamicAssertions.edges_restrictions(s2Name, sName, s4Name, s3Name, 1));
+						}
+					}
+				}
 		}
 
 		HeaderZ3("TABLE FUNCTIONS & PROPS");
