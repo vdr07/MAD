@@ -39,22 +39,6 @@ public class axon_trader {
 		r = new Random();
 	}
 
-	// User Controller
-	@ChoppedTransaction(microservice="m1")
-	public void showUsers() throws SQLException {
-		String showUsersSQL = 
-				"SELECT * FROM " + "USER_VIEW"+
-				" WHERE identifier != 'blabla'";
-
-		PreparedStatement showUsers = connect.prepareStatement(showUsersSQL);
-		ResultSet rs = showUsers.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
-
-		return;
-	}
-
 	@ChoppedTransaction(microservice="m1")
 	public void detail(String userIdentifier) throws SQLException {
 		String detailSQL = 
@@ -67,8 +51,37 @@ public class axon_trader {
 		if (!rs.next()) {
 			System.out.println("Empty");
 		}
+	}
 
-		return;
+	@ChoppedTransaction(microservice="m1")
+	public void createUser(String userIdentifier, String name, String uname, String password) throws SQLException {
+		String createUserSQL = 
+				"INSERT INTO " + "USER_VIEW" +
+				" (identifier, uname, username, upassword) " +
+				" VALUES ( ?, ?, ?, ? )";
+
+		PreparedStatement createUser = connect.prepareStatement(createUserSQL);
+		createUser.setString(1, userIdentifier);
+		createUser.setString(2, name);
+		createUser.setString(3, uname);
+		createUser.setString(4, password);
+		createUser.executeUpdate();
+	}
+
+	@ChoppedTransaction(microservice="m1")
+	public void authenticateUser(String userIdentifier, String password) throws SQLException {
+		String authenticateUserSQL = 
+				"SELECT upassword FROM " + "USER_VIEW"+
+				" WHERE identifier = ?";
+
+		PreparedStatement authenticateUser = connect.prepareStatement(authenticateUserSQL);
+		authenticateUser.setString(1, userIdentifier);
+		ResultSet rs = authenticateUser.executeQuery();
+		if (!rs.next()) {
+			System.out.println("Empty");
+		}
+		String userPassword = rs.getString("upassword");
+		assert (userPassword.equals(password));
 	}
 
 	// Company Controller
@@ -94,6 +107,7 @@ public class axon_trader {
 			if (!bookEntry.next()) {
 				System.out.println("Empty");
 			}
+			bookEntry.getString("identifier");
 
 			PreparedStatement findByUsername = connect.prepareStatement(findByUsernameSQL);
 			findByUsername.setString(1, loggedInUsername);
@@ -117,7 +131,6 @@ public class axon_trader {
 				return;
 			}
 
-			bookEntry.getString("identifier");
 			portfolioView.getString("identifier");
 
 			return;
@@ -139,8 +152,6 @@ public class axon_trader {
 		}
 		long amountOfMoney = portfolioView.getLong("amountOfMoney");
 		long reservedAmountOfMoney = portfolioView.getLong("reservedAmountOfMoney");
-
-		return;
 	}
 
 	@ChoppedTransaction(microservice="m1")
@@ -180,10 +191,7 @@ public class axon_trader {
 		if (!companyView.next()) {
 			System.out.println("Empty");
 		}
-
-		String companyName = companyView.getString("name");
-
-		return;
+		String companyName = companyView.getString("cname");
 	}
 
 	@ChoppedTransaction(microservice="m1")
@@ -239,9 +247,6 @@ public class axon_trader {
 		PreparedStatement sellOrders = connect.prepareStatement(sellOrdersSQL);
 		sellOrders.setString(1, bookEntryId);
 		ResultSet sellOrdersRS = sellOrders.executeQuery();
-		if (!sellOrdersRS.next()) {
-			System.out.println("Empty");
-		}
 		while (sellOrdersRS.next()) {
 			long orderJpaId = sellOrdersRS.getLong("orderId");
 			PreparedStatement orderViews = connect.prepareStatement(orderViewsSQL);
@@ -255,9 +260,6 @@ public class axon_trader {
 		PreparedStatement buyOrders = connect.prepareStatement(buyOrdersSQL);
 		buyOrders.setString(1, bookEntryId);
 		ResultSet buyOrdersRS = buyOrders.executeQuery();
-		if (!buyOrdersRS.next()) {
-			System.out.println("Empty");
-		}
 		while (buyOrdersRS.next()) {
 			long orderJpaId = buyOrdersRS.getLong("orderId");
 			PreparedStatement orderViews = connect.prepareStatement(orderViewsSQL);
@@ -267,28 +269,11 @@ public class axon_trader {
 				System.out.println("Empty");
 			}
 		}
-
-		return;
-	}
-
-	@ChoppedTransaction(microservice="m1")
-	public void companyGet() throws SQLException {
-		String companyGetSQL = 
-				"SELECT * FROM " + "COMPANY_VIEW"+
-				" WHERE identifier != 'blabla'";
-
-		PreparedStatement companyGet = connect.prepareStatement(companyGetSQL);
-		ResultSet rs = companyGet.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
-
-		return;
 	}
 
 	@ChoppedTransaction(microservice="m1")
 	public void sell(String companyIdentifier, String loggedInUsername, int bindingResult,
-			long tradeCount, long itemPrice) throws SQLException {
+			long tradeCount) throws SQLException {
 		String obtainOrderBookForCompanySQL = 
 				"SELECT * FROM " + "ORDER_BOOK_VIEW"+
 				" WHERE companyIdentifier = ?";
@@ -303,15 +288,15 @@ public class axon_trader {
 
 		String findItemInPossessionSQL = 
 				"SELECT * FROM " + "PORTFOLIO_ITEM_POSSESSION"+
-				" WHERE portfolioId = ? AND orderBookId = ?";
+				" WHERE portfolioId = ? AND itemIdentifier = ?";
 
 		String findItemReservedSQL = 
 				"SELECT * FROM " + "PORTFOLIO_ITEM_RESERVED"+
-				" WHERE portfolioId = ? AND orderBookId = ?";
+				" WHERE portfolioId = ? AND itemIdentifier = ?";
 
 		String obtainAmountOfItemsForSQL = 
 				"SELECT * FROM " + "ITEM_ENTRY"+
-				" WHERE generatedId = ?";
+				" WHERE identifier = ?";
 
 		if (bindingResult == 1) {
 			PreparedStatement obtainOrderBookForCompany = connect.prepareStatement(obtainOrderBookForCompanySQL);
@@ -345,10 +330,10 @@ public class axon_trader {
 			if (!itemInPossession.next()) {
 				System.out.println("Empty");
 			}
-			long itemInPossessionId = itemInPossession.getLong("itemId");
+			String itemInPossessionId = itemInPossession.getString("itemIdentifier");
 
 			PreparedStatement obtainAmountOfItemsFor = connect.prepareStatement(obtainAmountOfItemsForSQL);
-			obtainAmountOfItemsFor.setLong(1, itemInPossessionId);
+			obtainAmountOfItemsFor.setString(1, itemInPossessionId);
 			ResultSet obtainAmountOfItems = obtainAmountOfItemsFor.executeQuery();
 			if (!obtainAmountOfItems.next()) {
 				System.out.println("Empty");
@@ -362,10 +347,10 @@ public class axon_trader {
 			if (!itemReserved.next()) {
 				System.out.println("Empty");
 			}
-			long itemReservedId = itemReserved.getLong("itemId");
+			String itemReservedId = itemReserved.getString("itemIdentifier");
 
 			obtainAmountOfItemsFor = connect.prepareStatement(obtainAmountOfItemsForSQL);
-			obtainAmountOfItemsFor.setLong(1, itemReservedId);
+			obtainAmountOfItemsFor.setString(1, itemReservedId);
 			obtainAmountOfItems = obtainAmountOfItemsFor.executeQuery();
 			if (!obtainAmountOfItems.next()) {
 				System.out.println("Empty");
@@ -382,10 +367,10 @@ public class axon_trader {
 				if (!itemInPossession.next()) {
 					System.out.println("Empty");
 				}
-				itemInPossessionId = itemInPossession.getLong("itemId");
+				itemInPossessionId = itemInPossession.getString("itemIdentifier");
 
 				obtainAmountOfItemsFor = connect.prepareStatement(obtainAmountOfItemsForSQL);
-				obtainAmountOfItemsFor.setLong(1, itemInPossessionId);
+				obtainAmountOfItemsFor.setString(1, itemInPossessionId);
 				obtainAmountOfItems = obtainAmountOfItemsFor.executeQuery();
 				if (!obtainAmountOfItems.next()) {
 					System.out.println("Empty");
@@ -399,10 +384,10 @@ public class axon_trader {
 				if (!itemReserved.next()) {
 					System.out.println("Empty");
 				}
-				itemReservedId = itemReserved.getLong("itemId");
+				itemReservedId = itemReserved.getString("itemIdentifier");
 
 				obtainAmountOfItemsFor = connect.prepareStatement(obtainAmountOfItemsForSQL);
-				obtainAmountOfItemsFor.setLong(1, itemReservedId);
+				obtainAmountOfItemsFor.setString(1, itemReservedId);
 				obtainAmountOfItems = obtainAmountOfItemsFor.executeQuery();
 				if (!obtainAmountOfItems.next()) {
 					System.out.println("Empty");
@@ -411,10 +396,8 @@ public class axon_trader {
 				return;
 			}
 
-			// bookEntry.getString("identifier");
-			// portfolioView.getString("identifier");
-
-			return;
+			bookEntry.getString("identifier");
+			portfolioView.getString("identifier");
 		}
 
 		PreparedStatement findByUsername = connect.prepareStatement(findByUsernameSQL);
@@ -448,10 +431,10 @@ public class axon_trader {
 		if (!itemInPossession.next()) {
 			System.out.println("Empty");
 		}
-		long itemInPossessionId = itemInPossession.getLong("itemId");
+		String itemInPossessionId = itemInPossession.getString("itemIdentifier");
 
 		PreparedStatement obtainAmountOfItemsFor = connect.prepareStatement(obtainAmountOfItemsForSQL);
-		obtainAmountOfItemsFor.setLong(1, itemInPossessionId);
+		obtainAmountOfItemsFor.setString(1, itemInPossessionId);
 		ResultSet obtainAmountOfItems = obtainAmountOfItemsFor.executeQuery();
 		if (!obtainAmountOfItems.next()) {
 			System.out.println("Empty");
@@ -465,17 +448,15 @@ public class axon_trader {
 		if (!itemReserved.next()) {
 			System.out.println("Empty");
 		}
-		long itemReservedId = itemReserved.getLong("itemId");
+		String itemReservedId = itemReserved.getString("itemIdentifier");
 
 		obtainAmountOfItemsFor = connect.prepareStatement(obtainAmountOfItemsForSQL);
-		obtainAmountOfItemsFor.setLong(1, itemReservedId);
+		obtainAmountOfItemsFor.setString(1, itemReservedId);
 		obtainAmountOfItems = obtainAmountOfItemsFor.executeQuery();
 		if (!obtainAmountOfItems.next()) {
 			System.out.println("Empty");
 		}
 		long itemReservedAmount = obtainAmountOfItems.getLong("amount");
-
-		return;
 	}
 
 	@ChoppedTransaction(microservice="m1")
@@ -494,15 +475,15 @@ public class axon_trader {
 
 		String findItemInPossessionSQL = 
 				"SELECT * FROM " + "PORTFOLIO_ITEM_POSSESSION"+
-				" WHERE portfolioId = ? AND orderBookId = ?";
+				" WHERE portfolioId = ? AND itemIdentifier = ?";
 
 		String findItemReservedSQL = 
 				"SELECT * FROM " + "PORTFOLIO_ITEM_RESERVED"+
-				" WHERE portfolioId = ? AND orderBookId = ?";
+				" WHERE portfolioId = ? AND itemIdentifier = ?";
 
 		String obtainAmountOfItemsForSQL = 
 				"SELECT * FROM " + "ITEM_ENTRY"+
-				" WHERE generatedId = ?";
+				" WHERE identifier = ?";
 
 		String companyFindOneSQL = 
 				"SELECT * FROM " + "COMPANY_VIEW"+
@@ -540,10 +521,10 @@ public class axon_trader {
 		if (!itemInPossession.next()) {
 			System.out.println("Empty");
 		}
-		long itemInPossessionId = itemInPossession.getLong("itemId");
+		String itemInPossessionId = itemInPossession.getString("itemIdentifier");
 
 		PreparedStatement obtainAmountOfItemsFor = connect.prepareStatement(obtainAmountOfItemsForSQL);
-		obtainAmountOfItemsFor.setLong(1, itemInPossessionId);
+		obtainAmountOfItemsFor.setString(1, itemInPossessionId);
 		ResultSet obtainAmountOfItems = obtainAmountOfItemsFor.executeQuery();
 		if (!obtainAmountOfItems.next()) {
 			System.out.println("Empty");
@@ -557,10 +538,10 @@ public class axon_trader {
 		if (!itemReserved.next()) {
 			System.out.println("Empty");
 		}
-		long itemReservedId = itemReserved.getLong("itemId");
+		String itemReservedId = itemReserved.getString("itemIdentifier");
 
 		obtainAmountOfItemsFor = connect.prepareStatement(obtainAmountOfItemsForSQL);
-		obtainAmountOfItemsFor.setLong(1, itemReservedId);
+		obtainAmountOfItemsFor.setString(1, itemReservedId);
 		obtainAmountOfItems = obtainAmountOfItemsFor.executeQuery();
 		if (!obtainAmountOfItems.next()) {
 			System.out.println("Empty");
@@ -574,27 +555,26 @@ public class axon_trader {
 		if (!companyView.next()) {
 			System.out.println("Empty");
 		}
-		String companyName = companyView.getString("name");
+		String companyName = companyView.getString("cname");
+	}
 
-		return;
+	@ChoppedTransaction(microservice="m1")
+	public void createCompany(String companyIdentifier, String cname, long cvalue, long amountOfShares) throws SQLException {
+		String createCompanySQL = 
+				"INSERT INTO " + "COMPANY_VIEW" +
+				" (identifier, cname, cvalue, amountOfShares, tradeStarted) " +
+				" VALUES ( ?, ?, ?, ?, ? )";
+
+		PreparedStatement createCompany = connect.prepareStatement(createCompanySQL);
+		createCompany.setString(1, companyIdentifier);
+		createCompany.setString(2, cname);
+		createCompany.setLong(3, cvalue);
+		createCompany.setLong(4, amountOfShares);
+		createCompany.setLong(5, 1);
+		createCompany.executeUpdate();
 	}
 
 	// OrderBook Controller
-	@ChoppedTransaction(microservice="m1")
-	public void orderBookGet() throws SQLException {
-		// findall
-		String orderBookGetSQL = 
-				"SELECT * FROM " + "ORDER_BOOK_VIEW"+
-				" WHERE identifier != 'blabla'";
-
-		PreparedStatement orderBookGet = connect.prepareStatement(orderBookGetSQL);
-		ResultSet rs = orderBookGet.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
-
-		return;
-	}
 
 	@ChoppedTransaction(microservice="m1")
 	public void orderBookGetOrders(String identifier) throws SQLException {
@@ -609,26 +589,212 @@ public class axon_trader {
 		if (!rs.next()) {
 			System.out.println("Empty");
 		}
-
-		return;
 	}
 
-	// Admin Controller
 	@ChoppedTransaction(microservice="m1")
-	public void adminShow() throws SQLException {
-		// findall
-		String adminShowSQL = 
-				"SELECT * FROM " + "PORTFOLIO_VIEW"+
-				" WHERE identifier != 'blabla'";
+	public void orderBookAddedToCompany(String companyIdentifier, String orderBookId) throws SQLException {
+		String companyFindOneSQL = 
+				"SELECT * FROM " + "COMPANY_VIEW"+
+				" WHERE identifier = ?";
+		
+		String createOrderBookSQL = 
+				"INSERT INTO " + "ORDER_BOOK_VIEW" +
+				" (identifier, companyIdentifier, companyName) " +
+				" VALUES ( ?, ?, ? )";
 
-		PreparedStatement adminShow = connect.prepareStatement(adminShowSQL);
-		ResultSet rs = adminShow.executeQuery();
+		PreparedStatement companyFindOne = connect.prepareStatement(companyFindOneSQL);
+		companyFindOne.setString(1, companyIdentifier);
+		ResultSet companyView = companyFindOne.executeQuery();
+		if (!companyView.next()) {
+			System.out.println("Empty");
+		}
+		String companyName = companyView.getString("cname");
+
+		PreparedStatement createOrderBook = connect.prepareStatement(createOrderBookSQL);
+		createOrderBook.setString(1, orderBookId);
+		createOrderBook.setString(2, companyIdentifier);
+		createOrderBook.setString(3, companyName);
+		createOrderBook.executeUpdate();
+	}
+
+	@ChoppedTransaction(microservice="m1")
+	public void orderPlaced(String orderBookId, long jpaId, String identifier, long tradeCount, 
+			long itemPrice, String userId, long itemsRemaining, String type) throws SQLException {
+		String orderBookGetOrdersSQL = 
+				"SELECT * FROM " + "ORDER_BOOK_VIEW"+
+				" WHERE identifier = ?";
+
+		String createOrderSQL = 
+				"INSERT INTO " + "ORDER_VIEW" +
+				" (jpaId, identifier, tradeCount, itemPrice, userId, itemsRemaining, otype) " +
+				" VALUES ( ?, ?, ?, ?, ?, ?, ? )";
+
+		String placeBuyOrderSQL = 
+				"INSERT INTO " + "ORDERENTRY_BUY" +
+				" (orderBookId, orderId) " +
+				" VALUES ( ?, ? )";
+		
+		String placeSellOrderSQL = 
+				"INSERT INTO " + "ORDERENTRY_SELL" +
+				" (orderBookId, orderId) " +
+				" VALUES ( ?, ? )";
+
+		PreparedStatement orderBookGetOrders = connect.prepareStatement(orderBookGetOrdersSQL);
+		orderBookGetOrders.setString(1, orderBookId);
+		ResultSet rs = orderBookGetOrders.executeQuery();
 		if (!rs.next()) {
 			System.out.println("Empty");
 		}
 
-		return;
+		PreparedStatement createOrder = connect.prepareStatement(createOrderSQL);
+		createOrder.setLong(1, jpaId);
+		createOrder.setString(2, identifier);
+		createOrder.setLong(3, tradeCount);
+		createOrder.setLong(4, itemPrice);
+		createOrder.setString(5, userId);
+		createOrder.setLong(6, itemsRemaining);
+		createOrder.setString(7, type);
+		createOrder.executeUpdate();
+
+		if (type.equals("Buy")) {
+			PreparedStatement placeBuyOrder = connect.prepareStatement(placeBuyOrderSQL);
+			placeBuyOrder.setString(1, orderBookId);
+			placeBuyOrder.setLong(2, jpaId);
+			placeBuyOrder.executeUpdate();
+		} else if (type.equals("Sell")) {
+			PreparedStatement placeSellOrder = connect.prepareStatement(placeSellOrderSQL);
+			placeSellOrder.setString(1, orderBookId);
+			placeSellOrder.setLong(2, jpaId);
+			placeSellOrder.executeUpdate();
+		}
 	}
+
+	@ChoppedTransaction(microservice="m1")
+	public void tradeExecuted(long buyOrderId, long sellOrderId, String orderBookId,
+		long generatedId, long tradeCount, long itemPrice) throws SQLException {
+		String orderBookGetOrdersSQL = 
+				"SELECT * FROM " + "ORDER_BOOK_VIEW"+
+				" WHERE identifier = ?";
+
+		String tradeExecutedSQL = 
+				"INSERT INTO " + "TRADE_EXECUTED_VIEW" +
+				" (generatedId, tradeCount, tradePrice, companyName, orderBookId) " +
+				" VALUES ( ?, ?, ?, ?, ? )";
+
+		String buyOrdersSQL = 
+				"SELECT * FROM " + "ORDERENTRY_BUY"+
+				" WHERE orderBookId = ?";
+
+		String sellOrdersSQL = 
+				"SELECT * FROM " + "ORDERENTRY_SELL"+
+				" WHERE orderBookId = ?";
+
+		String orderViewsSQL = 
+				"SELECT * FROM " + "ORDER_VIEW"+
+				" WHERE jpaId = ?";
+		
+		String orderViewsUpdateRemItemsSQL =
+				"UPDATE " + "ORDER_VIEW" + 
+				"   SET itemsRemaining = ?" +
+				" WHERE jpaId = ? ";
+
+		String deleteBuyOrderSQL = 
+				"DELETE FROM " + "ORDERENTRY_BUY" +
+				" WHERE orderBookId = ? " +
+				"   AND orderId = ?";
+
+		String deleteSellOrderSQL = 
+				"DELETE FROM " + "ORDERENTRY_SELL" +
+				" WHERE orderBookId = ? " +
+				"   AND orderId = ?";
+
+		PreparedStatement orderBookGetOrders = connect.prepareStatement(orderBookGetOrdersSQL);
+		orderBookGetOrders.setString(1, orderBookId);
+		ResultSet orderBookView = orderBookGetOrders.executeQuery();
+		if (!orderBookView.next()) {
+			System.out.println("Empty");
+		}
+		String companyName = orderBookView.getString("companyName");
+		String orderBookIdentifier = orderBookView.getString("identifier");
+
+		PreparedStatement tradeExecuted = connect.prepareStatement(tradeExecutedSQL);
+		tradeExecuted.setLong(1, generatedId);
+		tradeExecuted.setLong(2, tradeCount);
+		tradeExecuted.setLong(3, itemPrice);
+		tradeExecuted.setString(4, companyName);
+		tradeExecuted.setString(5, orderBookIdentifier);
+		tradeExecuted.executeUpdate();
+
+		PreparedStatement buyOrders = connect.prepareStatement(buyOrdersSQL);
+		buyOrders.setString(1, orderBookIdentifier);
+		ResultSet buyOrdersRS = buyOrders.executeQuery();
+
+		boolean foundBuyOrder = false;
+		long buyOrderRemainingItems = 0;
+		while (buyOrdersRS.next()) {
+			long orderId = buyOrdersRS.getLong("orderId");
+			if (orderId == buyOrderId) {
+				PreparedStatement orderViews = connect.prepareStatement(orderViewsSQL);
+				orderViews.setLong(1, orderId);
+				ResultSet orderView = orderViews.executeQuery();
+				if (!orderView.next()) {
+					System.out.println("Empty");
+				}
+				long itemsRemaining = orderView.getLong("itemsRemaining");
+				buyOrderRemainingItems = itemsRemaining - tradeCount;
+
+				PreparedStatement orderViewsUpdateRemItems = connect.prepareStatement(orderViewsUpdateRemItemsSQL);
+				orderViewsUpdateRemItems.setLong(1, buyOrderRemainingItems);
+				orderViewsUpdateRemItems.setLong(2, orderId);
+				orderViewsUpdateRemItems.executeUpdate();
+                foundBuyOrder = true;
+                break;
+			}
+		}
+
+		if (foundBuyOrder && buyOrderRemainingItems == 0) {
+			PreparedStatement deleteBuyOrder = connect.prepareStatement(deleteBuyOrderSQL);
+			deleteBuyOrder.setString(1, orderBookIdentifier);
+			deleteBuyOrder.setLong(2, buyOrderId);
+			deleteBuyOrder.executeUpdate();
+		}
+
+		PreparedStatement sellOrders = connect.prepareStatement(sellOrdersSQL);
+		sellOrders.setString(1, orderBookIdentifier);
+		ResultSet sellOrdersRS = sellOrders.executeQuery();
+
+		boolean foundSellOrder = false;
+		long sellOrderRemainingItems = 0;
+		while (sellOrdersRS.next()) {
+			long orderId = sellOrdersRS.getLong("orderId");
+			if (orderId == sellOrderId) {
+				PreparedStatement orderViews = connect.prepareStatement(orderViewsSQL);
+				orderViews.setLong(1, orderId);
+				ResultSet orderView = orderViews.executeQuery();
+				if (!orderView.next()) {
+					System.out.println("Empty");
+				}
+				long itemsRemaining = orderView.getLong("itemsRemaining");
+				sellOrderRemainingItems = itemsRemaining - tradeCount;
+
+				PreparedStatement orderViewsUpdateRemItems = connect.prepareStatement(orderViewsUpdateRemItemsSQL);
+				orderViewsUpdateRemItems.setLong(1, sellOrderRemainingItems);
+				orderViewsUpdateRemItems.setLong(2, orderId);
+				orderViewsUpdateRemItems.executeUpdate();
+                foundSellOrder = true;
+                break;
+			}
+		}
+
+		if (foundSellOrder && sellOrderRemainingItems == 0) {
+			PreparedStatement deleteSellOrder = connect.prepareStatement(deleteSellOrderSQL);
+			deleteSellOrder.setString(1, orderBookIdentifier);
+			deleteSellOrder.setLong(2, buyOrderId);
+			deleteSellOrder.executeUpdate();
+		}
+	}
+
+	// Admin Controller
 
 	@ChoppedTransaction(microservice="m1")
 	public void adminShowPortfolio(String identifier) throws SQLException {
@@ -654,8 +820,549 @@ public class axon_trader {
 		if (!rs.next()) {
 			System.out.println("Empty");
 		}
+	}
 
-		return;
+	@ChoppedTransaction(microservice="m1")
+	public void createPortfolio(String identifier, String userIdentifier) throws SQLException {
+		String getUNameSQL = 
+				"SELECT uname FROM " + "USER_VIEW"+
+				" WHERE identifier = ?";
+
+		String createPortfolioSQL = 
+				"INSERT INTO " + "PORTFOLIO_VIEW" +
+				" (identifier, userIdentifier, userName, amountOfMoney, reservedAmountOfMoney) " +
+				" VALUES ( ?, ?, ?, ?, ? )";
+
+		PreparedStatement getUName = connect.prepareStatement(getUNameSQL);
+		getUName.setString(1, userIdentifier);
+		ResultSet rs = getUName.executeQuery();
+		if (!rs.next()) {
+			System.out.println("Empty");
+		}
+		String userName = rs.getString("uname");
+
+		PreparedStatement createPortfolio = connect.prepareStatement(createPortfolioSQL);
+		createPortfolio.setString(1, identifier);
+		createPortfolio.setString(2, userIdentifier);
+		createPortfolio.setString(3, userName);
+		createPortfolio.setLong(4, 0);
+		createPortfolio.setLong(5, 0);
+		createPortfolio.executeUpdate();
+	}
+
+	@ChoppedTransaction(microservice="m1")
+	public void cashManaged(String portfolioId, long amount, String type) throws SQLException {
+		String portfolioFindOneSQL = 
+				"SELECT * FROM " + "PORTFOLIO_VIEW"+
+				" WHERE identifier = ?";
+		
+		String portfolioUpdateAmountOfMoneySQL = 
+				"UPDATE " + "PORTFOLIO_VIEW" + 
+				"   SET amountOfMoney = ? " +
+				" WHERE identifier = ?";
+
+		PreparedStatement portfolioFindOne = connect.prepareStatement(portfolioFindOneSQL);
+		portfolioFindOne.setString(1, portfolioId);
+		ResultSet portfolioView = portfolioFindOne.executeQuery();
+		if (!portfolioView.next()) {
+			System.out.println("Empty");
+		}
+		long amountOfMoney = portfolioView.getLong("amountOfMoney");
+
+		long newAmount;
+		if (type.equals("deposit")) {
+			newAmount = amountOfMoney + amount;
+		} else {
+			newAmount = amountOfMoney - amount;
+		}
+
+		PreparedStatement portfolioUpdateAmountOfMoney = connect.prepareStatement(portfolioUpdateAmountOfMoneySQL);
+		portfolioUpdateAmountOfMoney.setLong(1, newAmount);
+		portfolioUpdateAmountOfMoney.setString(2, portfolioId);
+		portfolioUpdateAmountOfMoney.executeUpdate();
+	}
+
+	@ChoppedTransaction(microservice="m1")
+	public void cashReservedManage(String portfolioId, long amount, String type) throws SQLException {
+		String portfolioFindOneSQL = 
+				"SELECT * FROM " + "PORTFOLIO_VIEW"+
+				" WHERE identifier = ?";
+		
+		String portfolioUpdateReservedAmountOfMoneySQL = 
+				"UPDATE " + "PORTFOLIO_VIEW" + 
+				"   SET reservedAmountOfMoney = ? " +
+				" WHERE identifier = ?";
+
+		PreparedStatement portfolioFindOne = connect.prepareStatement(portfolioFindOneSQL);
+		portfolioFindOne.setString(1, portfolioId);
+		ResultSet portfolioView = portfolioFindOne.executeQuery();
+		if (!portfolioView.next()) {
+			System.out.println("Empty");
+		}
+		long reservedAmountOfMoney = portfolioView.getLong("reservedAmountOfMoney");
+		
+		long newReservedAmountOfMoney;
+		if (type.equals("reserve")) {
+			newReservedAmountOfMoney = reservedAmountOfMoney + amount;
+		} else {
+			newReservedAmountOfMoney = reservedAmountOfMoney - amount;
+		}
+		
+		PreparedStatement portfolioUpdateReservedAmountOfMoney = connect.prepareStatement(portfolioUpdateReservedAmountOfMoneySQL);
+		portfolioUpdateReservedAmountOfMoney.setLong(1, newReservedAmountOfMoney);
+		portfolioUpdateReservedAmountOfMoney.setString(2, portfolioId);
+		portfolioUpdateReservedAmountOfMoney.executeUpdate();
+	}
+
+	@ChoppedTransaction(microservice="m1")
+	public void cashReservationConfirmed(String portfolioId, long amountOfMoneyConfirmed) throws SQLException {
+		String portfolioFindOneSQL = 
+				"SELECT * FROM " + "PORTFOLIO_VIEW"+
+				" WHERE identifier = ?";
+		
+		String portfolioUpdateReservedAmountOfMoneySQL = 
+				"UPDATE " + "PORTFOLIO_VIEW" + 
+				"   SET reservedAmountOfMoney = ? " +
+				" WHERE identifier = ?";
+
+		String portfolioUpdateAmountOfMoneySQL = 
+				"UPDATE " + "PORTFOLIO_VIEW" + 
+				"   SET amountOfMoney = ? " +
+				" WHERE identifier = ?";
+
+		PreparedStatement portfolioFindOne = connect.prepareStatement(portfolioFindOneSQL);
+		portfolioFindOne.setString(1, portfolioId);
+		ResultSet portfolioView = portfolioFindOne.executeQuery();
+		if (!portfolioView.next()) {
+			System.out.println("Empty");
+		}
+		long reservedAmountOfMoney = portfolioView.getLong("reservedAmountOfMoney");
+		long amountOfMoney = portfolioView.getLong("amountOfMoney");
+
+		if (amountOfMoneyConfirmed < reservedAmountOfMoney) {
+			PreparedStatement portfolioUpdateReservedAmountOfMoney = connect.prepareStatement(portfolioUpdateReservedAmountOfMoneySQL);
+			portfolioUpdateReservedAmountOfMoney.setLong(1, reservedAmountOfMoney - amountOfMoneyConfirmed);
+			portfolioUpdateReservedAmountOfMoney.setString(2, portfolioId);
+			portfolioUpdateReservedAmountOfMoney.executeUpdate();
+		} else {
+			PreparedStatement portfolioUpdateReservedAmountOfMoney = connect.prepareStatement(portfolioUpdateReservedAmountOfMoneySQL);
+			portfolioUpdateReservedAmountOfMoney.setLong(1, 0);
+			portfolioUpdateReservedAmountOfMoney.setString(2, portfolioId);
+			portfolioUpdateReservedAmountOfMoney.executeUpdate();
+		}
+
+		PreparedStatement portfolioUpdateAmountOfMoney = connect.prepareStatement(portfolioUpdateAmountOfMoneySQL);
+		portfolioUpdateAmountOfMoney.setLong(1, amountOfMoney - amountOfMoneyConfirmed);
+		portfolioUpdateAmountOfMoney.setString(2, portfolioId);
+		portfolioUpdateAmountOfMoney.executeUpdate();
+	}
+
+	@ChoppedTransaction(microservice="m1")
+	public void itemsAddedToPortfolio(String orderBookId, long itemId, String itemIdentifier, 
+			long amountOfItemsAdded, String portfolioId) throws SQLException {
+		String getOrderBookSQL = 
+				"SELECT * FROM " + "ORDER_BOOK_VIEW"+
+				" WHERE identifier = ?";
+
+		String createItemEntrySQL = 
+				"INSERT INTO " + "ITEM_ENTRY" +
+				" (generatedId, identifier, companyIdentifier, companyName, amount) " +
+				" VALUES ( ?, ?, ?, ?, ? )";
+
+		String portfolioFindOneSQL = 
+				"SELECT * FROM " + "PORTFOLIO_VIEW"+
+				" WHERE identifier = ?";
+
+		String findItemInPossessionSQL = 
+				"SELECT * FROM " + "PORTFOLIO_ITEM_POSSESSION"+
+				" WHERE portfolioId = ? AND itemIdentifier = ?";
+
+		String insertItemInPossessionSQL = 
+				"INSERT INTO " + "PORTFOLIO_ITEM_POSSESSION" +
+				" (portfolioId, itemIdentifier) " +
+				" VALUES ( ?, ? )";
+		
+		String selectItemAmountSQL = 
+				"SELECT amount FROM " + "ITEM_ENTRY"+
+				" WHERE generatedId = ?";
+
+		String updateItemAmountSQL = 
+				"UPDATE " + "ITEM_ENTRY" + 
+				"   SET amount = ? " +
+				" WHERE generatedId = ?";
+
+		PreparedStatement getOrderBook = connect.prepareStatement(getOrderBookSQL);
+		getOrderBook.setString(1, orderBookId);
+		ResultSet orderBookView = getOrderBook.executeQuery();
+		if (!orderBookView.next()) {
+			System.out.println("Empty");
+		}
+		String companyIdentifier = orderBookView.getString("companyIdentifier");
+		String companyName = orderBookView.getString("companyName");
+
+		PreparedStatement portfolioFindOne = connect.prepareStatement(portfolioFindOneSQL);
+		portfolioFindOne.setString(1, portfolioId);
+		ResultSet portfolioView = portfolioFindOne.executeQuery();
+		if (!portfolioView.next()) {
+			System.out.println("Empty");
+		}
+
+		PreparedStatement findItemInPossession = connect.prepareStatement(findItemInPossessionSQL);
+		findItemInPossession.setString(1, portfolioId);
+		findItemInPossession.setString(2, itemIdentifier);
+		ResultSet itemInPossession = findItemInPossession.executeQuery();
+		if (!itemInPossession.next()) {
+			PreparedStatement createItemEntry = connect.prepareStatement(createItemEntrySQL);
+			createItemEntry.setLong(1, itemId);
+			createItemEntry.setString(2, itemIdentifier);
+			createItemEntry.setString(3, companyIdentifier);
+			createItemEntry.setString(4, companyName);
+			createItemEntry.setLong(5, amountOfItemsAdded);
+			createItemEntry.executeUpdate();
+			
+			PreparedStatement insertItemInPossession = connect.prepareStatement(insertItemInPossessionSQL);
+			insertItemInPossession.setString(1, portfolioId);
+			insertItemInPossession.setString(2, itemIdentifier);
+			insertItemInPossession.executeUpdate();
+		} else {
+			PreparedStatement selectItemAmount = connect.prepareStatement(selectItemAmountSQL);
+			selectItemAmount.setLong(1, itemId);
+			ResultSet itemEntry = selectItemAmount.executeQuery();
+			if (!itemEntry.next()) {
+				System.out.println("Empty");
+			}
+			long currentAmount = itemEntry.getLong("amount");
+			long newAmount = currentAmount + amountOfItemsAdded;
+			
+			PreparedStatement updateItemAmount = connect.prepareStatement(updateItemAmountSQL);
+			updateItemAmount.setLong(1, newAmount);
+			updateItemAmount.setLong(2, itemId);
+			updateItemAmount.executeUpdate();
+		}
+	}
+
+	@ChoppedTransaction(microservice="m1")
+	public void itemReservationCancelledForPortfolio(String orderBookId, long itemId, String itemIdentifier, 
+			long amountOfItemsCancelled, String portfolioId) throws SQLException {
+		String getOrderBookSQL = 
+				"SELECT * FROM " + "ORDER_BOOK_VIEW"+
+				" WHERE identifier = ?";
+
+		String createItemEntrySQL = 
+				"INSERT INTO " + "ITEM_ENTRY" +
+				" (generatedId, identifier, companyIdentifier, companyName, amount) " +
+				" VALUES ( ?, ?, ?, ?, ? )";
+
+		String portfolioFindOneSQL = 
+				"SELECT * FROM " + "PORTFOLIO_VIEW"+
+				" WHERE identifier = ?";
+
+		String findItemReservedSQL = 
+				"SELECT * FROM " + "PORTFOLIO_ITEM_RESERVED"+
+				" WHERE portfolioId = ? AND itemIdentifier = ?";
+
+		String removeItemReservedSQL = 
+				"DELETE FROM " + "PORTFOLIO_ITEM_RESERVED" +
+				" WHERE portfolioId = ? " +
+				"   AND itemIdentifier = ?";
+
+		String findItemInPossessionSQL = 
+				"SELECT * FROM " + "PORTFOLIO_ITEM_POSSESSION"+
+				" WHERE portfolioId = ? AND itemIdentifier = ?";
+
+		String insertItemInPossessionSQL = 
+				"INSERT INTO " + "PORTFOLIO_ITEM_POSSESSION" +
+				" (portfolioId, itemIdentifier) " +
+				" VALUES ( ?, ? )";
+		
+		String selectItemAmountSQL = 
+				"SELECT amount FROM " + "ITEM_ENTRY"+
+				" WHERE generatedId = ?";
+
+		String updateItemAmountSQL = 
+				"UPDATE " + "ITEM_ENTRY" + 
+				"   SET amount = ? " +
+				" WHERE generatedId = ?";
+
+		PreparedStatement getOrderBook = connect.prepareStatement(getOrderBookSQL);
+		getOrderBook.setString(1, orderBookId);
+		ResultSet orderBookView = getOrderBook.executeQuery();
+		if (!orderBookView.next()) {
+			System.out.println("Empty");
+		}
+		String companyIdentifier = orderBookView.getString("companyIdentifier");
+		String companyName = orderBookView.getString("companyName");
+
+		PreparedStatement portfolioFindOne = connect.prepareStatement(portfolioFindOneSQL);
+		portfolioFindOne.setString(1, portfolioId);
+		ResultSet portfolioView = portfolioFindOne.executeQuery();
+		if (!portfolioView.next()) {
+			System.out.println("Empty");
+		}
+
+		PreparedStatement findItemReserved = connect.prepareStatement(findItemReservedSQL);
+		findItemReserved.setString(1, portfolioId);
+		findItemReserved.setString(2, itemIdentifier);
+		ResultSet itemReserved = findItemReserved.executeQuery();
+		if (itemReserved.next()) {
+			PreparedStatement selectItemAmount = connect.prepareStatement(selectItemAmountSQL);
+			selectItemAmount.setLong(1, itemId);
+			ResultSet itemEntry = selectItemAmount.executeQuery();
+			if (!itemEntry.next()) {
+				System.out.println("Empty");
+			}
+			long currentAmount = itemEntry.getLong("amount");
+			long newAmount = currentAmount - amountOfItemsCancelled;
+
+			PreparedStatement updateItemAmount = connect.prepareStatement(updateItemAmountSQL);
+			updateItemAmount.setLong(1, newAmount);
+			updateItemAmount.setLong(2, itemId);
+			updateItemAmount.executeUpdate();
+
+			if (newAmount <= 0) {
+				PreparedStatement removeItemReserved = connect.prepareStatement(removeItemReservedSQL);
+				removeItemReserved.setString(1, portfolioId);
+				removeItemReserved.setString(2, itemIdentifier);
+				removeItemReserved.executeUpdate();
+			}
+		}
+
+		PreparedStatement findItemInPossession = connect.prepareStatement(findItemInPossessionSQL);
+		findItemInPossession.setString(1, portfolioId);
+		findItemInPossession.setString(2, itemIdentifier);
+		ResultSet itemInPossession = findItemInPossession.executeQuery();
+		if (!itemInPossession.next()) {
+			PreparedStatement createItemEntry = connect.prepareStatement(createItemEntrySQL);
+			createItemEntry.setLong(1, itemId);
+			createItemEntry.setString(2, itemIdentifier);
+			createItemEntry.setString(3, companyIdentifier);
+			createItemEntry.setString(4, companyName);
+			createItemEntry.setLong(5, amountOfItemsCancelled);
+			createItemEntry.executeUpdate();
+			
+			PreparedStatement insertItemInPossession = connect.prepareStatement(insertItemInPossessionSQL);
+			insertItemInPossession.setString(1, portfolioId);
+			insertItemInPossession.setString(2, itemIdentifier);
+			insertItemInPossession.executeUpdate();
+		} else {
+			PreparedStatement selectItemAmount = connect.prepareStatement(selectItemAmountSQL);
+			selectItemAmount.setLong(1, itemId);
+			ResultSet itemEntry = selectItemAmount.executeQuery();
+			if (!itemEntry.next()) {
+				System.out.println("Empty");
+			}
+			long currentAmount = itemEntry.getLong("amount");
+			long newAmount = currentAmount + amountOfItemsCancelled;
+			
+			PreparedStatement updateItemAmount = connect.prepareStatement(updateItemAmountSQL);
+			updateItemAmount.setLong(1, newAmount);
+			updateItemAmount.setLong(2, itemId);
+			updateItemAmount.executeUpdate();
+		}
+	}
+
+
+	@ChoppedTransaction(microservice="m1")
+	public void itemReservationConfirmedForPortfolio(String orderBookId, long itemId, String itemIdentifier, 
+			long amountOfConfirmedItems, String portfolioId) throws SQLException {
+		String getOrderBookSQL = 
+				"SELECT * FROM " + "ORDER_BOOK_VIEW"+
+				" WHERE identifier = ?";
+
+		String createItemEntrySQL = 
+				"INSERT INTO " + "ITEM_ENTRY" +
+				" (generatedId, identifier, companyIdentifier, companyName, amount) " +
+				" VALUES ( ?, ?, ?, ?, ? )";
+
+		String portfolioFindOneSQL = 
+				"SELECT * FROM " + "PORTFOLIO_VIEW"+
+				" WHERE identifier = ?";
+
+		String findItemReservedSQL = 
+				"SELECT * FROM " + "PORTFOLIO_ITEM_RESERVED"+
+				" WHERE portfolioId = ? AND itemIdentifier = ?";
+
+		String removeItemReservedSQL = 
+				"DELETE FROM " + "PORTFOLIO_ITEM_RESERVED" +
+				" WHERE portfolioId = ? " +
+				"   AND itemIdentifier = ?";
+
+		String findItemInPossessionSQL = 
+				"SELECT * FROM " + "PORTFOLIO_ITEM_POSSESSION"+
+				" WHERE portfolioId = ? AND itemIdentifier = ?";
+
+		String insertItemInPossessionSQL = 
+				"INSERT INTO " + "PORTFOLIO_ITEM_POSSESSION" +
+				" (portfolioId, itemIdentifier) " +
+				" VALUES ( ?, ? )";
+
+		String removeItemInPossesionSQL = 
+				"DELETE FROM " + "PORTFOLIO_ITEM_POSSESSION" +
+				" WHERE portfolioId = ? " +
+				"   AND itemIdentifier = ?";
+		
+		String selectItemAmountSQL = 
+				"SELECT amount FROM " + "ITEM_ENTRY"+
+				" WHERE generatedId = ?";
+
+		String updateItemAmountSQL = 
+				"UPDATE " + "ITEM_ENTRY" + 
+				"   SET amount = ? " +
+				" WHERE generatedId = ?";
+
+		PreparedStatement getOrderBook = connect.prepareStatement(getOrderBookSQL);
+		getOrderBook.setString(1, orderBookId);
+		ResultSet orderBookView = getOrderBook.executeQuery();
+		if (!orderBookView.next()) {
+			System.out.println("Empty");
+		}
+		String companyIdentifier = orderBookView.getString("companyIdentifier");
+		String companyName = orderBookView.getString("companyName");
+
+		PreparedStatement portfolioFindOne = connect.prepareStatement(portfolioFindOneSQL);
+		portfolioFindOne.setString(1, portfolioId);
+		ResultSet portfolioView = portfolioFindOne.executeQuery();
+		if (!portfolioView.next()) {
+			System.out.println("Empty");
+		}
+
+		PreparedStatement findItemReserved = connect.prepareStatement(findItemReservedSQL);
+		findItemReserved.setString(1, portfolioId);
+		findItemReserved.setString(2, itemIdentifier);
+		ResultSet itemReserved = findItemReserved.executeQuery();
+		if (itemReserved.next()) {
+			PreparedStatement selectItemAmount = connect.prepareStatement(selectItemAmountSQL);
+			selectItemAmount.setLong(1, itemId);
+			ResultSet itemEntry = selectItemAmount.executeQuery();
+			if (!itemEntry.next()) {
+				System.out.println("Empty");
+			}
+			long currentAmount = itemEntry.getLong("amount");
+			long newAmount = currentAmount - amountOfConfirmedItems;
+
+			PreparedStatement updateItemAmount = connect.prepareStatement(updateItemAmountSQL);
+			updateItemAmount.setLong(1, newAmount);
+			updateItemAmount.setLong(2, itemId);
+			updateItemAmount.executeUpdate();
+
+			if (newAmount <= 0) {
+				PreparedStatement removeItemReserved = connect.prepareStatement(removeItemReservedSQL);
+				removeItemReserved.setString(1, portfolioId);
+				removeItemReserved.setString(2, itemIdentifier);
+				removeItemReserved.executeUpdate();
+			}
+		}
+
+		PreparedStatement findItemInPossession = connect.prepareStatement(findItemInPossessionSQL);
+		findItemInPossession.setString(1, portfolioId);
+		findItemInPossession.setString(2, itemIdentifier);
+		ResultSet itemInPossession = findItemInPossession.executeQuery();
+		if (itemInPossession.next()) {
+			PreparedStatement selectItemAmount = connect.prepareStatement(selectItemAmountSQL);
+			selectItemAmount.setLong(1, itemId);
+			ResultSet itemEntry = selectItemAmount.executeQuery();
+			if (!itemEntry.next()) {
+				System.out.println("Empty");
+			}
+			long currentAmount = itemEntry.getLong("amount");
+			long newAmount = currentAmount - amountOfConfirmedItems;
+
+			PreparedStatement updateItemAmount = connect.prepareStatement(updateItemAmountSQL);
+			updateItemAmount.setLong(1, newAmount);
+			updateItemAmount.setLong(2, itemId);
+			updateItemAmount.executeUpdate();
+
+			if (newAmount <= 0) {
+				PreparedStatement removeItemInPossesion = connect.prepareStatement(removeItemInPossesionSQL);
+				removeItemInPossesion.setString(1, portfolioId);
+				removeItemInPossesion.setString(2, itemIdentifier);
+				removeItemInPossesion.executeUpdate();
+			}
+		}
+	}
+
+	@ChoppedTransaction(microservice="m1")
+	public void itemsReserved(String orderBookId, long itemId, String itemIdentifier, 
+			long amountOfItemsReserved, String portfolioId) throws SQLException {
+		String getOrderBookSQL = 
+				"SELECT * FROM " + "ORDER_BOOK_VIEW"+
+				" WHERE identifier = ?";
+
+		String createItemEntrySQL = 
+				"INSERT INTO " + "ITEM_ENTRY" +
+				" (generatedId, identifier, companyIdentifier, companyName, amount) " +
+				" VALUES ( ?, ?, ?, ?, ? )";
+
+		String portfolioFindOneSQL = 
+				"SELECT * FROM " + "PORTFOLIO_VIEW"+
+				" WHERE identifier = ?";
+
+		String findItemInReservedSQL = 
+				"SELECT * FROM " + "PORTFOLIO_ITEM_RESERVED"+
+				" WHERE portfolioId = ? AND itemIdentifier = ?";
+
+		String insertItemInReservedSQL = 
+				"INSERT INTO " + "PORTFOLIO_ITEM_RESERVED" +
+				" (portfolioId, itemIdentifier) " +
+				" VALUES ( ?, ? )";
+		
+		String selectItemAmountSQL = 
+				"SELECT amount FROM " + "ITEM_ENTRY"+
+				" WHERE generatedId = ?";
+
+		String updateItemAmountSQL = 
+				"UPDATE " + "ITEM_ENTRY" + 
+				"   SET amount = ? " +
+				" WHERE generatedId = ?";
+
+		PreparedStatement getOrderBook = connect.prepareStatement(getOrderBookSQL);
+		getOrderBook.setString(1, orderBookId);
+		ResultSet orderBookView = getOrderBook.executeQuery();
+		if (!orderBookView.next()) {
+			System.out.println("Empty");
+		}
+		String companyIdentifier = orderBookView.getString("companyIdentifier");
+		String companyName = orderBookView.getString("companyName");
+
+		PreparedStatement portfolioFindOne = connect.prepareStatement(portfolioFindOneSQL);
+		portfolioFindOne.setString(1, portfolioId);
+		ResultSet portfolioView = portfolioFindOne.executeQuery();
+		if (!portfolioView.next()) {
+			System.out.println("Empty");
+		}
+
+		PreparedStatement findItemInReserved = connect.prepareStatement(findItemInReservedSQL);
+		findItemInReserved.setString(1, portfolioId);
+		findItemInReserved.setString(2, itemIdentifier);
+		ResultSet itemReserved = findItemInReserved.executeQuery();
+		if (!itemReserved.next()) {
+			PreparedStatement createItemEntry = connect.prepareStatement(createItemEntrySQL);
+			createItemEntry.setLong(1, itemId);
+			createItemEntry.setString(2, itemIdentifier);
+			createItemEntry.setString(3, companyIdentifier);
+			createItemEntry.setString(4, companyName);
+			createItemEntry.setLong(5, amountOfItemsReserved);
+			createItemEntry.executeUpdate();
+			
+			PreparedStatement insertItemInReserved = connect.prepareStatement(insertItemInReservedSQL);
+			insertItemInReserved.setString(1, portfolioId);
+			insertItemInReserved.setString(2, itemIdentifier);
+			insertItemInReserved.executeUpdate();
+		} else {
+			PreparedStatement selectItemAmount = connect.prepareStatement(selectItemAmountSQL);
+			selectItemAmount.setLong(1, itemId);
+			ResultSet itemEntry = selectItemAmount.executeQuery();
+			if (!itemEntry.next()) {
+				System.out.println("Empty");
+			}
+			long currentAmount = itemEntry.getLong("amount");
+			long newAmount = currentAmount + amountOfItemsReserved;
+			
+			PreparedStatement updateItemAmount = connect.prepareStatement(updateItemAmountSQL);
+			updateItemAmount.setLong(1, newAmount);
+			updateItemAmount.setLong(2, itemId);
+			updateItemAmount.executeUpdate();
+		}
 	}
 
 	// Dashboard Controller
@@ -685,26 +1392,110 @@ public class axon_trader {
 		if (!rs.next()) {
 			System.out.println("Empty");
 		}
-
-		return;
 	}
 
-	// Rest Controller
 	@ChoppedTransaction(microservice="m1")
-	public void restObtainOrderBooks() throws SQLException {
-		String restObtainOrderBooksSQL = 
+	public void transactionStarted(String orderBookId, String identifier, String portfolioId, 
+			long amountOfItems, long amountOfExecutedItems, long pricePerItem, String type) throws SQLException {
+		String getOrderBookSQL = 
 				"SELECT * FROM " + "ORDER_BOOK_VIEW"+
-				" WHERE identifier != 'blabla'";
+				" WHERE identifier = ?";
 
-		// restObtainOrderBooks
-		PreparedStatement restObtainOrderBooks = connect.prepareStatement(restObtainOrderBooksSQL);
-		ResultSet rs = restObtainOrderBooks.executeQuery();
-		if (!rs.next()) {
+		String insertTransactionEntrySQL = 
+				"INSERT INTO " + "TRANSACTION_VIEW" +
+				" (identifier, orderBookId, portfolioId, companyName, amountOfItems, amountOfExecutedItems, pricePerItem, transactionState, transactionType) " +
+				" VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+
+		PreparedStatement getOrderBook = connect.prepareStatement(getOrderBookSQL);
+		getOrderBook.setString(1, orderBookId);
+		ResultSet orderBookView = getOrderBook.executeQuery();
+		if (!orderBookView.next()) {
+			System.out.println("Empty");
+		}
+		String companyName = orderBookView.getString("companyName");
+
+		PreparedStatement insertTransactionEntry = connect.prepareStatement(insertTransactionEntrySQL);
+		insertTransactionEntry.setString(1, identifier);
+		insertTransactionEntry.setString(2, orderBookId);
+		insertTransactionEntry.setString(3, portfolioId);
+		insertTransactionEntry.setString(4, companyName);
+		insertTransactionEntry.setLong(5, amountOfItems);
+		insertTransactionEntry.setLong(6, amountOfExecutedItems);
+		insertTransactionEntry.setLong(7, pricePerItem);
+		insertTransactionEntry.setString(8, "Started");
+		insertTransactionEntry.setString(9, type);
+		insertTransactionEntry.executeUpdate();
+	}
+	
+	@ChoppedTransaction(microservice="m1")
+	public void transactionChangeState(String identifier, String newState) throws SQLException {
+		String getTransactionSQL = 
+				"SELECT * FROM " + "TRANSACTION_VIEW"+
+				" WHERE identifier = ?";
+
+		String updateTransactionStateSQL = 
+				"UPDATE " + "TRANSACTION_VIEW" + 
+				"   SET transactionState = ? " +
+				" WHERE identifier = ?";
+
+		PreparedStatement getTransaction = connect.prepareStatement(getTransactionSQL);
+		getTransaction.setString(1, identifier);
+		ResultSet transactionView = getTransaction.executeQuery();
+		if (!transactionView.next()) {
 			System.out.println("Empty");
 		}
 
-		return;
+		PreparedStatement updateTransactionState = connect.prepareStatement(updateTransactionStateSQL);
+		updateTransactionState.setString(1, newState);
+		updateTransactionState.setString(2, identifier);
+		updateTransactionState.executeUpdate();
 	}
+
+	@ChoppedTransaction(microservice="m1")
+	public void transactionExecution(String identifier, long amountOfItems, long itemPrice,
+			String transactionState, long totalOfExecutedItems) throws SQLException {
+		String getTransactionSQL = 
+				"SELECT * FROM " + "TRANSACTION_VIEW"+
+				" WHERE identifier = ?";
+
+		String updateTransactionSQL =
+				"UPDATE " + "TRANSACTION_VIEW" +
+				"   SET transactionState = ?," +
+				"       amountOfExecutedItems = ?," +
+				"       pricePerItem = ? " +
+				" WHERE identifier = ?";
+
+		PreparedStatement getTransaction = connect.prepareStatement(getTransactionSQL);
+		getTransaction.setString(1, identifier);
+		ResultSet transactionView = getTransaction.executeQuery();
+		if (!transactionView.next()) {
+			System.out.println("Empty");
+		}
+		long value = transactionView.getLong("amountOfExecutedItems") * transactionView.getLong("pricePerItem");
+		long additionalValue = amountOfItems * itemPrice;
+		
+		if (transactionState.equals("Executed")) {
+			long newPrice = (value + additionalValue) / transactionView.getLong("amountOfItems");
+
+			PreparedStatement updateTransaction = connect.prepareStatement(updateTransactionSQL);
+			updateTransaction.setString(1, "Executed");
+			updateTransaction.setLong(2, transactionView.getLong("amountOfItems"));
+			updateTransaction.setLong(3, newPrice);
+			updateTransaction.setString(4, identifier);
+			updateTransaction.executeUpdate();
+		} else if (transactionState.equals("Partially_Executed")) {
+			long newPrice = (value + additionalValue) / totalOfExecutedItems;
+
+			PreparedStatement updateTransaction = connect.prepareStatement(updateTransactionSQL);
+			updateTransaction.setString(1, "Partially_Executed");
+			updateTransaction.setLong(2, totalOfExecutedItems);
+			updateTransaction.setLong(3, newPrice);
+			updateTransaction.setString(4, identifier);
+			updateTransaction.executeUpdate();
+		}
+	}
+
+	// Rest Controller
 
 	@ChoppedTransaction(microservice="m1")
 	public void restObtainPortfolio(String identifier) throws SQLException {
@@ -719,23 +1510,5 @@ public class axon_trader {
 		if (!rs.next()) {
 			System.out.println("Empty");
 		}
-
-		return;
-	}
-
-	@ChoppedTransaction(microservice="m1")
-	public void restObtainPortfolios() throws SQLException {
-		String restObtainPortfoliosSQL = 
-				"SELECT * FROM " + "PORTFOLIO_VIEW"+
-				" WHERE identifier != 'blabla'";
-
-		// restObtainPortfolios
-		PreparedStatement restObtainPortfolios = connect.prepareStatement(restObtainPortfoliosSQL);
-		ResultSet rs = restObtainPortfolios.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
-
-		return;
 	}
 }

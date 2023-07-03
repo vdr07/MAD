@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
+import java.util.Collections;
 import java.util.stream.Collectors;
 import utils.Tuple;
 
@@ -20,6 +21,7 @@ import exceptions.UnknownUnitException;
 import fec.GimpToAppOne;
 import fec.utils.DDLParser;
 import ar.Application;
+import ar.Transaction;
 import soot.Body;
 import soot.BodyTransformer;
 import soot.PhaseOptions;
@@ -245,15 +247,39 @@ public class Transformer extends BodyTransformer {
 			anmlsCounters.put(anmlName, 0);
 
 		Integer currentCounterValue = 0;
+		Map<List<String>, Integer> txnsInteractions = new HashMap<List<String>, Integer>();
+		Map<String, Integer> txnsAppearance = new HashMap<String, Integer>();
 		String anmlName = "";
 		for (Anomaly seenVersAnml : seenVersAnmls) {
 			List<String> edges = new ArrayList<>();
+			List<String> seenTxns = new ArrayList<>();
 			for (Tuple<String, Tuple<String, String>> edge : seenVersAnml.getCycleStructure()) {
 				if(edge.x.contains("sibling")) {
 					edges.add("X");
 				} else {
 					edges.add(edge.x);
 				}
+
+				Tuple<String,String> relatedOps = edge.y;
+				String leftTxn = relatedOps.x.split("-")[0];
+				leftTxn = leftTxn.substring(1,leftTxn.length());
+
+				if (seenTxns.contains(leftTxn)) continue;
+
+				if (!txnsAppearance.containsKey(leftTxn)) {
+					txnsAppearance.put(leftTxn, 1);
+				} else {
+					txnsAppearance.put(leftTxn, txnsAppearance.get(leftTxn)+1);
+				}
+				seenTxns.add(leftTxn);
+			}
+
+			Collections.sort(seenTxns);
+			
+			if(!txnsInteractions.containsKey(seenTxns)) {
+				txnsInteractions.put(seenTxns, 1);
+			} else {
+				txnsInteractions.put(seenTxns, txnsInteractions.get(seenTxns)+1);
 			}
 
 			// Unknown anomaly
@@ -265,6 +291,19 @@ public class Transformer extends BodyTransformer {
 			anmlName = structure2anmlName.get(edges);
 			currentCounterValue = anmlsCounters.get(anmlName);
 			anmlsCounters.put(anmlName, ++currentCounterValue);
+		}
+
+		txnsInteractions.forEach((k, v) ->  System.out.println(k + ": " + v + "/"+seenVersAnmls.size()));
+
+		for(String txnName : txnsAppearance.keySet().stream().sorted().collect(Collectors.toList())) {
+			Transaction t = app.getTxnByName(txnName);
+			String origTxnName = t.getOriginalTransaction();
+			int txnCount = txnsAppearance.get(txnName);
+			if (origTxnName != null && !origTxnName.equals(txnName)) {
+				System.out.println(origTxnName + " (" + txnName + "): " + txnCount + "/"+seenVersAnmls.size());
+			} else {
+				System.out.println(txnName + ": " + txnCount + "/"+seenVersAnmls.size());
+			}
 		}
 
 		printStats(app, tables, anmlsCounters, seenVersAnmls.size(), (analysis_finish_time - analysis_begin_time),

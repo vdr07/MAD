@@ -168,12 +168,12 @@ public class DynamicAssertsions {
 		BoolExpr lhs6, lhs7, lhs8;
 		if (direction == 0) {
 			lhs6 = ctx.mkEq(ctx.mkApp(parent, o1), ctx.mkApp(parent, o2));
-			lhs7 = ctx.mkNot(ctx.mkEq(ctx.mkApp(parent, o1), ctx.mkApp(parent, o3)));
-			lhs8 = ctx.mkNot(ctx.mkEq(ctx.mkApp(parent, o2), ctx.mkApp(parent, o4)));
+			lhs7 = ctx.mkNot(ctx.mkEq(ctx.mkApp(parent, o2), ctx.mkApp(parent, o3)));
+			lhs8 = ctx.mkNot(ctx.mkEq(ctx.mkApp(parent, o1), ctx.mkApp(parent, o4)));
 		} else {
 			lhs6 = ctx.mkOr(ctx.mkEq(ctx.mkApp(originalTransaction, o1), ctx.mkApp(originalTransaction, o2)), ctx.mkEq(ctx.mkApp(parent, o1), ctx.mkApp(parent, o2)));
-			lhs7 = ctx.mkNot(ctx.mkEq(ctx.mkApp(originalTransaction, o1), ctx.mkApp(originalTransaction, o3)));
-			lhs8 = ctx.mkNot(ctx.mkEq(ctx.mkApp(originalTransaction, o2), ctx.mkApp(originalTransaction, o4)));
+			lhs7 = ctx.mkNot(ctx.mkEq(ctx.mkApp(originalTransaction, o2), ctx.mkApp(originalTransaction, o3)));
+			lhs8 = ctx.mkNot(ctx.mkEq(ctx.mkApp(originalTransaction, o1), ctx.mkApp(originalTransaction, o4)));
 		}
 		BoolExpr lhs9, rhs;
 		if (stmt.contains("-select#") || stmt2.contains("-select#")) {

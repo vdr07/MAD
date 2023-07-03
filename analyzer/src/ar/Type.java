@@ -37,6 +37,10 @@ public enum Type {
 			return INT;
 		case "int[]":
 			return Type.STRING;
+		case "java.lang.String[]":
+			return Type.STRING;
+		case "long[]":
+			return Type.STRING;
 		default:
 			throw new SqlTypeNotFoundException(
 					"Type.java.fromJavaTypes : --- unhandled java type (" + v.toString() + ")");

@@ -65,14 +65,16 @@ CREATE TABLE portfolio_view (
 
 CREATE TABLE portfolio_item_possession (
   portfolioId VARCHAR(24),
-  itemIdentifier VARCHAR(24),
-  PRIMARY KEY (portfolioId, itemIdentifier)
+  orderBookId VARCHAR(24),
+  itemId BIGINT,
+  PRIMARY KEY (portfolioId, orderBookId, itemId)
 );
 
 CREATE TABLE portfolio_item_reserved (
   portfolioId VARCHAR(24),
-  itemIdentifier VARCHAR(24),
-  PRIMARY KEY (portfolioId, itemIdentifier)
+  orderBookId VARCHAR(24),
+  itemId BIGINT,
+  PRIMARY KEY (portfolioId, orderBookId, itemId)
 );
 
 CREATE TABLE trade_executed_view (
@@ -92,8 +94,8 @@ CREATE TABLE transaction_view (
   amountOfItems BIGINT,
   amountOfExecutedItems BIGINT,
   pricePerItem BIGINT,
-  transactionState VARCHAR(24),
-  transactionType VARCHAR(24),
+  TransactionState INT,
+  TransactionType INT,
   PRIMARY KEY (identifier)
 );
 
@@ -102,6 +104,6 @@ ALTER TABLE orderentry_sell  ADD CONSTRAINT fkey_orderentry_sell_2 FOREIGN KEY(o
 ALTER TABLE orderentry_buy  ADD CONSTRAINT fkey_orderentry_buy_1 FOREIGN KEY(orderBookId) REFERENCES order_book_view(identifier);
 ALTER TABLE orderentry_buy  ADD CONSTRAINT fkey_orderentry_buy_2 FOREIGN KEY(orderId) REFERENCES order_view(jpaId);
 ALTER TABLE portfolio_item_possession  ADD CONSTRAINT fkey_portfolio_item_possession_1 FOREIGN KEY(portfolioId) REFERENCES portfolio_view(identifier);
-ALTER TABLE portfolio_item_possession  ADD CONSTRAINT fkey_portfolio_item_possession_2 FOREIGN KEY(itemIdentifier) REFERENCES item_entry(identifier);
+ALTER TABLE portfolio_item_possession  ADD CONSTRAINT fkey_portfolio_item_possession_2 FOREIGN KEY(itemId) REFERENCES item_entry(generatedId);
 ALTER TABLE portfolio_item_reserved  ADD CONSTRAINT fkey_portfolio_item_reserved_1 FOREIGN KEY(portfolioId) REFERENCES portfolio_view(identifier);
-ALTER TABLE portfolio_item_reserved  ADD CONSTRAINT fkey_portfolio_item_reserved_2 FOREIGN KEY(itemIdentifier) REFERENCES item_entry(identifier);
+ALTER TABLE portfolio_item_reserved  ADD CONSTRAINT fkey_portfolio_item_reserved_2 FOREIGN KEY(itemId) REFERENCES item_entry(generatedId);
