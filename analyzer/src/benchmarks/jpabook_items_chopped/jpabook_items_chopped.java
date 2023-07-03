@@ -156,7 +156,7 @@ public class jpabook_items_chopped {
 	@ChoppedTransaction(originalTransaction="order", microservice="m1")
 	public void order1(long memberId) throws SQLException {
 		String findOneMemberSQL = 
-				"SELECT city, street, zipcode FROM " + "MEMBER"+
+				"SELECT * FROM " + "MEMBER"+
 				" WHERE id = ?";
 	
 		PreparedStatement findOneMember = connect.prepareStatement(findOneMemberSQL);
@@ -174,7 +174,7 @@ public class jpabook_items_chopped {
 	@ChoppedTransaction(originalTransaction="order", microservice="m2")
 	public void order2(long itemId) throws SQLException {
 		String findOneItemSQL = 
-				"SELECT price, stockQuantity FROM " + "ITEMS"+
+				"SELECT * FROM " + "ITEMS"+
 				" WHERE id = ?";
 	
 		PreparedStatement findOneItem = connect.prepareStatement(findOneItemSQL);
@@ -257,7 +257,7 @@ public class jpabook_items_chopped {
 	@ChoppedTransaction(originalTransaction="processCancelBuy", microservice="m5")
 	public void processCancelBuy1(long orderId) throws SQLException {
 		String findOneOrderSQL = 
-				"SELECT id, deliveryId FROM " + "ORDERS"+
+				"SELECT * FROM " + "ORDERS"+
 				" WHERE id = ?";
 		
 		PreparedStatement findOneOrder = connect.prepareStatement(findOneOrderSQL);

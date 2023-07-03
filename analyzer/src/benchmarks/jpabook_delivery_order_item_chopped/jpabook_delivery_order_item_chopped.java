@@ -160,7 +160,7 @@ public class jpabook_delivery_order_item_chopped {
 	@ChoppedTransaction(originalTransaction="processCancelBuy", microservice="m3")
 	public void processCancelBuy2(long deliveryId) throws SQLException {
 		String findOneDeliverySQL = 
-				"SELECT * FROM " + "DELIVERY"+
+				"SELECT status FROM " + "DELIVERY"+
 				" WHERE id = ?";
 		
 		PreparedStatement findOneDelivery = connect.prepareStatement(findOneDeliverySQL);
@@ -189,7 +189,7 @@ public class jpabook_delivery_order_item_chopped {
 	@ChoppedTransaction(originalTransaction="processCancelBuy", microservice="m4")
 	public void processCancelBuy4(long orderId) throws SQLException {
 		String findOrderItemByOrderIdSQL = 
-				"SELECT * FROM " + "ORDER_ITEM"+
+				"SELECT itemId, count FROM " + "ORDER_ITEM"+
 				" WHERE orderId = ?";
 		
 		PreparedStatement findOrderItemByOrderId = connect.prepareStatement(findOrderItemByOrderIdSQL);
@@ -197,6 +197,7 @@ public class jpabook_delivery_order_item_chopped {
 		ResultSet rs = findOrderItemByOrderId.executeQuery();
 		if (!rs.next()) {
 			System.out.println("empty");
+			return;
 		}
 	}
 
@@ -204,7 +205,7 @@ public class jpabook_delivery_order_item_chopped {
 	public void processCancelBuy5(int orderItemsCount, int[] orderItemItemids,
 			int[] orderItemCounts) throws SQLException {
 		String findItemSQL = 
-				"SELECT * FROM " + "ITEMS"+
+				"SELECT stockQuantity FROM " + "ITEMS"+
 				" WHERE id = ?";
 
 		String updateItemSQL = 
@@ -221,6 +222,7 @@ public class jpabook_delivery_order_item_chopped {
 			ResultSet item = findItem.executeQuery();
 			if (!item.next()) {
 				System.out.println("empty");
+				return;
 			}
 			int itemStockQuantity = item.getInt("stockQuantity");
 			
