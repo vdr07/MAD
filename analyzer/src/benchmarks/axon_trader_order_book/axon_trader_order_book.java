@@ -1,4 +1,4 @@
-package benchmarks.axon_trader;
+package benchmarks.axon_trader_order_book;
 
 import ar.ChoppedTransaction;
 
@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 import java.util.Random;
 import java.util.ArrayList;
 
-public class axon_trader {
+public class axon_trader_order_book {
 
 	private Connection connect = null;
 	private int _ISOLATION = Connection.TRANSACTION_READ_COMMITTED;
@@ -22,7 +22,7 @@ public class axon_trader {
 	Properties p;
 	private Random r;
 
-	public axon_trader(int id) {
+	public axon_trader_order_book(int id) {
 		this.id = id;
 		p = new Properties();
 		p.setProperty("id", String.valueOf(this.id));
@@ -37,51 +37,6 @@ public class axon_trader {
 		}
 		
 		r = new Random();
-	}
-
-	@ChoppedTransaction(microservice="m1")
-	public void detail(String userIdentifier) throws SQLException {
-		String detailSQL = 
-				"SELECT * FROM " + "USER_VIEW"+
-				" WHERE identifier = ?";
-
-		PreparedStatement detail = connect.prepareStatement(detailSQL);
-		detail.setString(1, userIdentifier);
-		ResultSet rs = detail.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
-	}
-
-	@ChoppedTransaction(microservice="m1")
-	public void createUser(String userIdentifier, String name, String uname, String password) throws SQLException {
-		String createUserSQL = 
-				"INSERT INTO " + "USER_VIEW" +
-				" (identifier, uname, username, upassword) " +
-				" VALUES ( ?, ?, ?, ? )";
-
-		PreparedStatement createUser = connect.prepareStatement(createUserSQL);
-		createUser.setString(1, userIdentifier);
-		createUser.setString(2, name);
-		createUser.setString(3, uname);
-		createUser.setString(4, password);
-		createUser.executeUpdate();
-	}
-
-	@ChoppedTransaction(microservice="m1")
-	public void authenticateUser(String userIdentifier, String password) throws SQLException {
-		String authenticateUserSQL = 
-				"SELECT upassword FROM " + "USER_VIEW"+
-				" WHERE identifier = ?";
-
-		PreparedStatement authenticateUser = connect.prepareStatement(authenticateUserSQL);
-		authenticateUser.setString(1, userIdentifier);
-		ResultSet rs = authenticateUser.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
-		String userPassword = rs.getString("upassword");
-		assert (userPassword.equals(password));
 	}
 
 	// Company Controller
@@ -152,46 +107,6 @@ public class axon_trader {
 		}
 		long amountOfMoney = portfolioView.getLong("amountOfMoney");
 		long reservedAmountOfMoney = portfolioView.getLong("reservedAmountOfMoney");
-	}
-
-	@ChoppedTransaction(microservice="m1")
-	public void buyForm(String loggedInUsername, String companyIdentifier) throws SQLException {
-		String findByUsernameSQL = 
-				"SELECT * FROM " + "USER_VIEW"+
-				" WHERE username = ?";
-
-		String findByUserIdentifierSQL = 
-				"SELECT * FROM " + "PORTFOLIO_VIEW"+
-				" WHERE userIdentifier = ?";
-
-		String companyFindOneSQL = 
-				"SELECT * FROM " + "COMPANY_VIEW"+
-				" WHERE identifier = ?";
-
-		PreparedStatement findByUsername = connect.prepareStatement(findByUsernameSQL);
-		findByUsername.setString(1, loggedInUsername);
-		ResultSet rs = findByUsername.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
-		String userIdentifier = rs.getString("identifier");
-
-		PreparedStatement findByUserIdentifier = connect.prepareStatement(findByUserIdentifierSQL);
-		findByUserIdentifier.setString(1, userIdentifier);
-		ResultSet portfolioView = findByUserIdentifier.executeQuery();
-		if (!portfolioView.next()) {
-			System.out.println("Empty");
-		}
-		long amountOfMoney = portfolioView.getLong("amountOfMoney");
-		long reservedAmountOfMoney = portfolioView.getLong("reservedAmountOfMoney");
-
-		PreparedStatement companyFindOne = connect.prepareStatement(companyFindOneSQL);
-		companyFindOne.setString(1, companyIdentifier);
-		ResultSet companyView = companyFindOne.executeQuery();
-		if (!companyView.next()) {
-			System.out.println("Empty");
-		}
-		String companyName = companyView.getString("cname");
 	}
 
 	@ChoppedTransaction(microservice="m1")
@@ -558,24 +473,7 @@ public class axon_trader {
 		String companyName = companyView.getString("cname");
 	}
 
-	@ChoppedTransaction(microservice="m1")
-	public void createCompany(String companyIdentifier, String cname, long cvalue, long amountOfShares) throws SQLException {
-		String createCompanySQL = 
-				"INSERT INTO " + "COMPANY_VIEW" +
-				" (identifier, cname, cvalue, amountOfShares, tradeStarted) " +
-				" VALUES ( ?, ?, ?, ?, ? )";
-
-		PreparedStatement createCompany = connect.prepareStatement(createCompanySQL);
-		createCompany.setString(1, companyIdentifier);
-		createCompany.setString(2, cname);
-		createCompany.setLong(3, cvalue);
-		createCompany.setLong(4, amountOfShares);
-		createCompany.setLong(5, 1);
-		createCompany.executeUpdate();
-	}
-
 	// OrderBook Controller
-
 	@ChoppedTransaction(microservice="m1")
 	public void orderBookGetOrders(String identifier) throws SQLException {
 		// findone
@@ -820,141 +718,6 @@ public class axon_trader {
 		if (!rs.next()) {
 			System.out.println("Empty");
 		}
-	}
-
-	@ChoppedTransaction(microservice="m1")
-	public void createPortfolio(String identifier, String userIdentifier) throws SQLException {
-		String getUNameSQL = 
-				"SELECT uname FROM " + "USER_VIEW"+
-				" WHERE identifier = ?";
-
-		String createPortfolioSQL = 
-				"INSERT INTO " + "PORTFOLIO_VIEW" +
-				" (identifier, userIdentifier, userName, amountOfMoney, reservedAmountOfMoney) " +
-				" VALUES ( ?, ?, ?, ?, ? )";
-
-		PreparedStatement getUName = connect.prepareStatement(getUNameSQL);
-		getUName.setString(1, userIdentifier);
-		ResultSet rs = getUName.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
-		String userName = rs.getString("uname");
-
-		PreparedStatement createPortfolio = connect.prepareStatement(createPortfolioSQL);
-		createPortfolio.setString(1, identifier);
-		createPortfolio.setString(2, userIdentifier);
-		createPortfolio.setString(3, userName);
-		createPortfolio.setLong(4, 0);
-		createPortfolio.setLong(5, 0);
-		createPortfolio.executeUpdate();
-	}
-
-	@ChoppedTransaction(microservice="m1")
-	public void cashManaged(String portfolioId, long amount, String type) throws SQLException {
-		String portfolioFindOneSQL = 
-				"SELECT * FROM " + "PORTFOLIO_VIEW"+
-				" WHERE identifier = ?";
-		
-		String portfolioUpdateAmountOfMoneySQL = 
-				"UPDATE " + "PORTFOLIO_VIEW" + 
-				"   SET amountOfMoney = ? " +
-				" WHERE identifier = ?";
-
-		PreparedStatement portfolioFindOne = connect.prepareStatement(portfolioFindOneSQL);
-		portfolioFindOne.setString(1, portfolioId);
-		ResultSet portfolioView = portfolioFindOne.executeQuery();
-		if (!portfolioView.next()) {
-			System.out.println("Empty");
-		}
-		long amountOfMoney = portfolioView.getLong("amountOfMoney");
-
-		long newAmount;
-		if (type.equals("deposit")) {
-			newAmount = amountOfMoney + amount;
-		} else {
-			newAmount = amountOfMoney - amount;
-		}
-
-		PreparedStatement portfolioUpdateAmountOfMoney = connect.prepareStatement(portfolioUpdateAmountOfMoneySQL);
-		portfolioUpdateAmountOfMoney.setLong(1, newAmount);
-		portfolioUpdateAmountOfMoney.setString(2, portfolioId);
-		portfolioUpdateAmountOfMoney.executeUpdate();
-	}
-
-	@ChoppedTransaction(microservice="m1")
-	public void cashReservedManage(String portfolioId, long amount, String type) throws SQLException {
-		String portfolioFindOneSQL = 
-				"SELECT * FROM " + "PORTFOLIO_VIEW"+
-				" WHERE identifier = ?";
-		
-		String portfolioUpdateReservedAmountOfMoneySQL = 
-				"UPDATE " + "PORTFOLIO_VIEW" + 
-				"   SET reservedAmountOfMoney = ? " +
-				" WHERE identifier = ?";
-
-		PreparedStatement portfolioFindOne = connect.prepareStatement(portfolioFindOneSQL);
-		portfolioFindOne.setString(1, portfolioId);
-		ResultSet portfolioView = portfolioFindOne.executeQuery();
-		if (!portfolioView.next()) {
-			System.out.println("Empty");
-		}
-		long reservedAmountOfMoney = portfolioView.getLong("reservedAmountOfMoney");
-		
-		long newReservedAmountOfMoney;
-		if (type.equals("reserve")) {
-			newReservedAmountOfMoney = reservedAmountOfMoney + amount;
-		} else {
-			newReservedAmountOfMoney = reservedAmountOfMoney - amount;
-		}
-		
-		PreparedStatement portfolioUpdateReservedAmountOfMoney = connect.prepareStatement(portfolioUpdateReservedAmountOfMoneySQL);
-		portfolioUpdateReservedAmountOfMoney.setLong(1, newReservedAmountOfMoney);
-		portfolioUpdateReservedAmountOfMoney.setString(2, portfolioId);
-		portfolioUpdateReservedAmountOfMoney.executeUpdate();
-	}
-
-	@ChoppedTransaction(microservice="m1")
-	public void cashReservationConfirmed(String portfolioId, long amountOfMoneyConfirmed) throws SQLException {
-		String portfolioFindOneSQL = 
-				"SELECT * FROM " + "PORTFOLIO_VIEW"+
-				" WHERE identifier = ?";
-		
-		String portfolioUpdateReservedAmountOfMoneySQL = 
-				"UPDATE " + "PORTFOLIO_VIEW" + 
-				"   SET reservedAmountOfMoney = ? " +
-				" WHERE identifier = ?";
-
-		String portfolioUpdateAmountOfMoneySQL = 
-				"UPDATE " + "PORTFOLIO_VIEW" + 
-				"   SET amountOfMoney = ? " +
-				" WHERE identifier = ?";
-
-		PreparedStatement portfolioFindOne = connect.prepareStatement(portfolioFindOneSQL);
-		portfolioFindOne.setString(1, portfolioId);
-		ResultSet portfolioView = portfolioFindOne.executeQuery();
-		if (!portfolioView.next()) {
-			System.out.println("Empty");
-		}
-		long reservedAmountOfMoney = portfolioView.getLong("reservedAmountOfMoney");
-		long amountOfMoney = portfolioView.getLong("amountOfMoney");
-
-		if (amountOfMoneyConfirmed < reservedAmountOfMoney) {
-			PreparedStatement portfolioUpdateReservedAmountOfMoney = connect.prepareStatement(portfolioUpdateReservedAmountOfMoneySQL);
-			portfolioUpdateReservedAmountOfMoney.setLong(1, reservedAmountOfMoney - amountOfMoneyConfirmed);
-			portfolioUpdateReservedAmountOfMoney.setString(2, portfolioId);
-			portfolioUpdateReservedAmountOfMoney.executeUpdate();
-		} else {
-			PreparedStatement portfolioUpdateReservedAmountOfMoney = connect.prepareStatement(portfolioUpdateReservedAmountOfMoneySQL);
-			portfolioUpdateReservedAmountOfMoney.setLong(1, 0);
-			portfolioUpdateReservedAmountOfMoney.setString(2, portfolioId);
-			portfolioUpdateReservedAmountOfMoney.executeUpdate();
-		}
-
-		PreparedStatement portfolioUpdateAmountOfMoney = connect.prepareStatement(portfolioUpdateAmountOfMoneySQL);
-		portfolioUpdateAmountOfMoney.setLong(1, amountOfMoney - amountOfMoneyConfirmed);
-		portfolioUpdateAmountOfMoney.setString(2, portfolioId);
-		portfolioUpdateAmountOfMoney.executeUpdate();
 	}
 
 	@ChoppedTransaction(microservice="m1")
@@ -1365,35 +1128,6 @@ public class axon_trader {
 		}
 	}
 
-	// Dashboard Controller
-	@ChoppedTransaction(microservice="m1")
-	public void dashboardShow(String userIdentifier) throws SQLException {
-		String portfolioFindByUserIdSQL = 
-				"SELECT * FROM " + "PORTFOLIO_VIEW"+
-				" WHERE userIdentifier = ?";
-		
-		String transactionFindByPortfolioIdSQL = 
-				"SELECT * FROM " + "TRANSACTION_VIEW"+
-				" WHERE portfolioId = ?";
-
-		// portfolioFindByUserId
-		PreparedStatement portfolioFindByUserId = connect.prepareStatement(portfolioFindByUserIdSQL);
-		portfolioFindByUserId.setString(1, userIdentifier);
-		ResultSet rs = portfolioFindByUserId.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
-		String portfolioId = rs.getString("identifier");
-
-		// transactionFindByPortfolioId
-		PreparedStatement transactionFindByPortfolioId = connect.prepareStatement(transactionFindByPortfolioIdSQL);
-		transactionFindByPortfolioId.setString(1, portfolioId);
-		rs = transactionFindByPortfolioId.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
-	}
-
 	@ChoppedTransaction(microservice="m1")
 	public void transactionStarted(String orderBookId, String identifier, String portfolioId, 
 			long amountOfItems, long amountOfExecutedItems, long pricePerItem, String type) throws SQLException {
@@ -1425,89 +1159,5 @@ public class axon_trader {
 		insertTransactionEntry.setString(8, "Started");
 		insertTransactionEntry.setString(9, type);
 		insertTransactionEntry.executeUpdate();
-	}
-	
-	@ChoppedTransaction(microservice="m1")
-	public void transactionChangeState(String identifier, String newState) throws SQLException {
-		String getTransactionSQL = 
-				"SELECT * FROM " + "TRANSACTION_VIEW"+
-				" WHERE identifier = ?";
-
-		String updateTransactionStateSQL = 
-				"UPDATE " + "TRANSACTION_VIEW" + 
-				"   SET transactionState = ? " +
-				" WHERE identifier = ?";
-
-		PreparedStatement getTransaction = connect.prepareStatement(getTransactionSQL);
-		getTransaction.setString(1, identifier);
-		ResultSet transactionView = getTransaction.executeQuery();
-		if (!transactionView.next()) {
-			System.out.println("Empty");
-		}
-
-		PreparedStatement updateTransactionState = connect.prepareStatement(updateTransactionStateSQL);
-		updateTransactionState.setString(1, newState);
-		updateTransactionState.setString(2, identifier);
-		updateTransactionState.executeUpdate();
-	}
-
-	@ChoppedTransaction(microservice="m1")
-	public void transactionExecution(String identifier, long amountOfItems, long itemPrice,
-			String transactionState, long totalOfExecutedItems) throws SQLException {
-		String getTransactionSQL = 
-				"SELECT * FROM " + "TRANSACTION_VIEW"+
-				" WHERE identifier = ?";
-
-		String updateTransactionSQL =
-				"UPDATE " + "TRANSACTION_VIEW" +
-				"   SET transactionState = ?," +
-				"       amountOfExecutedItems = ?," +
-				"       pricePerItem = ? " +
-				" WHERE identifier = ?";
-
-		PreparedStatement getTransaction = connect.prepareStatement(getTransactionSQL);
-		getTransaction.setString(1, identifier);
-		ResultSet transactionView = getTransaction.executeQuery();
-		if (!transactionView.next()) {
-			System.out.println("Empty");
-		}
-		long value = transactionView.getLong("amountOfExecutedItems") * transactionView.getLong("pricePerItem");
-		long additionalValue = amountOfItems * itemPrice;
-		
-		if (transactionState.equals("Executed")) {
-			long newPrice = (value + additionalValue) / transactionView.getLong("amountOfItems");
-
-			PreparedStatement updateTransaction = connect.prepareStatement(updateTransactionSQL);
-			updateTransaction.setString(1, "Executed");
-			updateTransaction.setLong(2, transactionView.getLong("amountOfItems"));
-			updateTransaction.setLong(3, newPrice);
-			updateTransaction.setString(4, identifier);
-			updateTransaction.executeUpdate();
-		} else if (transactionState.equals("Partially_Executed")) {
-			long newPrice = (value + additionalValue) / totalOfExecutedItems;
-
-			PreparedStatement updateTransaction = connect.prepareStatement(updateTransactionSQL);
-			updateTransaction.setString(1, "Partially_Executed");
-			updateTransaction.setLong(2, totalOfExecutedItems);
-			updateTransaction.setLong(3, newPrice);
-			updateTransaction.setString(4, identifier);
-			updateTransaction.executeUpdate();
-		}
-	}
-
-	// Rest Controller
-	@ChoppedTransaction(microservice="m1")
-	public void restObtainPortfolio(String identifier) throws SQLException {
-		String restObtainPortfolioSQL = 
-				"SELECT * FROM " + "PORTFOLIO_VIEW"+
-				" WHERE identifier = ?";
-
-		// restObtainPortfolio
-		PreparedStatement restObtainPortfolio = connect.prepareStatement(restObtainPortfolioSQL);
-		restObtainPortfolio.setString(1, identifier);
-		ResultSet rs = restObtainPortfolio.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
 	}
 }

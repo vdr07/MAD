@@ -40,18 +40,129 @@ public class java_spring_mvc_blog_user {
 	}
 
 	@ChoppedTransaction(microservice="m1")
-	public void deleteComment(long commentId, int isAdmin, String authName,
-			long currentTime, long maxDeleteTime) throws SQLException {
-		String getCommentSQL = 
-				"SELECT userId FROM " + "COMMENTS"+
+	public void addComment(long postId, long commentId, String commentText,
+			long currentDate, String authName, long parentId) throws SQLException {
+		String getPostSQL = 
+				"SELECT * FROM " + "POSTS"+
 				" WHERE id = ?";
 
-		String getUserByUsernameSQL = 
-				"SELECT username FROM " + "USERS"+
+		String getCurrentUserSQL = 
+				"SELECT * FROM " + "USERS"+
+				" WHERE username = ?";
+		
+		String getUserRolesSQL = 
+				"SELECT * FROM " + "USER_ROLE"+
+				" WHERE userId = ?";
+
+		String getRoleNameSQL = 
+				"SELECT rname FROM " + "ROLES"+
+				" WHERE id = ?";
+		
+		String saveNewCommentSQL = 
+				"INSERT INTO " + "COMMENTS" +
+				" (id, commentText, originalDateTime, modifiedDateTime, userId, postId, deleted, pCommentId) " +
+				" VALUES ( ?, ?, ?, ?, ?, ?, ?, ? )";
+
+		String insertIntoChildrenCommentsSQL = 
+				"INSERT INTO " + "CHILDREN_COMMENT" +
+				" (pId, cId) " +
+				" VALUES ( ?, ? )";
+
+		PreparedStatement getPost = connect.prepareStatement(getPostSQL);
+		getPost.setLong(1, postId);
+		ResultSet rs = getPost.executeQuery();
+		if (!rs.next()) {
+			System.out.println("post not found");
+			return;
+		}
+
+		// isAdmin
+		PreparedStatement getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
+		getCurrentUser.setString(1, authName);
+		rs = getCurrentUser.executeQuery();
+		if (!rs.next()) {
+			System.out.println("user not found");
+			return;
+		}
+		long currentUserId = rs.getLong("id");
+
+		PreparedStatement getUserRoles = connect.prepareStatement(getUserRolesSQL);
+		getUserRoles.setLong(1, currentUserId);
+		rs = getUserRoles.executeQuery();
+		int isAdmin = 0;
+		while (rs.next()) {
+			long roleId = rs.getLong("roleId");
+
+			PreparedStatement getRoleName = connect.prepareStatement(getRoleNameSQL);
+			getRoleName.setLong(1, roleId);
+			ResultSet roleName = getRoleName.executeQuery();
+			if (!roleName.next()) {
+				System.out.println("role not found");
+				return;
+			}
+			String rName = roleName.getString("rname");
+
+			if (rName.equals("ROLE_ADMIN")) {
+				isAdmin = 1;
+				break;
+			}
+		}
+		//
+
+		if (rs.getInt("hide") == 1 && isAdmin != 1) {
+			System.out.println("post not found");
+			return;
+		}
+
+		getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
+		getCurrentUser.setString(1, authName);
+		rs = getCurrentUser.executeQuery();
+		if (!rs.next()) {
+			System.out.println("user not found");
+			return;
+		}
+		currentUserId = rs.getLong("id");
+
+		PreparedStatement saveNewComment = connect.prepareStatement(saveNewCommentSQL);
+		saveNewComment.setLong(1, commentId);
+		saveNewComment.setString(2, commentText);
+		saveNewComment.setLong(3, currentDate);
+		saveNewComment.setLong(4, 0);
+		saveNewComment.setLong(5, currentUserId);
+		saveNewComment.setLong(6, postId);
+		saveNewComment.setLong(7, 0);
+		saveNewComment.setLong(8, parentId);
+		saveNewComment.executeUpdate();
+
+		if (parentId != 0) {
+			PreparedStatement insertIntoChildrenComments = connect.prepareStatement(insertIntoChildrenCommentsSQL);
+			insertIntoChildrenComments.setLong(1, parentId);
+			insertIntoChildrenComments.setLong(2, commentId);
+			insertIntoChildrenComments.executeUpdate();
+		}
+	}
+
+	@ChoppedTransaction(microservice="m1")
+	public void deleteComment(long commentId, String authName,
+			long currentTime, long maxDeleteTime) throws SQLException {
+		String getCommentSQL = 
+				"SELECT * FROM " + "COMMENTS"+
+				" WHERE id = ?";
+
+		String getCurrentUserSQL = 
+				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
 
+		String getUserRolesSQL = 
+				"SELECT * FROM " + "USER_ROLE"+
+				" WHERE userId = ?";
+
+		String getRoleNameSQL = 
+				"SELECT rname FROM " + "ROLES"+
+				" WHERE id = ?";
+
 		String getUserSQL = 
-				"SELECT username FROM " + "USERS"+
+				"SELECT * FROM " + "USERS"+
 				" WHERE id = ?";
 
 		String deleteCommentSQL = 
@@ -68,10 +179,42 @@ public class java_spring_mvc_blog_user {
 		}
 		long userId = rs.getLong("userId");
 
+		// isAdmin
+		PreparedStatement getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
+		getCurrentUser.setString(1, authName);
+		rs = getCurrentUser.executeQuery();
+		if (!rs.next()) {
+			System.out.println("user not found");
+			return;
+		}
+		long currentUserId = rs.getLong("id");
 
-		PreparedStatement getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
-		getUserByUsername.setString(1, authName);
-		rs = getUserByUsername.executeQuery();
+		PreparedStatement getUserRoles = connect.prepareStatement(getUserRolesSQL);
+		getUserRoles.setLong(1, currentUserId);
+		rs = getUserRoles.executeQuery();
+		int isAdmin = 0;
+		while (rs.next()) {
+			long roleId = rs.getLong("roleId");
+
+			PreparedStatement getRoleName = connect.prepareStatement(getRoleNameSQL);
+			getRoleName.setLong(1, roleId);
+			ResultSet roleName = getRoleName.executeQuery();
+			if (!roleName.next()) {
+				System.out.println("role not found");
+				return;
+			}
+			String rName = roleName.getString("rname");
+
+			if (rName.equals("ROLE_ADMIN")) {
+				isAdmin = 1;
+				break;
+			}
+		}
+		//
+
+		getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
+		getCurrentUser.setString(1, authName);
+		rs = getCurrentUser.executeQuery();
 		if (!rs.next()) {
 			System.out.println("comment not found");
 			return;
@@ -104,18 +247,26 @@ public class java_spring_mvc_blog_user {
 	}
 
 	@ChoppedTransaction(microservice="m1")
-	public void editComment(long commentId, int isAdmin, String authName,
+	public void editComment(long commentId, String authName,
 			long currentTime, long maxEditTime, String newCommentText) throws SQLException {
 		String getCommentSQL = 
-				"SELECT userId FROM " + "COMMENTS"+
+				"SELECT * FROM " + "COMMENTS"+
 				" WHERE id = ?";
 
-		String getUserByUsernameSQL = 
-				"SELECT username FROM " + "USERS"+
+		String getCurrentUserSQL = 
+				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
 
+		String getUserRolesSQL = 
+				"SELECT * FROM " + "USER_ROLE"+
+				" WHERE userId = ?";
+
+		String getRoleNameSQL = 
+				"SELECT rname FROM " + "ROLES"+
+				" WHERE id = ?";
+
 		String getUserSQL = 
-				"SELECT username FROM " + "USERS"+
+				"SELECT * FROM " + "USERS"+
 				" WHERE id = ?";
 
 		String updateCommentSQL = 
@@ -133,9 +284,42 @@ public class java_spring_mvc_blog_user {
 		}
 		long userId = rs.getLong("userId");
 
-		PreparedStatement getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
-		getUserByUsername.setString(1, authName);
-		rs = getUserByUsername.executeQuery();
+		// isAdmin
+		PreparedStatement getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
+		getCurrentUser.setString(1, authName);
+		rs = getCurrentUser.executeQuery();
+		if (!rs.next()) {
+			System.out.println("user not found");
+			return;
+		}
+		long currentUserId = rs.getLong("id");
+
+		PreparedStatement getUserRoles = connect.prepareStatement(getUserRolesSQL);
+		getUserRoles.setLong(1, currentUserId);
+		rs = getUserRoles.executeQuery();
+		int isAdmin = 0;
+		while (rs.next()) {
+			long roleId = rs.getLong("roleId");
+
+			PreparedStatement getRoleName = connect.prepareStatement(getRoleNameSQL);
+			getRoleName.setLong(1, roleId);
+			ResultSet roleName = getRoleName.executeQuery();
+			if (!roleName.next()) {
+				System.out.println("role not found");
+				return;
+			}
+			String rName = roleName.getString("rname");
+
+			if (rName.equals("ROLE_ADMIN")) {
+				isAdmin = 1;
+				break;
+			}
+		}
+		//
+
+		getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
+		getCurrentUser.setString(1, authName);
+		rs = getCurrentUser.executeQuery();
 		if (!rs.next()) {
 			System.out.println("comment not found");
 			return;
@@ -146,7 +330,7 @@ public class java_spring_mvc_blog_user {
 		getUser.setLong(1, userId);
 		rs = getUser.executeQuery();
 		if (!rs.next()) {
-			System.out.println("comment not found");
+			System.out.println("comment user not found");
 			return;
 		}
 		String username = rs.getString("username");
@@ -168,20 +352,18 @@ public class java_spring_mvc_blog_user {
 		updateComment.executeUpdate();
 	}
 
-	//merged
 	@ChoppedTransaction(microservice="m1")
-	public void commentVote(long commentId, int isAdmin, String authName, long ratingId,
-			int like) throws SQLException {
+	public void commentLike(long commentId, String authName, long ratingId) throws SQLException {
 		String getUserByUsernameSQL = 
-				"SELECT id FROM " + "USERS"+
+				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
 
 		String getCommentSQL = 
-				"SELECT userId FROM " + "COMMENTS"+
+				"SELECT * FROM " + "COMMENTS"+
 				" WHERE id = ?";
 
 		String getCommentRatingSQL = 
-				"SELECT id FROM " + "COMMENT_RATING"+
+				"SELECT * FROM " + "COMMENT_RATING"+
 				" WHERE userId = ? AND commentId = ?";
 
 		String insertCommentRatingSQL = 
@@ -221,21 +403,96 @@ public class java_spring_mvc_blog_user {
 			return;
 		}
 
-		int rate;
-		if (like == 1) rate = 1;
-		else rate = -1;
+		PreparedStatement insertCommentRating = connect.prepareStatement(insertCommentRatingSQL);
+		insertCommentRating.setLong(1, ratingId);
+		insertCommentRating.setLong(2, currentUserId);
+		insertCommentRating.setInt(3, 1);
+		insertCommentRating.setLong(4, commentId);
+		insertCommentRating.executeUpdate();
+	}
+
+	@ChoppedTransaction(microservice="m1")
+	public void commentDislike(long commentId, String authName, long ratingId) throws SQLException {
+		String getUserByUsernameSQL = 
+				"SELECT * FROM " + "USERS"+
+				" WHERE username = ?";
+
+		String getUserRolesSQL = 
+				"SELECT * FROM " + "USER_ROLE"+
+				" WHERE userId = ?";
+
+		String getRoleNameSQL = 
+				"SELECT rname FROM " + "ROLES"+
+				" WHERE id = ?";
+
+		String getCommentSQL = 
+				"SELECT * FROM " + "COMMENTS"+
+				" WHERE id = ?";
+
+		String getCommentRatingSQL = 
+				"SELECT * FROM " + "COMMENT_RATING"+
+				" WHERE userId = ? AND commentId = ?";
+
+		String insertCommentRatingSQL = 
+				"INSERT INTO " + "COMMENT_RATING" +
+				" (id, userId, rate, commentId) " +
+				" VALUES ( ?, ?, ?, ? )";
+
+		PreparedStatement getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
+		getUserByUsername.setString(1, authName);
+		ResultSet rs = getUserByUsername.executeQuery();
+		if (!rs.next()) {
+			System.out.println("comment not found");
+			return;
+		}
+		long currentUserId = rs.getLong("id");
+
+		PreparedStatement getComment = connect.prepareStatement(getCommentSQL);
+		getComment.setLong(1, commentId);
+		rs = getComment.executeQuery();
+		if (!rs.next()) {
+			System.out.println("comment not found");
+			return;
+		}
+		long commentUserId = rs.getLong("userId");
+
+		if (currentUserId == commentUserId) {
+			System.out.println("cannot vote own comment");
+			return;
+		}
+
+		PreparedStatement getCommentRating = connect.prepareStatement(getCommentRatingSQL);
+		getCommentRating.setLong(1, currentUserId);
+		getCommentRating.setLong(2, commentId);
+		rs = getCommentRating.executeQuery();
+		if (rs.next()) {
+			System.out.println("already voted");
+			return;
+		}
 
 		PreparedStatement insertCommentRating = connect.prepareStatement(insertCommentRatingSQL);
 		insertCommentRating.setLong(1, ratingId);
 		insertCommentRating.setLong(2, currentUserId);
-		insertCommentRating.setLong(3, rate);
+		insertCommentRating.setInt(3, -1);
 		insertCommentRating.setLong(4, commentId);
 		insertCommentRating.executeUpdate();
 	}
 
 	// PostsController
 	@ChoppedTransaction(microservice="m1")
-	public void showPostsList(int isAdmin, String authName) throws SQLException {
+	public void showPostsList(String authName) throws SQLException {
+		String getCurrentUserSQL = 
+				"SELECT * FROM " + "USERS"+
+				" WHERE username = ?";
+
+		String getUserRolesSQL = 
+				"SELECT * FROM " + "USER_ROLE"+
+				" WHERE userId = ?";
+
+		String getRoleNameSQL = 
+				"SELECT rname FROM " + "ROLES"+
+				" WHERE id = ?";
+
 		String getAllPostsSQL = 
 				"SELECT * FROM " + "POSTS"+
 				" WHERE 1 = 1";
@@ -243,12 +500,40 @@ public class java_spring_mvc_blog_user {
 		String getPublicPostsSQL = 
 				"SELECT * FROM " + "POSTS"+
 				" WHERE hide = 0";
+		
+		// isAdmin
+		PreparedStatement getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
+		getCurrentUser.setString(1, authName);
+		ResultSet rs = getCurrentUser.executeQuery();
+		if (!rs.next()) {
+			System.out.println("user not found");
+			return;
+		}
+		long currentUserId = rs.getLong("id");
 
-		String getUserByUsernameSQL = 
-				"SELECT id FROM " + "USERS"+
-				" WHERE username = ?";
+		PreparedStatement getUserRoles = connect.prepareStatement(getUserRolesSQL);
+		getUserRoles.setLong(1, currentUserId);
+		rs = getUserRoles.executeQuery();
+		int isAdmin = 0;
+		while (rs.next()) {
+			long roleId = rs.getLong("roleId");
 
-		ResultSet rs;
+			PreparedStatement getRoleName = connect.prepareStatement(getRoleNameSQL);
+			getRoleName.setLong(1, roleId);
+			ResultSet roleName = getRoleName.executeQuery();
+			if (!roleName.next()) {
+				System.out.println("role not found");
+				return;
+			}
+			String rName = roleName.getString("rname");
+
+			if (rName.equals("ROLE_ADMIN")) {
+				isAdmin = 1;
+				break;
+			}
+		}
+		//
+
 		if (isAdmin == 1) {
 			PreparedStatement getAllPosts = connect.prepareStatement(getAllPostsSQL);
 			rs = getAllPosts.executeQuery();
@@ -263,21 +548,33 @@ public class java_spring_mvc_blog_user {
 			}
 		}
 
-		PreparedStatement getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
-		getUserByUsername.setString(1, authName);
-		rs = getUserByUsername.executeQuery();
+		getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
+		getCurrentUser.setString(1, authName);
+		rs = getCurrentUser.executeQuery();
 		if (!rs.next()) {
 			System.out.println("no current user");
 			return;
 		}
-		long currentUserId = rs.getLong("id");
+		currentUserId = rs.getLong("id");
 	}
 
 	@ChoppedTransaction(microservice="m1")
-	public void searchByTag(int isAdmin, String authName, String[] tags) throws SQLException {
+	public void searchByTag(String authName, String[] tags) throws SQLException {
 		String getTagSQL = 
-				"SELECT id FROM " + "TAGS"+
+				"SELECT * FROM " + "TAGS"+
 				" WHERE tname = ?";
+
+		String getCurrentUserSQL = 
+				"SELECT * FROM " + "USERS"+
+				" WHERE username = ?";
+
+		String getUserRolesSQL = 
+				"SELECT * FROM " + "USER_ROLE"+
+				" WHERE userId = ?";
+
+		String getRoleNameSQL = 
+				"SELECT rname FROM " + "ROLES"+
+				" WHERE id = ?";
 
 		String getPostByTagSQL = 
 				"SELECT postId FROM " + "POST_TAG"+
@@ -291,10 +588,6 @@ public class java_spring_mvc_blog_user {
 				"SELECT * FROM " + "POSTS"+
 				" WHERE id = ? AND hide = 0";
 
-		String getUserByUsernameSQL = 
-				"SELECT id FROM " + "USERS"+
-				" WHERE username = ?";
-
 		ResultSet rs;
 		for (String tagName : tags) {
 			PreparedStatement getTag = connect.prepareStatement(getTagSQL);
@@ -304,6 +597,39 @@ public class java_spring_mvc_blog_user {
 				System.out.println("empty");
 			}
 			long tagId = rs.getLong("id");
+
+			// isAdmin
+			PreparedStatement getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
+			getCurrentUser.setString(1, authName);
+			rs = getCurrentUser.executeQuery();
+			if (!rs.next()) {
+				System.out.println("user not found");
+				return;
+			}
+			long currentUserId = rs.getLong("id");
+
+			PreparedStatement getUserRoles = connect.prepareStatement(getUserRolesSQL);
+			getUserRoles.setLong(1, currentUserId);
+			rs = getUserRoles.executeQuery();
+			int isAdmin = 0;
+			while (rs.next()) {
+				long roleId = rs.getLong("roleId");
+
+				PreparedStatement getRoleName = connect.prepareStatement(getRoleNameSQL);
+				getRoleName.setLong(1, roleId);
+				ResultSet roleName = getRoleName.executeQuery();
+				if (!roleName.next()) {
+					System.out.println("role not found");
+					return;
+				}
+				String rName = roleName.getString("rname");
+
+				if (rName.equals("ROLE_ADMIN")) {
+					isAdmin = 1;
+					break;
+				}
+			}
+			//
 
 			PreparedStatement getPostByTag = connect.prepareStatement(getPostByTagSQL);
 			getPostByTag.setLong(1, tagId);
@@ -328,9 +654,9 @@ public class java_spring_mvc_blog_user {
 			}
 		}
 
-		PreparedStatement getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
-		getUserByUsername.setString(1, authName);
-		rs = getUserByUsername.executeQuery();
+		PreparedStatement getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
+		getCurrentUser.setString(1, authName);
+		rs = getCurrentUser.executeQuery();
 		if (!rs.next()) {
 			System.out.println("no current user");
 			return;
@@ -339,14 +665,22 @@ public class java_spring_mvc_blog_user {
 	}
 
 	@ChoppedTransaction(microservice="m1")
-	public void showPost(long postId, int isAdmin, String authName) throws SQLException {
+	public void showPost(long postId, String authName) throws SQLException {
+		String getCurrentUserSQL = 
+				"SELECT * FROM " + "USERS"+
+				" WHERE username = ?";
+		
+		String getUserRolesSQL = 
+				"SELECT * FROM " + "USER_ROLE"+
+				" WHERE userId = ?";
+
+		String getRoleNameSQL = 
+				"SELECT rname FROM " + "ROLES"+
+				" WHERE id = ?";
+
 		String getPostSQL = 
 				"SELECT * FROM " + "POSTS"+
 				" WHERE id = ?";
-		
-		String getUserByUsernameSQL = 
-				"SELECT id FROM " + "USERS"+
-				" WHERE username = ?";
 
 		PreparedStatement getPost = connect.prepareStatement(getPostSQL);
 		getPost.setLong(1, postId);
@@ -356,35 +690,66 @@ public class java_spring_mvc_blog_user {
 			return;
 		}
 
+		// isAdmin
+		PreparedStatement getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
+		getCurrentUser.setString(1, authName);
+		rs = getCurrentUser.executeQuery();
+		if (!rs.next()) {
+			System.out.println("user not found");
+			return;
+		}
+		long currentUserId = rs.getLong("id");
+
+		PreparedStatement getUserRoles = connect.prepareStatement(getUserRolesSQL);
+		getUserRoles.setLong(1, currentUserId);
+		rs = getUserRoles.executeQuery();
+		int isAdmin = 0;
+		while (rs.next()) {
+			long roleId = rs.getLong("roleId");
+
+			PreparedStatement getRoleName = connect.prepareStatement(getRoleNameSQL);
+			getRoleName.setLong(1, roleId);
+			ResultSet roleName = getRoleName.executeQuery();
+			if (!roleName.next()) {
+				System.out.println("role not found");
+				return;
+			}
+			String rName = roleName.getString("rname");
+
+			if (rName.equals("ROLE_ADMIN")) {
+				isAdmin = 1;
+				break;
+			}
+		}
+		//
+
 		if (rs.getInt("hide") == 1 && isAdmin != 1) {
 			System.out.println("error");
 			return;
 		}
 
-		PreparedStatement getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
-		getUserByUsername.setString(1, authName);
-		rs = getUserByUsername.executeQuery();
+		getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
+		getCurrentUser.setString(1, authName);
+		rs = getCurrentUser.executeQuery();
 		if (!rs.next()) {
 			System.out.println("no current user");
 			return;
 		}
-		long currentUserId = rs.getLong("id");
+		currentUserId = rs.getLong("id");
 	}
 
-	//merged
 	@ChoppedTransaction(microservice="m1")
-	public void postVote(long postId, int isAdmin, String authName, long ratingId,
-			int like) throws SQLException {
+	public void postLike(long postId, String authName, long ratingId) throws SQLException {
 		String getUserByUsernameSQL = 
-				"SELECT id FROM " + "USERS"+
+				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
 
 		String getPostSQL = 
-				"SELECT id FROM " + "POSTS"+
+				"SELECT * FROM " + "POSTS"+
 				" WHERE id = ?";
 
 		String getPostRatingSQL = 
-				"SELECT id FROM " + "POST_RATING"+
+				"SELECT * FROM " + "POST_RATING"+
 				" WHERE userId = ? AND postId = ?";
 
 		String insertPostRatingSQL = 
@@ -418,14 +783,63 @@ public class java_spring_mvc_blog_user {
 			return;
 		}
 
-		int rate;
-		if (like == 1) rate = 1;
-		else rate = -1;
+		PreparedStatement insertPostRating = connect.prepareStatement(insertPostRatingSQL);
+		insertPostRating.setLong(1, ratingId);
+		insertPostRating.setLong(2, currentUserId);
+		insertPostRating.setInt(3, 1);
+		insertPostRating.setLong(4, postId);
+		insertPostRating.executeUpdate();
+	}
+
+	@ChoppedTransaction(microservice="m1")
+	public void postDislike(long postId, String authName, long ratingId) throws SQLException {
+		String getUserByUsernameSQL = 
+				"SELECT * FROM " + "USERS"+
+				" WHERE username = ?";
+
+		String getPostSQL = 
+				"SELECT * FROM " + "POSTS"+
+				" WHERE id = ?";
+
+		String getPostRatingSQL = 
+				"SELECT * FROM " + "POST_RATING"+
+				" WHERE userId = ? AND postId = ?";
+
+		String insertPostRatingSQL = 
+				"INSERT INTO " + "POST_RATING" +
+				" (id, userId, rate, postId) " +
+				" VALUES ( ?, ?, ?, ? )";
+
+		PreparedStatement getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
+		getUserByUsername.setString(1, authName);
+		ResultSet rs = getUserByUsername.executeQuery();
+		if (!rs.next()) {
+			System.out.println("comment not found");
+			return;
+		}
+		long currentUserId = rs.getLong("id");
+
+		PreparedStatement getPost = connect.prepareStatement(getPostSQL);
+		getPost.setLong(1, postId);
+		rs = getPost.executeQuery();
+		if (!rs.next()) {
+			System.out.println("post not found");
+			return;
+		}
+
+		PreparedStatement getPostRating = connect.prepareStatement(getPostRatingSQL);
+		getPostRating.setLong(1, currentUserId);
+		getPostRating.setLong(2, postId);
+		rs = getPostRating.executeQuery();
+		if (rs.next()) {
+			System.out.println("already voted");
+			return;
+		}
 
 		PreparedStatement insertPostRating = connect.prepareStatement(insertPostRatingSQL);
 		insertPostRating.setLong(1, ratingId);
 		insertPostRating.setLong(2, currentUserId);
-		insertPostRating.setLong(3, rate);
+		insertPostRating.setInt(3, -1);
 		insertPostRating.setLong(4, postId);
 		insertPostRating.executeUpdate();
 	}
@@ -435,11 +849,11 @@ public class java_spring_mvc_blog_user {
 	public void registerUser(long userId, String username, String email, String password,
 		long currentTime) throws SQLException {
 		String getUserByUsernameSQL = 
-				"SELECT id FROM " + "USERS"+
+				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
 
 		String getUserByEmailSQL = 
-				"SELECT id FROM " + "USERS"+
+				"SELECT * FROM " + "USERS"+
 				" WHERE email = ?";
 
 		String insertUserSQL = 
@@ -448,7 +862,7 @@ public class java_spring_mvc_blog_user {
 				" VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 
 		String getRoleByNameSQL = 
-				"SELECT id FROM " + "ROLES"+
+				"SELECT * FROM " + "ROLES"+
 				" WHERE rname = ?";
 
 		String insertUsersRolesSQL = 
@@ -457,7 +871,7 @@ public class java_spring_mvc_blog_user {
 				" VALUES ( ?, ? )";
 
 		String getUserRolesSQL = 
-				"SELECT roleId FROM " + "USER_ROLE"+
+				"SELECT * FROM " + "USER_ROLE"+
 				" WHERE userId = ?";
 
 		PreparedStatement getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
@@ -518,13 +932,13 @@ public class java_spring_mvc_blog_user {
 		if (!rs.next()) {
 			System.out.println("empty");
 			return;
-		}
+		}		
 	}
 
 	@ChoppedTransaction(microservice="m1")
 	public void checkEmail(String email) throws SQLException {
 		String getUserByEmailSQL = 
-				"SELECT id FROM " + "USERS"+
+				"SELECT * FROM " + "USERS"+
 				" WHERE email = ?";
 
 		PreparedStatement getUserByEmail = connect.prepareStatement(getUserByEmailSQL);
@@ -539,7 +953,7 @@ public class java_spring_mvc_blog_user {
 	@ChoppedTransaction(microservice="m1")
 	public void checkUsername(String username) throws SQLException {
 		String getUserByUsernameSQL = 
-				"SELECT id FROM " + "USERS"+
+				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
 
 		PreparedStatement getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
@@ -551,11 +965,10 @@ public class java_spring_mvc_blog_user {
 		}	
 	}
 
-	/* showProfile
 	@ChoppedTransaction(microservice="m1")
 	public void showEditSettingsPage(String authName) throws SQLException {
 		String getUserByUsernameSQL = 
-				"SELECT * FROM " + "USER"+
+				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
 
 		PreparedStatement getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
@@ -565,17 +978,17 @@ public class java_spring_mvc_blog_user {
 			System.out.println("empty");
 			return;
 		}
-	}*/
+	}
 
 	@ChoppedTransaction(microservice="m1")
 	public void changeEmail(String username, String newEmail, String currentPassword,
 			String authName, long userId) throws SQLException {
 		String getUserByUsernameSQL = 
-				"SELECT password FROM " + "USERS"+
+				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
 
 		String getUserByEmailSQL = 
-				"SELECT id FROM " + "USERS"+
+				"SELECT * FROM " + "USERS"+
 				" WHERE email = ?";
 		
 		String updateEmailSQL = 
@@ -623,7 +1036,7 @@ public class java_spring_mvc_blog_user {
 	public void changePassword(String newPassword, String currentPassword,
 			String authName, long userId) throws SQLException {
 		String getUserByUsernameSQL = 
-				"SELECT password, email FROM " + "USERS"+
+				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
 		
 		String updatePasswordSQL = 
@@ -662,11 +1075,10 @@ public class java_spring_mvc_blog_user {
 		updateEmail.executeUpdate();
 	}
 
-	/* showProfile
 	@ChoppedTransaction(microservice="m1")
 	public void showEditProfilePage(String authName) throws SQLException {
 		String getUserByUsernameSQL = 
-				"SELECT * FROM " + "USER"+
+				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
 
 		PreparedStatement getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
@@ -676,13 +1088,13 @@ public class java_spring_mvc_blog_user {
 			System.out.println("empty");
 			return;
 		}
-	}*/
+	}
 
 	@ChoppedTransaction(microservice="m1")
 	public void editProfile(int hasError, String authName, long userId,
 			String aboutText, String websiteLink) throws SQLException {
 		String getUserByUsernameSQL = 
-				"SELECT bigAvatarLink FROM " + "USERS"+
+				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
 
 		String updateBigAvatarLinkSQL = 
@@ -732,7 +1144,7 @@ public class java_spring_mvc_blog_user {
 	public void uploadAvatar(String authName, String newBigAvatarLink,
 			String newSmallAvatarLink) throws SQLException {
 		String getUserByUsernameSQL = 
-				"SELECT id FROM " + "USERS"+
+				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
 
 		String updateUserAvatarsSQL = 
@@ -757,15 +1169,14 @@ public class java_spring_mvc_blog_user {
 		updateUserAvatars.executeUpdate();
 	}
 	
-	/* uploadAvatar
 	@ChoppedTransaction(microservice="m1")
 	public void removeAvatar(String authName) throws SQLException {
 		String getUserByUsernameSQL = 
-				"SELECT id FROM " + "USER"+
+				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
 
 		String updateUserAvatarsSQL = 
-				"UPDATE " + "USER" + 
+				"UPDATE " + "USERS" + 
 				"   SET bigAvatarLink = ?," +
 				"       smallAvatarLink = ?" +
 				" WHERE id = ? ";
@@ -784,7 +1195,7 @@ public class java_spring_mvc_blog_user {
 		updateUserAvatars.setString(2, "");
 		updateUserAvatars.setLong(3, userId);
 		updateUserAvatars.executeUpdate();
-	}*/
+	}
 
 	@ChoppedTransaction(microservice="m1")
 	public void showProfile(String username) throws SQLException {
