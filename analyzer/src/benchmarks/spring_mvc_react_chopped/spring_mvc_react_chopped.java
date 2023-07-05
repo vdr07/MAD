@@ -702,6 +702,11 @@ public class spring_mvc_react_chopped {
 				"SELECT * FROM " + "USERS"+
 				" WHERE id = ?";
 
+		String userUpdatePopularSQL = 
+				"UPDATE " + "USERS" + 
+				"   SET popular = ?" +
+				" WHERE id = ? ";
+
 		PreparedStatement userGetById = connect.prepareStatement(userGetByIdSQL);
 		userGetById.setLong(1, questionUserId);
 		ResultSet questionUser = userGetById.executeQuery();
@@ -718,6 +723,13 @@ public class spring_mvc_react_chopped {
 		else newPopular += 5;
 
 		sawQuestion = 1;
+
+		if (sawQuestion == 1) {
+			PreparedStatement userUpdatePopular = connect.prepareStatement(userUpdatePopularSQL);
+			userUpdatePopular.setInt(1, newPopular);
+			userUpdatePopular.setLong(2, userId);
+			userUpdatePopular.executeUpdate();
+		}
 	}
 
 	@ChoppedTransaction(originalTransaction="voteCreateQuestion2", microservice="m1")
@@ -786,6 +798,11 @@ public class spring_mvc_react_chopped {
 				"SELECT * FROM " + "USERS"+
 				" WHERE id = ?";
 
+		String userUpdatePopularSQL = 
+				"UPDATE " + "USERS" + 
+				"   SET popular = ?" +
+				" WHERE id = ? ";
+
 		PreparedStatement userGetById = connect.prepareStatement(userGetByIdSQL);
 		userGetById.setLong(1, questionUserId);
 		ResultSet questionUser = userGetById.executeQuery();
@@ -800,32 +817,9 @@ public class spring_mvc_react_chopped {
 
 		if (mark.equals("DOWN")) newPopular -= 2;
 		else newPopular += 10;
-		
+
 		sawAnswer = 1;
-	}
-
-	@ChoppedTransaction(originalTransaction="voteCreateQuestion1", microservice="m2")
-	public void voteCreateQuestion16(int sawQuestion, int newPopular, long userId) throws SQLException {
-		String userUpdatePopularSQL = 
-				"UPDATE " + "USERS" + 
-				"   SET popular = ?" +
-				" WHERE id = ? ";
-
-		if (sawQuestion == 1) {
-			PreparedStatement userUpdatePopular = connect.prepareStatement(userUpdatePopularSQL);
-			userUpdatePopular.setInt(1, newPopular);
-			userUpdatePopular.setLong(2, userId);
-			userUpdatePopular.executeUpdate();
-		}
-	}
-
-	@ChoppedTransaction(originalTransaction="voteCreateQuestion2", microservice="m2")
-	public void voteCreateQuestion27(int sawAnswer, int newPopular, long userId) throws SQLException {
-		String userUpdatePopularSQL = 
-				"UPDATE " + "USERS" + 
-				"   SET popular = ?" +
-				" WHERE id = ? ";
-
+		
 		if (sawAnswer == 1) {
 			PreparedStatement userUpdatePopular = connect.prepareStatement(userUpdatePopularSQL);
 			userUpdatePopular.setInt(1, newPopular);
@@ -835,7 +829,7 @@ public class spring_mvc_react_chopped {
 	}
 
 	@ChoppedTransaction(originalTransaction="voteCreateQuestion1", microservice="m5")
-	public void voteCreateQuestion17(long voteId, long questionId, long answerId, long userId,
+	public void voteCreateQuestion16(long voteId, long questionId, long answerId, long userId,
 			String mark) throws SQLException {
 		String voteAddVoteSQL = 
 				"INSERT INTO " + "VOTES" +
@@ -853,7 +847,7 @@ public class spring_mvc_react_chopped {
 	}
 
 	@ChoppedTransaction(originalTransaction="voteCreateQuestion2", microservice="m5")
-	public void voteCreateQuestion28(long voteId, long questionId, long answerId, long userId,
+	public void voteCreateQuestion27(long voteId, long questionId, long answerId, long userId,
 			String mark) throws SQLException {
 		String voteAddVoteSQL = 
 				"INSERT INTO " + "VOTES" +
