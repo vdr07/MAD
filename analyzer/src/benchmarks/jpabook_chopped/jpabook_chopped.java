@@ -44,7 +44,7 @@ public class jpabook_chopped {
 	public void memberCreate(long memberId, String memberName, String city,
 			String street, String zipcode) throws SQLException {
 		String getMemberByNameSQL = 
-				"SELECT id FROM " + "MEMBER"+
+				"SELECT * FROM " + "MEMBER"+
 				" WHERE name = ?";
 
 		String insertMemberSQL = 
@@ -199,7 +199,7 @@ public class jpabook_chopped {
 	@ChoppedTransaction(originalTransaction="order", microservice="m1")
 	public void order1(long memberId) throws SQLException {
 		String findOneMemberSQL = 
-				"SELECT city, street, zipcode FROM " + "MEMBER"+
+				"SELECT * FROM " + "MEMBER"+
 				" WHERE id = ?";
 	
 		PreparedStatement findOneMember = connect.prepareStatement(findOneMemberSQL);
@@ -217,7 +217,7 @@ public class jpabook_chopped {
 	@ChoppedTransaction(originalTransaction="order", microservice="m2")
 	public void order2(long itemId) throws SQLException {
 		String findOneItemSQL = 
-				"SELECT price, stockQuantity FROM " + "ITEMS"+
+				"SELECT * FROM " + "ITEMS"+
 				" WHERE id = ?";
 	
 		PreparedStatement findOneItem = connect.prepareStatement(findOneItemSQL);
@@ -300,7 +300,7 @@ public class jpabook_chopped {
 	@ChoppedTransaction(originalTransaction="orderList", microservice="m1")
 	public void orderList1(String memberName) throws SQLException {
 		String findMemberByNameSQL = 
-				"SELECT id FROM " + "MEMBER"+
+				"SELECT * FROM " + "MEMBER"+
 				" WHERE name = ?";
 		
 		PreparedStatement findMemberByName = connect.prepareStatement(findMemberByNameSQL);
@@ -332,7 +332,7 @@ public class jpabook_chopped {
 	@ChoppedTransaction(originalTransaction="processCancelBuy", microservice="m5")
 	public void processCancelBuy1(long orderId) throws SQLException {
 		String findOneOrderSQL = 
-				"SELECT id, deliveryId FROM " + "ORDERS"+
+				"SELECT * FROM " + "ORDERS"+
 				" WHERE id = ?";
 		
 		PreparedStatement findOneOrder = connect.prepareStatement(findOneOrderSQL);
@@ -386,6 +386,7 @@ public class jpabook_chopped {
 		ResultSet rs = findOrderItemByOrderId.executeQuery();
 		if (!rs.next()) {
 			System.out.println("empty");
+			return;
 		}
 	}
 
@@ -410,6 +411,7 @@ public class jpabook_chopped {
 			ResultSet item = findItem.executeQuery();
 			if (!item.next()) {
 				System.out.println("empty");
+				return;
 			}
 			int itemStockQuantity = item.getInt("stockQuantity");
 			
