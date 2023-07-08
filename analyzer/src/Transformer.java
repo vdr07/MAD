@@ -217,9 +217,9 @@ public class Transformer extends BodyTransformer {
 										seenVersAnmls.add(anml3);
 										seenStructures.addStructure(anml3.getCycleStructure());
 										seenStructures.writeToCSV(seenStructures.size(), iter - 1, anml3);
-										LOG.info("A structurally similar anomaly generated (" + seenStructures.size()
+										LOG.info("A structurally similar anomaly generated (" + seenVersAnmls.size()
 												+ ") -- " + anml3);
-										anml3.announce(false, seenStructures.size());
+										anml3.announce(false, seenVersAnmls.size());
 										// repeat
 										anml3 = zdr.analyze(4, null, seenAnmls, includedTables, anml3);
 									}
