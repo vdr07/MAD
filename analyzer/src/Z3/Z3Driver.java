@@ -710,11 +710,14 @@ public class Z3Driver {
 			case 1:
 				ctxInitialize(unVersionedAnml);
 				int iter530 = 0;
-				for (Anomaly anml : seenAnmls)
-					excludeAnomaly(anml, iter530++);
-				// Redudant loop since the structures will be the same as the anomalies
-				//for (List<Tuple<String, Tuple<String, String>>> strc : seenStructures)
-				//	excludeAnomalyFromStructure(strc, iter530++);
+				// Valentim: Commenting this cycle since the structures one is more relevant
+				// for (Anomaly anml : seenAnmls)
+				//	excludeAnomaly(anml, iter530++);
+				
+				// Previous: Redudant loop since the structures will be the same as the anomalies
+				// Valentim: Excluding anomalies by structure because of continuous analysis
+				for (List<Tuple<String, Tuple<String, String>>> strc : seenStructures)
+					excludeAnomalyFromStructure(strc, iter530++);
 
 				try {
 					// rules

@@ -185,6 +185,8 @@ public class Transformer extends BodyTransformer {
 							anml1.generateCycleStructure();
 							System.out.println("structure1: "+anml1.getCycleStructure());
 							seenAnmls.add(anml1);
+							seenStructures.addStructure(anml1.getCycleStructure());
+							seenStructures.writeToCSV(seenStructures.size(), iter - 1, anml1);
 							// Versioned analysis
 							ConstantArgs._current_version_enforcement = true;
 							anml2 = zdr.analyze(2, null, seenAnmls, includedTables, anml1);
@@ -193,12 +195,14 @@ public class Transformer extends BodyTransformer {
 								anml2.generateCycleStructure();
 								System.out.println("structure3: "+anml2.getCycleStructure());
 								seenVersAnmls.add(anml2);
-								seenStructures.addStructure(anml2.getCycleStructure());
-								seenStructures.writeToCSV(seenStructures.size(), iter - 1, anml2);
+								// seenStructures.addStructure(anml2.getCycleStructure());
+								// seenStructures.writeToCSV(seenStructures.size(), iter - 1, anml2);
 								long anml2_finish_time = System.currentTimeMillis();
 								anml2.setExtractionTime(-1, anml2_finish_time - anml2_begin_time);
-								anml2.announce(false, seenStructures.size());
-								LOG.info("Versioned anomaly generated (" + seenStructures.size() + ") -- " + anml2);
+								// anml2.announce(false, seenStructures.size());
+								// LOG.info("Versioned anomaly generated (" + seenStructures.size() + ") -- " + anml2);
+								anml2.announce(false, seenVersAnmls.size());
+								LOG.info("Versioned anomaly generated (" + seenVersAnmls.size() + ") -- " + anml2);
 
 								// inner loop for finding structurally similar anomalies
 								if (ConstantArgs._ENFORCE_OPTIMIZED_ALGORITHM) {

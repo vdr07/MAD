@@ -536,6 +536,9 @@ public class DynamicAssertsions {
 		for (int i = 0; i < length; i++) {
 			String xs = structure.get(i).y.x;
 			FuncDecl cnstrX = objs.getConstructor("OType", xs.substring(1, xs.length() - 1));
+			// If the structure is from a different test case ignore
+			if (cnstrX == null)
+				return ctx.mkTrue();
 			BoolExpr lhsLoop = ctx.mkEq(ctx.mkApp(otypeFunc, Os[i]), ctx.mkApp(cnstrX));
 			allLhs[i] = lhsLoop;
 		}
@@ -825,9 +828,7 @@ public class DynamicAssertsions {
 		depExprs[0] = ctx.mkAnd((BoolExpr) ctx.mkApp(objs.getfuncs("X"), Os[0], Os[1]),
 				ctx.mkOr((BoolExpr) ctx.mkApp(objs.getfuncs("sibling"), Os[0], Os[1]),
 					(BoolExpr) ctx.mkApp(objs.getfuncs("step_sibling"), Os[0], Os[1])));
-		//
-		// TODO - Expandir para ser "pelo menos uma das relações não é entre o mesmo microservico" 
-		//
+
 		depExprs[1] = (BoolExpr) ctx.mkApp(objs.getfuncs("D"), Os[1], Os[2]);
 		depExprs[length - 1] = (BoolExpr) ctx.mkApp(objs.getfuncs("D"), Os[length - 1], Os[0]);
 		for (int i = 2; i < length - 1; i++)
