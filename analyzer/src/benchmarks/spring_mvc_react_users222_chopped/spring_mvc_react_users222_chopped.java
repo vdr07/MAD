@@ -1,4 +1,4 @@
-package benchmarks.spring_mvc_react_users22_chopped;
+package benchmarks.spring_mvc_react_users222_chopped;
 
 import ar.ChoppedTransaction;
 
@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 import java.util.Random;
 import java.util.ArrayList;
 
-public class spring_mvc_react_users22_chopped {
+public class spring_mvc_react_users222_chopped {
 
 	private Connection connect = null;
 	private int _ISOLATION = Connection.TRANSACTION_READ_COMMITTED;
@@ -22,7 +22,7 @@ public class spring_mvc_react_users22_chopped {
 	Properties p;
 	private Random r;
 
-	public spring_mvc_react_users22_chopped(int id) {
+	public spring_mvc_react_users222_chopped(int id) {
 		this.id = id;
 		p = new Properties();
 		p.setProperty("id", String.valueOf(this.id));
