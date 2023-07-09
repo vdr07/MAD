@@ -107,7 +107,7 @@ public class spring_mvc_react_users22_chopped {
 	}
 
 	// AuthorizationController
-	@ChoppedTransaction(microservice="m2")
+	/*@ChoppedTransaction(microservice="m2")
 	public void authorizationLogin(String username, String password) throws SQLException {
 		String userGetByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -201,9 +201,9 @@ public class spring_mvc_react_users22_chopped {
 			System.out.println("User not found");
 			return;
 		}
-	}
+	}*/
 
-	/*@ChoppedTransaction(microservice="m2")
+	@ChoppedTransaction(microservice="m2")
 	public void userCreateUser(long userId, String username, String password,
 			String currentDate, String status, int popular) throws SQLException {
 		String userGetByUsernameSQL = 
@@ -291,7 +291,7 @@ public class spring_mvc_react_users22_chopped {
 		userUpdateUsernamePassword.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m2")
+	/*@ChoppedTransaction(microservice="m2")
 	public void userDeleteUser(long userId) throws SQLException {
 		String userGetByIdSQL = 
 				"SELECT * FROM " + "USERS"+
