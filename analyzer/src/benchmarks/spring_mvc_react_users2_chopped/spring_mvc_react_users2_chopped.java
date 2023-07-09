@@ -159,144 +159,6 @@ public class spring_mvc_react_users2_chopped {
 		userAddUser.executeUpdate();
 	}
 
-	@ChoppedTransaction(originalTransaction="questionGetQuestionsByUser", microservice="m2")
-	public void questionGetQuestionsByUser1(String username) throws SQLException {
-		String userGetByUsernameSQL = 
-				"SELECT * FROM " + "USERS"+
-				" WHERE username = ?";
-
-		PreparedStatement userGetByUsername = connect.prepareStatement(userGetByUsernameSQL);
-		userGetByUsername.setString(1, username);
-		ResultSet rs = userGetByUsername.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
-		long userId = rs.getLong("id");
-	}
-
-	@ChoppedTransaction(originalTransaction="questionGetQuestionsByUser", microservice="m3")
-	public void questionGetQuestionsByUser2(long userId) throws SQLException {
-		String questionGetByUserSQL = 
-				"SELECT * FROM " + "QUESTIONS"+
-				" WHERE userId = ?";
-
-		PreparedStatement questionGetByUser = connect.prepareStatement(questionGetByUserSQL);
-		questionGetByUser.setLong(1, userId);
-		ResultSet rs = questionGetByUser.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
-	}
-
-	@ChoppedTransaction(originalTransaction="questionCreateQuestion", microservice="m2")
-	public void questionCreateQuestion1(String username) throws SQLException {
-		String userGetByUsernameSQL = 
-				"SELECT * FROM " + "USERS"+
-				" WHERE username = ?";
-
-		PreparedStatement userGetByUsername = connect.prepareStatement(userGetByUsernameSQL);
-		userGetByUsername.setString(1, username);
-		ResultSet rs = userGetByUsername.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-			return;
-		}
-		long userId = rs.getLong("id");
-	}
-
-	@ChoppedTransaction(originalTransaction="questionCreateQuestion", microservice="m4")
-	public void questionCreateQuestion2(String[] tagNames, long tagId, String currentDate,
-			long userId) throws SQLException {
-		String tagGetByNameSQL = 
-				"SELECT * FROM " + "TAGS"+
-				" WHERE name = ?";
-
-		String tagUpdatePopularSQL = 
-				"UPDATE " + "TAGS" + 
-				"   SET popular = ?" +
-				" WHERE id = ? ";
-
-		String tagAddTagSQL = 
-				"INSERT INTO " + "TAGS" +
-				" (id, name, description, popular, createdAt, userId) " +
-				" VALUES ( ?, ?, ?, ?, ?, ? )";
-
-		for (String tagName : tagNames) {
-			PreparedStatement tagGetByName = connect.prepareStatement(tagGetByNameSQL);
-			tagGetByName.setString(1, tagName);
-			ResultSet rs = tagGetByName.executeQuery();
-			if (rs.next()) {
-				tagId = rs.getLong("id");
-				int tagCurrentPopular = rs.getInt("popular");
-				PreparedStatement tagUpdatePopular = connect.prepareStatement(tagUpdatePopularSQL);
-				tagUpdatePopular.setInt(1, tagCurrentPopular + 1);
-				tagUpdatePopular.setLong(2, tagId);
-				tagUpdatePopular.executeUpdate();
-			} else {
-				PreparedStatement tagAddTag = connect.prepareStatement(tagAddTagSQL);
-				tagAddTag.setLong(1, tagId);
-				tagAddTag.setString(2, tagName);
-				tagAddTag.setString(3, "");
-				tagAddTag.setInt(4, 0);
-				tagAddTag.setString(5, currentDate);
-				tagAddTag.setLong(6, userId);
-				tagAddTag.executeUpdate();
-			}
-		}
-	}
-
-	@ChoppedTransaction(originalTransaction="questionCreateQuestion", microservice="m3")
-	public void questionCreateQuestion3(long questionId, String questionTitle, String questionAgo, 
-			String questionComment, long userId, String currentDate, String[] tagNames) throws SQLException {
-		String questionAddQuestionSQL = 
-				"INSERT INTO " + "QUESTIONS" +
-				" (id, tile, ago, comment, userId, createdAt, updatedAt) " +
-				" VALUES ( ?, ?, ?, ?, ?, ?, ? )";
-
-		PreparedStatement questionAddQuestion = connect.prepareStatement(questionAddQuestionSQL);
-		questionAddQuestion.setLong(1, questionId);
-		questionAddQuestion.setString(2, questionTitle);
-		questionAddQuestion.setString(3, questionAgo);
-		questionAddQuestion.setString(4, questionComment);
-		questionAddQuestion.setLong(5, userId);
-		questionAddQuestion.setString(6, currentDate);
-		questionAddQuestion.setString(7, currentDate);
-		questionAddQuestion.executeUpdate();
-	}
-
-	@ChoppedTransaction(originalTransaction="questionCreateQuestion", microservice="m4")
-	public void questionCreateQuestion4(String[] tagNames) throws SQLException {
-		String tagGetByNameSQL = 
-				"SELECT * FROM " + "TAGS"+
-				" WHERE name = ?";
-
-		for (String tagName : tagNames) {
-			PreparedStatement tagGetByName = connect.prepareStatement(tagGetByNameSQL);
-			tagGetByName.setString(1, tagName);
-			ResultSet rs = tagGetByName.executeQuery();
-			if (!rs.next()) {
-				System.out.println("No tag was found");
-				return;
-			}
-			long tagId = rs.getLong("id");
-		}
-	}
-
-	@ChoppedTransaction(originalTransaction="questionCreateQuestion", microservice="m3")
-	public void questionCreateQuestion5(long questionId, long[] tagIds) throws SQLException {
-		String questionTagAddQuestionTagSQL = 
-				"INSERT INTO " + "QUESTION_TAG" +
-				" (questionId, tagId) " +
-				" VALUES ( ?, ? )";
-
-		for (long tagId : tagIds) {
-			PreparedStatement questionTagAddQuestionTag = connect.prepareStatement(questionTagAddQuestionTagSQL);
-			questionTagAddQuestionTag.setLong(1, questionId);
-			questionTagAddQuestionTag.setLong(2, tagId);
-			questionTagAddQuestionTag.executeUpdate();
-		}
-	}
-
 	// UserController
 	@ChoppedTransaction(microservice="m2")
 	public void userListAllUsers() throws SQLException {
@@ -463,6 +325,10 @@ public class spring_mvc_react_users2_chopped {
 				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
 
+		String userGetByEmailSQL = 
+				"SELECT * FROM " + "USERS"+
+				" WHERE username = ?";
+
 		if (!username.equals("") && !email.equals("")) {
 			PreparedStatement userGetByUsernameOrEmail = connect.prepareStatement(userGetByUsernameOrEmailSQL);
 			userGetByUsernameOrEmail.setString(1, username);
@@ -479,9 +345,9 @@ public class spring_mvc_react_users2_chopped {
 				System.out.println("Empty");
 			}
 		} else if (!email.equals("")) {
-			PreparedStatement userGetByUsername = connect.prepareStatement(userGetByUsernameSQL);
-			userGetByUsername.setString(1, email);
-			ResultSet rs = userGetByUsername.executeQuery();
+			PreparedStatement userGetByEmail = connect.prepareStatement(userGetByEmailSQL);
+			userGetByEmail.setString(1, email);
+			ResultSet rs = userGetByEmail.executeQuery();
 			if (!rs.next()) {
 				System.out.println("Empty");
 			}

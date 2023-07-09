@@ -1,4 +1,4 @@
-package benchmarks.spring_mvc_react_users1_chopped;
+package benchmarks.spring_mvc_react_users4_chopped;
 
 import ar.ChoppedTransaction;
 
@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 import java.util.Random;
 import java.util.ArrayList;
 
-public class spring_mvc_react_users1_chopped {
+public class spring_mvc_react_users4_chopped {
 
 	private Connection connect = null;
 	private int _ISOLATION = Connection.TRANSACTION_READ_COMMITTED;
@@ -22,7 +22,7 @@ public class spring_mvc_react_users1_chopped {
 	Properties p;
 	private Random r;
 
-	public spring_mvc_react_users1_chopped(int id) {
+	public spring_mvc_react_users4_chopped(int id) {
 		this.id = id;
 		p = new Properties();
 		p.setProperty("id", String.valueOf(this.id));
@@ -37,35 +37,6 @@ public class spring_mvc_react_users1_chopped {
 		}
 		
 		r = new Random();
-	}
-
-	@ChoppedTransaction(originalTransaction="answerGetAnswersByUser", microservice="m2")
-	public void answerGetAnswersByUser1(String username) throws SQLException {
-		String userGetByUsernameSQL = 
-				"SELECT * FROM " + "USERS"+
-				" WHERE username = ?";
-
-		PreparedStatement userGetByUsername = connect.prepareStatement(userGetByUsernameSQL);
-		userGetByUsername.setString(1, username);
-		ResultSet rs = userGetByUsername.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
-		long userId = rs.getLong("id");
-	}
-
-	@ChoppedTransaction(originalTransaction="answerGetAnswersByUser", microservice="m1")
-	public void answerGetAnswersByUser2(long userId) throws SQLException {
-		String answerGetByUserSQL = 
-				"SELECT * FROM " + "ANSWERS"+
-				" WHERE userId = ?";
-
-		PreparedStatement answerGetByUser = connect.prepareStatement(answerGetByUserSQL);
-		answerGetByUser.setLong(1, userId);
-		ResultSet rs = answerGetByUser.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
 	}
 
 	// AuthorizationController
@@ -119,6 +90,115 @@ public class spring_mvc_react_users1_chopped {
 		userAddUser.setString(5, "active");
 		userAddUser.setInt(6, 0);
 		userAddUser.executeUpdate();
+	}
+
+	@ChoppedTransaction(originalTransaction="questionCreateQuestion", microservice="m2")
+	public void questionCreateQuestion1(String username) throws SQLException {
+		String userGetByUsernameSQL = 
+				"SELECT * FROM " + "USERS"+
+				" WHERE username = ?";
+
+		PreparedStatement userGetByUsername = connect.prepareStatement(userGetByUsernameSQL);
+		userGetByUsername.setString(1, username);
+		ResultSet rs = userGetByUsername.executeQuery();
+		if (!rs.next()) {
+			System.out.println("Empty");
+			return;
+		}
+		long userId = rs.getLong("id");
+	}
+
+	@ChoppedTransaction(originalTransaction="questionCreateQuestion", microservice="m4")
+	public void questionCreateQuestion2(String[] tagNames, long tagId, String currentDate,
+			long userId) throws SQLException {
+		String tagGetByNameSQL = 
+				"SELECT * FROM " + "TAGS"+
+				" WHERE name = ?";
+
+		String tagUpdatePopularSQL = 
+				"UPDATE " + "TAGS" + 
+				"   SET popular = ?" +
+				" WHERE id = ? ";
+
+		String tagAddTagSQL = 
+				"INSERT INTO " + "TAGS" +
+				" (id, name, description, popular, createdAt, userId) " +
+				" VALUES ( ?, ?, ?, ?, ?, ? )";
+
+		for (String tagName : tagNames) {
+			PreparedStatement tagGetByName = connect.prepareStatement(tagGetByNameSQL);
+			tagGetByName.setString(1, tagName);
+			ResultSet rs = tagGetByName.executeQuery();
+			if (rs.next()) {
+				tagId = rs.getLong("id");
+				int tagCurrentPopular = rs.getInt("popular");
+				PreparedStatement tagUpdatePopular = connect.prepareStatement(tagUpdatePopularSQL);
+				tagUpdatePopular.setInt(1, tagCurrentPopular + 1);
+				tagUpdatePopular.setLong(2, tagId);
+				tagUpdatePopular.executeUpdate();
+			} else {
+				PreparedStatement tagAddTag = connect.prepareStatement(tagAddTagSQL);
+				tagAddTag.setLong(1, tagId);
+				tagAddTag.setString(2, tagName);
+				tagAddTag.setString(3, "");
+				tagAddTag.setInt(4, 0);
+				tagAddTag.setString(5, currentDate);
+				tagAddTag.setLong(6, userId);
+				tagAddTag.executeUpdate();
+			}
+		}
+	}
+
+	@ChoppedTransaction(originalTransaction="questionCreateQuestion", microservice="m3")
+	public void questionCreateQuestion3(long questionId, String questionTitle, String questionAgo, 
+			String questionComment, long userId, String currentDate, String[] tagNames) throws SQLException {
+		String questionAddQuestionSQL = 
+				"INSERT INTO " + "QUESTIONS" +
+				" (id, tile, ago, comment, userId, createdAt, updatedAt) " +
+				" VALUES ( ?, ?, ?, ?, ?, ?, ? )";
+
+		PreparedStatement questionAddQuestion = connect.prepareStatement(questionAddQuestionSQL);
+		questionAddQuestion.setLong(1, questionId);
+		questionAddQuestion.setString(2, questionTitle);
+		questionAddQuestion.setString(3, questionAgo);
+		questionAddQuestion.setString(4, questionComment);
+		questionAddQuestion.setLong(5, userId);
+		questionAddQuestion.setString(6, currentDate);
+		questionAddQuestion.setString(7, currentDate);
+		questionAddQuestion.executeUpdate();
+	}
+
+	@ChoppedTransaction(originalTransaction="questionCreateQuestion", microservice="m4")
+	public void questionCreateQuestion4(String[] tagNames) throws SQLException {
+		String tagGetByNameSQL = 
+				"SELECT * FROM " + "TAGS"+
+				" WHERE name = ?";
+
+		for (String tagName : tagNames) {
+			PreparedStatement tagGetByName = connect.prepareStatement(tagGetByNameSQL);
+			tagGetByName.setString(1, tagName);
+			ResultSet rs = tagGetByName.executeQuery();
+			if (!rs.next()) {
+				System.out.println("No tag was found");
+				return;
+			}
+			long tagId = rs.getLong("id");
+		}
+	}
+
+	@ChoppedTransaction(originalTransaction="questionCreateQuestion", microservice="m3")
+	public void questionCreateQuestion5(long questionId, long[] tagIds) throws SQLException {
+		String questionTagAddQuestionTagSQL = 
+				"INSERT INTO " + "QUESTION_TAG" +
+				" (questionId, tagId) " +
+				" VALUES ( ?, ? )";
+
+		for (long tagId : tagIds) {
+			PreparedStatement questionTagAddQuestionTag = connect.prepareStatement(questionTagAddQuestionTagSQL);
+			questionTagAddQuestionTag.setLong(1, questionId);
+			questionTagAddQuestionTag.setLong(2, tagId);
+			questionTagAddQuestionTag.executeUpdate();
+		}
 	}
 
 	// UserController
