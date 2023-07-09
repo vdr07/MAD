@@ -39,6 +39,35 @@ public class spring_mvc_react_users3_chopped {
 		r = new Random();
 	}
 
+	@ChoppedTransaction(originalTransaction="answerGetAnswersByUser", microservice="m2")
+	public void answerGetAnswersByUser1(String username) throws SQLException {
+		String userGetByUsernameSQL = 
+				"SELECT * FROM " + "USERS"+
+				" WHERE username = ?";
+
+		PreparedStatement userGetByUsername = connect.prepareStatement(userGetByUsernameSQL);
+		userGetByUsername.setString(1, username);
+		ResultSet rs = userGetByUsername.executeQuery();
+		if (!rs.next()) {
+			System.out.println("Empty");
+		}
+		long userId = rs.getLong("id");
+	}
+
+	@ChoppedTransaction(originalTransaction="answerGetAnswersByUser", microservice="m1")
+	public void answerGetAnswersByUser2(long userId) throws SQLException {
+		String answerGetByUserSQL = 
+				"SELECT * FROM " + "ANSWERS"+
+				" WHERE userId = ?";
+
+		PreparedStatement answerGetByUser = connect.prepareStatement(answerGetByUserSQL);
+		answerGetByUser.setLong(1, userId);
+		ResultSet rs = answerGetByUser.executeQuery();
+		if (!rs.next()) {
+			System.out.println("Empty");
+		}
+	}
+
 	@ChoppedTransaction(originalTransaction="answerCreateQuestion", microservice="m2")
 	public void answerCreateQuestion1(String username) throws SQLException {
 		String userGetByUsernameSQL = 
@@ -212,6 +241,35 @@ public class spring_mvc_react_users3_chopped {
 			questionTagAddQuestionTag.setLong(1, questionId);
 			questionTagAddQuestionTag.setLong(2, tagId);
 			questionTagAddQuestionTag.executeUpdate();
+		}
+	}
+
+	@ChoppedTransaction(originalTransaction="questionGetQuestionsByUser", microservice="m2")
+	public void questionGetQuestionsByUser1(String username) throws SQLException {
+		String userGetByUsernameSQL = 
+				"SELECT * FROM " + "USERS"+
+				" WHERE username = ?";
+
+		PreparedStatement userGetByUsername = connect.prepareStatement(userGetByUsernameSQL);
+		userGetByUsername.setString(1, username);
+		ResultSet rs = userGetByUsername.executeQuery();
+		if (!rs.next()) {
+			System.out.println("Empty");
+		}
+		long userId = rs.getLong("id");
+	}
+
+	@ChoppedTransaction(originalTransaction="questionGetQuestionsByUser", microservice="m3")
+	public void questionGetQuestionsByUser2(long userId) throws SQLException {
+		String questionGetByUserSQL = 
+				"SELECT * FROM " + "QUESTIONS"+
+				" WHERE userId = ?";
+
+		PreparedStatement questionGetByUser = connect.prepareStatement(questionGetByUserSQL);
+		questionGetByUser.setLong(1, userId);
+		ResultSet rs = questionGetByUser.executeQuery();
+		if (!rs.next()) {
+			System.out.println("Empty");
 		}
 	}
 
