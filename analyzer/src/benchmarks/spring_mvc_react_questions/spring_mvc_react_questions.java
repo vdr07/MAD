@@ -293,6 +293,14 @@ public class spring_mvc_react_questions {
 				"SELECT * FROM " + "USERS"+
 				" WHERE id = ?";
 
+		String userUsernameGetByIdSQL = 
+				"SELECT username FROM " + "USERS"+
+				" WHERE id = ?";
+
+		String questionUserIdGetByIdSQL = 
+				"SELECT userId FROM " + "QUESTIONS"+
+				" WHERE id = ?";
+
 		String answerGetByIdSQL = 
 				"SELECT * FROM " + "ANSWERS"+
 				" WHERE id = ?";
@@ -314,93 +322,69 @@ public class spring_mvc_react_questions {
 			System.out.println("Empty");
 		}
 		long userId = rs.getLong("id");
+		String userUsername = rs.getString("username");
 		int userPopular = rs.getInt("popular");
 
 		int newPopular = userPopular;
 		PreparedStatement questionGetById = connect.prepareStatement(questionGetByIdSQL);
 		questionGetById.setLong(1, questionId);
-		rs = questionGetById.executeQuery();
+		ResultSet question = questionGetById.executeQuery();
+		long questionUserId = 0;
 		int sawQuestion = 0;
-		if (rs.next()) {
-			userGetByUsername = connect.prepareStatement(userGetByUsernameSQL);
-			userGetByUsername.setString(1, username);
-			ResultSet user = userGetByUsername.executeQuery();
-			if (!user.next()) {
-				System.out.println("Empty");
-			}
-			userId = user.getLong("id");
+		if (question.next()) {
+			sawQuestion = 1;
+			questionUserId = question.getLong("userId");
+		}
 
-			questionGetById = connect.prepareStatement(questionGetByIdSQL);
-			questionGetById.setLong(1, questionId);
-			ResultSet question = questionGetById.executeQuery();
-			if (!question.next()) {
-				System.out.println("Empty");
-			}
-			long questionUserId = question.getLong("userId");
+		PreparedStatement answerGetById = connect.prepareStatement(answerGetByIdSQL);
+		answerGetById.setLong(1, answerId);
+		ResultSet answer = answerGetById.executeQuery();
+		long answerQuestionId = 0;
+		int sawAnswer = 0;
+		if (answer.next() && sawQuestion == 0) {
+			sawAnswer = 1;
+			answerQuestionId = answer.getLong("questionId");
+		}
 
-			PreparedStatement userGetById = connect.prepareStatement(userGetByIdSQL);
-			userGetById.setLong(1, questionUserId);
-			ResultSet questionUser = userGetById.executeQuery();
+		if (sawQuestion == 1) {
+			PreparedStatement userUsernameGetById = connect.prepareStatement(userUsernameGetByIdSQL);
+			userUsernameGetById.setLong(1, questionUserId);
+			ResultSet questionUser = userUsernameGetById.executeQuery();
 			if (!questionUser.next()) {
 				System.out.println("Empty");
 			}
 			String questionUsername = questionUser.getString("username");
 
-			if (questionUsername.equals(username)) {
+			if (questionUsername.equals(userUsername)) {
 				userId = questionUserId;
 			}
 
 			if (mark.equals("DOWN")) newPopular -= 2;
 			else newPopular += 5;
 
-			sawQuestion = 1;
-		}
-
-		PreparedStatement answerGetById = connect.prepareStatement(answerGetByIdSQL);
-		answerGetById.setLong(1, answerId);
-		rs = answerGetById.executeQuery();
-		int sawAnswer = 0;
-		if (rs.next() && sawQuestion == 0) {
-			userGetByUsername = connect.prepareStatement(userGetByUsernameSQL);
-			userGetByUsername.setString(1, username);
-			ResultSet user = userGetByUsername.executeQuery();
-			if (!user.next()) {
-				System.out.println("Empty");
-			}
-			userId = user.getLong("id");
-
-			answerGetById = connect.prepareStatement(answerGetByIdSQL);
-			answerGetById.setLong(1, questionId);
-			ResultSet answer = answerGetById.executeQuery();
-			if (!answer.next()) {
-				System.out.println("Empty");
-			}
-			long answerQuestionId = answer.getLong("questionId");
-
-			questionGetById = connect.prepareStatement(questionGetByIdSQL);
-			questionGetById.setLong(1, answerQuestionId);
-			ResultSet question = questionGetById.executeQuery();
+		} else if (sawAnswer == 1 && sawQuestion == 0) {
+			PreparedStatement questionUserIdGetById = connect.prepareStatement(questionUserIdGetByIdSQL);
+			questionUserIdGetById.setLong(1, answerQuestionId);
+			question = questionUserIdGetById.executeQuery();
 			if (!question.next()) {
 				System.out.println("Empty");
 			}
-			long questionUserId = question.getLong("userId");
+			questionUserId = question.getLong("userId");
 
-			PreparedStatement userGetById = connect.prepareStatement(userGetByIdSQL);
-			userGetById.setLong(1, questionUserId);
-			ResultSet questionUser = userGetById.executeQuery();
+			PreparedStatement userUsernameGetById = connect.prepareStatement(userUsernameGetByIdSQL);
+			userUsernameGetById.setLong(1, questionUserId);
+			ResultSet questionUser = userUsernameGetById.executeQuery();
 			if (!questionUser.next()) {
 				System.out.println("Empty");
 			}
 			String questionUsername = questionUser.getString("username");
 
-			if (questionUsername.equals(username)) {
+			if (questionUsername.equals(userUsername)) {
 				userId = questionUserId;
 			}
 
 			if (mark.equals("DOWN")) newPopular -= 2;
 			else newPopular += 10;
-			
-			sawAnswer = 1;
 		}
 
 		if (sawQuestion == 1 || sawAnswer == 1) {

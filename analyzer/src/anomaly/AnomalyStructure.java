@@ -72,7 +72,7 @@ public class AnomalyStructure {
 	}
 
 	// TODO: verify it works correctly
-	//@SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	public void load() throws ClassNotFoundException, IOException {
 
 		FileInputStream streamIn;

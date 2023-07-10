@@ -482,8 +482,8 @@ public class spring_mvc_react_users_chopped {
 	}
 
 	// VoteController
-	@ChoppedTransaction(originalTransaction="voteCreateQuestion1", microservice="m2")
-	public void voteCreateQuestion11(String username) throws SQLException {
+	@ChoppedTransaction(originalTransaction="voteCreateQuestion", microservice="m2")
+	public void voteCreateQuestion1(String username) throws SQLException {
 		String userGetByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
@@ -495,27 +495,12 @@ public class spring_mvc_react_users_chopped {
 			System.out.println("Empty");
 		}
 		long userId = rs.getLong("id");
+		String userUsername = rs.getString("username");
 		int userPopular = rs.getInt("popular");
 	}
 
-	@ChoppedTransaction(originalTransaction="voteCreateQuestion2", microservice="m2")
-	public void voteCreateQuestion21(String username) throws SQLException {
-		String userGetByUsernameSQL = 
-				"SELECT * FROM " + "USERS"+
-				" WHERE username = ?";
-
-		PreparedStatement userGetByUsername = connect.prepareStatement(userGetByUsernameSQL);
-		userGetByUsername.setString(1, username);
-		ResultSet rs = userGetByUsername.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
-		long userId = rs.getLong("id");
-		int userPopular = rs.getInt("popular");
-	}
-
-	@ChoppedTransaction(originalTransaction="voteCreateQuestion1", microservice="m3")
-	public void voteCreateQuestion12(long questionId) throws SQLException {
+	@ChoppedTransaction(originalTransaction="voteCreateQuestion", microservice="m3")
+	public void voteCreateQuestion2(long questionId) throws SQLException {
 		String questionGetByIdSQL = 
 				"SELECT * FROM " + "QUESTIONS"+
 				" WHERE id = ?";
@@ -527,42 +512,26 @@ public class spring_mvc_react_users_chopped {
 			System.out.println("Empty");
 		}
 	}
-	
-	@ChoppedTransaction(originalTransaction="voteCreateQuestion1", microservice="m2")
-	public void voteCreateQuestion13(String username) throws SQLException {
-		String userGetByUsernameSQL = 
-				"SELECT * FROM " + "USERS"+
-				" WHERE username = ?";
 
-		PreparedStatement userGetByUsername = connect.prepareStatement(userGetByUsernameSQL);
-		userGetByUsername.setString(1, username);
-		ResultSet user = userGetByUsername.executeQuery();
-		if (!user.next()) {
-			System.out.println("Empty");
-		}
-		long userId = user.getLong("id");
-	}
-
-	@ChoppedTransaction(originalTransaction="voteCreateQuestion1", microservice="m3")
-	public void voteCreateQuestion14(long questionId) throws SQLException {
-		String questionGetByIdSQL = 
-				"SELECT * FROM " + "QUESTIONS"+
+	@ChoppedTransaction(originalTransaction="voteCreateQuestion", microservice="m1")
+	public void voteCreateQuestion3(long answerId) throws SQLException {
+		String answerGetByIdSQL = 
+				"SELECT * FROM " + "ANSWERS"+
 				" WHERE id = ?";
 
-		PreparedStatement questionGetById = connect.prepareStatement(questionGetByIdSQL);
-		questionGetById.setLong(1, questionId);
-		ResultSet question = questionGetById.executeQuery();
-		if (!question.next()) {
+		PreparedStatement answerGetById = connect.prepareStatement(answerGetByIdSQL);
+		answerGetById.setLong(1, answerId);
+		ResultSet rs = answerGetById.executeQuery();
+		if (!rs.next()) {
 			System.out.println("Empty");
 		}
-		long questionUserId = question.getLong("userId");
 	}
-
-	@ChoppedTransaction(originalTransaction="voteCreateQuestion1", microservice="m2")
-	public void voteCreateQuestion15(long questionUserId, String username, long userId, 
+	
+	/*@ChoppedTransaction(originalTransaction="voteCreateQuestion", microservice="m2")
+	public void voteCreateQuestion4(long questionUserId, String username, long userId, 
 			String mark, int newPopular, int sawQuestion) throws SQLException {
-		String userGetByIdSQL = 
-				"SELECT * FROM " + "USERS"+
+		String userUsernameGetByIdSQL = 
+				"SELECT username FROM " + "USERS"+
 				" WHERE id = ?";
 
 		String userUpdatePopularSQL = 
@@ -570,9 +539,9 @@ public class spring_mvc_react_users_chopped {
 				"   SET popular = ?" +
 				" WHERE id = ? ";
 
-		PreparedStatement userGetById = connect.prepareStatement(userGetByIdSQL);
-		userGetById.setLong(1, questionUserId);
-		ResultSet questionUser = userGetById.executeQuery();
+		PreparedStatement userUsernameGetById = connect.prepareStatement(userUsernameGetByIdSQL);
+		userUsernameGetById.setLong(1, questionUserId);
+		ResultSet questionUser = userUsernameGetById.executeQuery();
 		if (!questionUser.next()) {
 			System.out.println("Empty");
 		}
@@ -593,72 +562,28 @@ public class spring_mvc_react_users_chopped {
 			userUpdatePopular.setLong(2, userId);
 			userUpdatePopular.executeUpdate();
 		}
-	}
+	}*/
 
-	@ChoppedTransaction(originalTransaction="voteCreateQuestion2", microservice="m1")
-	public void voteCreateQuestion22(long answerId) throws SQLException {
-		String answerGetByIdSQL = 
-				"SELECT * FROM " + "ANSWERS"+
+	@ChoppedTransaction(originalTransaction="voteCreateQuestion", microservice="m3")
+	public void voteCreateQuestion4(long answerQuestionId) throws SQLException {
+		String questionUserIdGetByIdSQL = 
+				"SELECT userId FROM " + "QUESTIONS"+
 				" WHERE id = ?";
 
-		PreparedStatement answerGetById = connect.prepareStatement(answerGetByIdSQL);
-		answerGetById.setLong(1, answerId);
-		ResultSet rs = answerGetById.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
-	}
-
-	@ChoppedTransaction(originalTransaction="voteCreateQuestion2", microservice="m2")
-	public void voteCreateQuestion23(String username) throws SQLException {
-		String userGetByUsernameSQL = 
-				"SELECT * FROM " + "USERS"+
-				" WHERE username = ?";
-
-		PreparedStatement userGetByUsername = connect.prepareStatement(userGetByUsernameSQL);
-		userGetByUsername.setString(1, username);
-		ResultSet user = userGetByUsername.executeQuery();
-		if (!user.next()) {
-			System.out.println("Empty");
-		}
-		long userId = user.getLong("id");
-	}
-
-	@ChoppedTransaction(originalTransaction="voteCreateQuestion2", microservice="m1")
-	public void voteCreateQuestion24(long questionId) throws SQLException {
-		String answerGetByIdSQL = 
-				"SELECT * FROM " + "ANSWERS"+
-				" WHERE id = ?";
-
-		PreparedStatement answerGetById = connect.prepareStatement(answerGetByIdSQL);
-		answerGetById.setLong(1, questionId);
-		ResultSet answer = answerGetById.executeQuery();
-		if (!answer.next()) {
-			System.out.println("Empty");
-		}
-		long answerQuestionId = answer.getLong("questionId");
-	}
-
-	@ChoppedTransaction(originalTransaction="voteCreateQuestion2", microservice="m3")
-	public void voteCreateQuestion25(long answerQuestionId) throws SQLException {
-		String questionGetByIdSQL = 
-				"SELECT * FROM " + "QUESTIONS"+
-				" WHERE id = ?";
-
-		PreparedStatement questionGetById = connect.prepareStatement(questionGetByIdSQL);
-		questionGetById.setLong(1, answerQuestionId);
-		ResultSet question = questionGetById.executeQuery();
+		PreparedStatement questionUserIdGetById = connect.prepareStatement(questionUserIdGetByIdSQL);
+		questionUserIdGetById.setLong(1, answerQuestionId);
+		ResultSet question = questionUserIdGetById.executeQuery();
 		if (!question.next()) {
 			System.out.println("Empty");
 		}
 		long questionUserId = question.getLong("userId");
 	}
 
-	@ChoppedTransaction(originalTransaction="voteCreateQuestion2", microservice="m2")
-	public void voteCreateQuestion26(long questionUserId, String username, long userId,
+	@ChoppedTransaction(originalTransaction="voteCreateQuestion", microservice="m2")
+	public void voteCreateQuestion5(long questionUserId, String username, long userId,
 		String mark, int newPopular, int sawAnswer) throws SQLException {
-		String userGetByIdSQL = 
-				"SELECT * FROM " + "USERS"+
+		String userUsernameGetByIdSQL = 
+				"SELECT username FROM " + "USERS"+
 				" WHERE id = ?";
 
 		String userUpdatePopularSQL = 
@@ -666,9 +591,9 @@ public class spring_mvc_react_users_chopped {
 				"   SET popular = ?" +
 				" WHERE id = ? ";
 
-		PreparedStatement userGetById = connect.prepareStatement(userGetByIdSQL);
-		userGetById.setLong(1, questionUserId);
-		ResultSet questionUser = userGetById.executeQuery();
+		PreparedStatement userUsernameGetById = connect.prepareStatement(userUsernameGetByIdSQL);
+		userUsernameGetById.setLong(1, questionUserId);
+		ResultSet questionUser = userUsernameGetById.executeQuery();
 		if (!questionUser.next()) {
 			System.out.println("Empty");
 		}
@@ -691,32 +616,14 @@ public class spring_mvc_react_users_chopped {
 		}
 	}
 
-	@ChoppedTransaction(originalTransaction="voteCreateQuestion1", microservice="m5")
-	public void voteCreateQuestion16(long voteId, long questionId, long answerId, long userId,
+	@ChoppedTransaction(originalTransaction="voteCreateQuestion", microservice="m5")
+	public void voteCreateQuestion6(long voteId, long questionId, long answerId, long userId,
 			String mark) throws SQLException {
 		String voteAddVoteSQL = 
 				"INSERT INTO " + "VOTES" +
 				" (id, module, questionId, answerId, userId, mark) " +
 				" VALUES ( ?, ?, ?, ?, ?, ? )";
 
-		PreparedStatement voteAddVote = connect.prepareStatement(voteAddVoteSQL);
-		voteAddVote.setLong(1, voteId);
-		voteAddVote.setString(2, "");
-		voteAddVote.setLong(3, questionId);
-		voteAddVote.setLong(4, answerId);
-		voteAddVote.setLong(5, userId);
-		voteAddVote.setString(6, mark);
-		voteAddVote.executeUpdate();
-	}
-
-	@ChoppedTransaction(originalTransaction="voteCreateQuestion2", microservice="m5")
-	public void voteCreateQuestion27(long voteId, long questionId, long answerId, long userId,
-			String mark) throws SQLException {
-		String voteAddVoteSQL = 
-				"INSERT INTO " + "VOTES" +
-				" (id, module, questionId, answerId, userId, mark) " +
-				" VALUES ( ?, ?, ?, ?, ?, ? )";
-				
 		PreparedStatement voteAddVote = connect.prepareStatement(voteAddVoteSQL);
 		voteAddVote.setLong(1, voteId);
 		voteAddVote.setString(2, "");
