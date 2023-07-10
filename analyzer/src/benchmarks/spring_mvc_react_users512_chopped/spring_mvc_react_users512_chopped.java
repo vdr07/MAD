@@ -293,8 +293,8 @@ public class spring_mvc_react_users512_chopped {
 		}
 	}
 	
-	/*@ChoppedTransaction(originalTransaction="voteCreateQuestion", microservice="m2")
-	public void voteCreateQuestion4(long questionUserId, String username, long userId, 
+	@ChoppedTransaction(originalTransaction="voteCreateQuestion", microservice="m2")
+	public void voteCreateQuestion41(long questionUserId, String username, long userId, 
 			String mark, int newPopular, int sawQuestion) throws SQLException {
 		String userUsernameGetByIdSQL = 
 				"SELECT username FROM " + "USERS"+
@@ -328,10 +328,10 @@ public class spring_mvc_react_users512_chopped {
 			userUpdatePopular.setLong(2, userId);
 			userUpdatePopular.executeUpdate();
 		}
-	}*/
+	}
 
-	@ChoppedTransaction(originalTransaction="voteCreateQuestion", microservice="m3")
-	public void voteCreateQuestion4(long answerQuestionId) throws SQLException {
+	/*@ChoppedTransaction(originalTransaction="voteCreateQuestion", microservice="m3")
+	public void voteCreateQuestion42(long answerQuestionId) throws SQLException {
 		String questionUserIdGetByIdSQL = 
 				"SELECT userId FROM " + "QUESTIONS"+
 				" WHERE id = ?";
@@ -346,7 +346,7 @@ public class spring_mvc_react_users512_chopped {
 	}
 
 	@ChoppedTransaction(originalTransaction="voteCreateQuestion", microservice="m2")
-	public void voteCreateQuestion5(long questionUserId, String username, long userId,
+	public void voteCreateQuestion52(long questionUserId, String username, long userId,
 		String mark, int newPopular, int sawAnswer) throws SQLException {
 		String userUsernameGetByIdSQL = 
 				"SELECT username FROM " + "USERS"+
@@ -380,7 +380,7 @@ public class spring_mvc_react_users512_chopped {
 			userUpdatePopular.setLong(2, userId);
 			userUpdatePopular.executeUpdate();
 		}
-	}
+	}*/
 
 	@ChoppedTransaction(originalTransaction="voteCreateQuestion", microservice="m5")
 	public void voteCreateQuestion6(long voteId, long questionId, long answerId, long userId,
