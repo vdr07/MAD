@@ -1,4 +1,4 @@
-package benchmarks.spring_mvc_react_users52_chopped;
+package benchmarks.spring_mvc_react_users521_chopped;
 
 import ar.ChoppedTransaction;
 
@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 import java.util.Random;
 import java.util.ArrayList;
 
-public class spring_mvc_react_users52_chopped {
+public class spring_mvc_react_users521_chopped {
 
 	private Connection connect = null;
 	private int _ISOLATION = Connection.TRANSACTION_READ_COMMITTED;
@@ -22,7 +22,7 @@ public class spring_mvc_react_users52_chopped {
 	Properties p;
 	private Random r;
 
-	public spring_mvc_react_users52_chopped(int id) {
+	public spring_mvc_react_users521_chopped(int id) {
 		this.id = id;
 		p = new Properties();
 		p.setProperty("id", String.valueOf(this.id));
@@ -136,7 +136,7 @@ public class spring_mvc_react_users52_chopped {
 		}
 	}*/
 
-	@ChoppedTransaction(microservice="m2")
+	/*@ChoppedTransaction(microservice="m2")
 	public void userCreateUser(long userId, String username, String password,
 			String currentDate, String status, int popular) throws SQLException {
 		String userGetByUsernameSQL = 
@@ -195,7 +195,7 @@ public class spring_mvc_react_users52_chopped {
 		userUpdatePassword.setString(1, newPassword);
 		userUpdatePassword.setLong(2, userId);
 		userUpdatePassword.executeUpdate();
-	}
+	}*/
 
 	@ChoppedTransaction(microservice="m2")
 	public void userUpdateUser(long userId, String username, String password) throws SQLException {
