@@ -1,4 +1,4 @@
-package benchmarks.spring_mvc_react_users4_chopped;
+package benchmarks.spring_mvc_react_users42_chopped;
 
 import ar.ChoppedTransaction;
 
@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 import java.util.Random;
 import java.util.ArrayList;
 
-public class spring_mvc_react_users4_chopped {
+public class spring_mvc_react_users42_chopped {
 
 	private Connection connect = null;
 	private int _ISOLATION = Connection.TRANSACTION_READ_COMMITTED;
@@ -22,7 +22,7 @@ public class spring_mvc_react_users4_chopped {
 	Properties p;
 	private Random r;
 
-	public spring_mvc_react_users4_chopped(int id) {
+	public spring_mvc_react_users42_chopped(int id) {
 		this.id = id;
 		p = new Properties();
 		p.setProperty("id", String.valueOf(this.id));
@@ -40,7 +40,7 @@ public class spring_mvc_react_users4_chopped {
 	}
 
 	// AuthorizationController
-	@ChoppedTransaction(microservice="m2")
+	/*@ChoppedTransaction(microservice="m2")
 	public void authorizationLogin(String username, String password) throws SQLException {
 		String userGetByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -90,7 +90,7 @@ public class spring_mvc_react_users4_chopped {
 		userAddUser.setString(5, "active");
 		userAddUser.setInt(6, 0);
 		userAddUser.executeUpdate();
-	}
+	}*/
 
 	@ChoppedTransaction(originalTransaction="questionCreateQuestion", microservice="m2")
 	public void questionCreateQuestion1(String username) throws SQLException {
@@ -202,7 +202,7 @@ public class spring_mvc_react_users4_chopped {
 	}
 
 	// UserController
-	@ChoppedTransaction(microservice="m2")
+	/*@ChoppedTransaction(microservice="m2")
 	public void userListAllUsers() throws SQLException {
 		String userListAllUsersSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -243,7 +243,7 @@ public class spring_mvc_react_users4_chopped {
 			System.out.println("User not found");
 			return;
 		}
-	}
+	}*/
 
 	@ChoppedTransaction(microservice="m2")
 	public void userCreateUser(long userId, String username, String password,
@@ -357,7 +357,7 @@ public class spring_mvc_react_users4_chopped {
 	}
 
 	// AjaxController
-	@ChoppedTransaction(microservice="m2")
+	/*@ChoppedTransaction(microservice="m2")
 	public void ajaxGetSearchResultViaAjax(String username, String email) throws SQLException {
 		String userGetByUsernameOrEmailSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -394,5 +394,5 @@ public class spring_mvc_react_users4_chopped {
 				System.out.println("Empty");
 			}
 		}
-	}
+	}*/
 }
