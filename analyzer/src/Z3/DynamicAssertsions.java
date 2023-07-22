@@ -576,7 +576,8 @@ public class DynamicAssertsions {
 	// this function has two totally separated use-cases:
 	// 1. when a basic cycle is generated
 	// 2. when a cycle with additional operations is generated
-	public BoolExpr mk_cycle(boolean findCore, Anomaly unVersionedAnml) {
+	public BoolExpr mk_cycle(boolean findCore, Anomaly unVersionedAnml,
+			List<String> txnsNamesComb) {
 		List<Tuple<String, Tuple<String, String>>> structure = null;
 		Map<Tuple<String, String>, Set<String>> completeStructure = null;
 		List<Tuple<String, String>> cycleTxns = null;
@@ -626,13 +627,29 @@ public class DynamicAssertsions {
 			x = ctx.mkExists(allOs, body, 1, null, null, null, null);
 		} else {
 			BoolExpr notEqExprs2[] = new BoolExpr[length * (length - 1) / 2];
+			BoolExpr txnRestrExprs[] = new BoolExpr[length];
+			BoolExpr txnRestrExpr[];
 			int iter = 0;
-			for (int i = 0; i < length - 1; i++)
+			int iter2 = 0;
+			FuncDecl ottypeFunc = objs.getfuncs("ottype");
+			FuncDecl originalTransactionFunc = objs.getfuncs("original_transaction");
+			for (int i = 0; i < length - 1; i++) {
+				txnRestrExpr = new BoolExpr[txnsNamesComb.size()];
+				for (int j = 0; j < txnsNamesComb.size(); j++)
+					txnRestrExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
+				txnRestrExprs[iter2++] = ctx.mkOr(txnRestrExpr);
+
 				for (int j = i + 1; j < length; j++)
 					notEqExprs2[iter++] = ctx.mkNot(ctx.mkEq(Os[i], Os[j]));
+			}
+			txnRestrExpr = new BoolExpr[txnsNamesComb.size()];
+			for (int j = 0; j < txnsNamesComb.size(); j++)
+				txnRestrExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
+			txnRestrExprs[iter2] = ctx.mkOr(txnRestrExpr);
+
 			BoolExpr depExprs[] = new BoolExpr[length];
 			prepareBasicCycle(depExprs, Os, length);
-			BoolExpr body = ctx.mkAnd(ctx.mkAnd(notEqExprs2), ctx.mkAnd(depExprs));
+			BoolExpr body = ctx.mkAnd(ctx.mkAnd(notEqExprs2), ctx.mkAnd(depExprs), ctx.mkAnd(txnRestrExprs));
 			x = ctx.mkExists(Os, body, 1, null, null, null, null);
 		}
 		return x;

@@ -138,6 +138,22 @@ public class Transformer extends BodyTransformer {
 				LOG.error("_CONTINUED_ANALYSIS is set to true but loading failed: make sure files exist");
 			}
 		}
+
+		Set<List<String>> txnsNamesCombsSet = new HashSet<>();
+		// Assuming that the cycle max length is 4, so max combinations size is 3
+		for (int i = 0; i < app.getOrigTxns().size(); i++) {
+			for (int j = i; j < app.getOrigTxns().size(); j++) {
+				for (int k = j; k < app.getOrigTxns().size(); k++) {
+					Set<String> txnsNamesCombSet = new HashSet<>();
+					txnsNamesCombSet.addAll(Arrays.asList(app.getOrigTxns().get(i).getName(), app.getOrigTxns().get(j).getName(), app.getOrigTxns().get(k).getName()));
+					txnsNamesCombsSet.add(new ArrayList<>(txnsNamesCombSet));
+				}
+			}
+		}
+		List<List<String>> txnsNamesCombs = new ArrayList<>(txnsNamesCombsSet);
+		Collections.sort(txnsNamesCombs, (txnsNamesComb1, txnsNamesComb2) -> Integer.compare(txnsNamesComb1.size(), txnsNamesComb2.size()));
+
+		int txnsNamesCombIdx = 0;
 		long analysis_begin_time = System.currentTimeMillis();
 		List<Anomaly> seenAnmls = new ArrayList<>();
 		List<Anomaly> seenVersAnmls = new ArrayList<>();
@@ -168,6 +184,8 @@ public class Transformer extends BodyTransformer {
 					do {
 						LOG.info("New round of analysis for an anomaly of length: "
 								+ ConstantArgs._Current_Cycle_Length);
+						LOG.info("Analysis for transactions: "
+														+ txnsNamesCombs.get(txnsNamesCombIdx));
 						try {
 							seenStructures.save();
 							LOG.info("All models saved in file");
@@ -179,7 +197,7 @@ public class Transformer extends BodyTransformer {
 						zdr = new Z3Driver(app, tables, false);
 						LOG.info("New Z3Driver created");
 						ConstantArgs._current_version_enforcement = false;
-						anml1 = zdr.analyze(1, seenStructures.getStructures(), seenAnmls, includedTables, null);
+						anml1 = zdr.analyze(1, seenStructures.getStructures(), seenAnmls, includedTables, null, txnsNamesCombs.get(txnsNamesCombIdx));
 						if (anml1 != null) {
 							LOG.info("Unversioned anomaly generated: " + anml1);
 							anml1.generateCycleStructure();
@@ -189,7 +207,7 @@ public class Transformer extends BodyTransformer {
 							seenStructures.writeToCSV(seenStructures.size(), iter - 1, anml1);
 							// Versioned analysis
 							ConstantArgs._current_version_enforcement = true;
-							anml2 = zdr.analyze(2, null, seenAnmls, includedTables, anml1);
+							anml2 = zdr.analyze(2, null, seenAnmls, includedTables, anml1, null);
 							if (anml2 != null) {
 
 								anml2.generateCycleStructure();
@@ -207,7 +225,7 @@ public class Transformer extends BodyTransformer {
 								// inner loop for finding structurally similar anomalies
 								if (ConstantArgs._ENFORCE_OPTIMIZED_ALGORITHM) {
 									LOG.info("Entering the inner loop for finding structurally similar anomalies");
-									Anomaly anml3 = zdr.analyze(3, null, seenAnmls, includedTables, anml2);
+									Anomaly anml3 = zdr.analyze(3, null, seenAnmls, includedTables, anml2, null);
 									if (anml3 == null)
 										LOG.info("No structurally similar anomaly exists");
 									while (anml3 != null) {
@@ -221,7 +239,7 @@ public class Transformer extends BodyTransformer {
 												+ ") -- " + anml3);
 										anml3.announce(false, seenVersAnmls.size());
 										// repeat
-										anml3 = zdr.analyze(4, null, seenAnmls, includedTables, anml3);
+										anml3 = zdr.analyze(4, null, seenAnmls, includedTables, anml3, null);
 									}
 								}
 							} else
@@ -232,8 +250,12 @@ public class Transformer extends BodyTransformer {
 							zdr.closeCtx();
 							LOG.info("No anomaly was found");
 						}
+						// No more anomalies using that set of transactions
+						if (anml1 == null)
+							txnsNamesCombIdx++;
 						// update global variables for the next round
-						if (/*anml2 == null || */anml1 == null) {
+						if (/*anml2 == null || */anml1 == null && txnsNamesCombIdx == txnsNamesCombs.size()) {
+							txnsNamesCombIdx = 0;
 							LOG.info("Search completed for anomalies of length: " + ConstantArgs._Current_Cycle_Length);
 							ConstantArgs._Current_Cycle_Length++;
 						}
