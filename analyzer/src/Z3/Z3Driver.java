@@ -778,14 +778,14 @@ public class Z3Driver {
 				addAssertion("gen_depx", staticAssrtions.mk_gen_depx());
 				// addAssertion("gen_depx_props", staticAssrtions.mk_gen_depx_props());
 				slv.push();
-				addAssertion("exact_cycle_enforcement", dynamicAssertions.mk_cycle(findCore, unVersionedAnml, null));
+				addAssertion("exact_cycle_enforcement", dynamicAssertions.mk_cycle(findCore, unVersionedAnml, txnsNamesComb));
 				HeaderZ3("EOF");
 				break;
 			case 3:
 				slv.pop();
 				HeaderZ3("ROUND 3: newly pushed");
 				List<Tuple<String, Tuple<String, String>>> structure3 = unVersionedAnml.getCycleStructure();
-				addAssertion("loose_cycle_constraint", dynamicAssertions.mk_loose_cycle(findCore, structure3));
+				addAssertion("loose_cycle_constraint", dynamicAssertions.mk_loose_cycle(findCore, structure3, txnsNamesComb));
 				excludeAnomaly(unVersionedAnml, seenAnmls.size() + 1);
 				break;
 

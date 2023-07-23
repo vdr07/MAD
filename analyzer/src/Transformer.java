@@ -207,7 +207,7 @@ public class Transformer extends BodyTransformer {
 							seenStructures.writeToCSV(seenStructures.size(), iter - 1, anml1);
 							// Versioned analysis
 							ConstantArgs._current_version_enforcement = true;
-							anml2 = zdr.analyze(2, null, seenAnmls, includedTables, anml1, null);
+							anml2 = zdr.analyze(2, null, seenAnmls, includedTables, anml1, txnsNamesCombs.get(txnsNamesCombIdx));
 							if (anml2 != null) {
 
 								anml2.generateCycleStructure();
@@ -225,7 +225,7 @@ public class Transformer extends BodyTransformer {
 								// inner loop for finding structurally similar anomalies
 								if (ConstantArgs._ENFORCE_OPTIMIZED_ALGORITHM) {
 									LOG.info("Entering the inner loop for finding structurally similar anomalies");
-									Anomaly anml3 = zdr.analyze(3, null, seenAnmls, includedTables, anml2, null);
+									Anomaly anml3 = zdr.analyze(3, null, seenAnmls, includedTables, anml2, txnsNamesCombs.get(txnsNamesCombIdx));
 									if (anml3 == null)
 										LOG.info("No structurally similar anomaly exists");
 									while (anml3 != null) {
