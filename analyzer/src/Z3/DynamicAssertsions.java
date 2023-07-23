@@ -388,6 +388,18 @@ public class DynamicAssertsions {
 		return x;
 	}
 
+	public BoolExpr mk_txns_restr(List<String> txnsNamesComb) {
+		FuncDecl ottypeFunc = objs.getfuncs("ottype");
+		FuncDecl originalTransactionFunc = objs.getfuncs("original_transaction");
+		BoolExpr txnRestrExprs[] = new BoolExpr[txnsNamesComb.size()];
+		for (int i = 0; i < txnsNamesComb.size(); i++)
+			txnRestrExprs[i] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, o1)), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(i))));
+		
+		BoolExpr body = ctx.mkOr(txnRestrExprs);
+		Quantifier x = ctx.mkForall(new Expr[]{o1}, body, 1, null, null, null, null);
+		return x;
+	}
+
 	public List<FuncDecl> mk_declare_lhs(String label, VarExp ve) {
 		// PrimitiveVarExp
 		try {
@@ -614,7 +626,7 @@ public class DynamicAssertsions {
 			int iter2 = 0;
 			FuncDecl ottypeFunc = objs.getfuncs("ottype");
 			FuncDecl originalTransactionFunc = objs.getfuncs("original_transaction");
-			for (int i = 0; i < length - 1; i++) {
+			/*for (int i = 0; i < length - 1; i++) {
 				txnRestrExpr = new BoolExpr[txnsNamesComb.size()];
 				for (int j = 0; j < txnsNamesComb.size(); j++)
 					txnRestrExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
@@ -626,7 +638,11 @@ public class DynamicAssertsions {
 			txnRestrExpr = new BoolExpr[txnsNamesComb.size()];
 			for (int j = 0; j < txnsNamesComb.size(); j++)
 				txnRestrExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
-			txnRestrExprs[iter2] = ctx.mkOr(txnRestrExpr);
+			txnRestrExprs[iter2] = ctx.mkOr(txnRestrExpr);*/
+
+			for (int i = 0; i < length - 1; i++)
+				for (int j = i + 1; j < length; j++)
+					notEqExprs[iter++] = ctx.mkNot(ctx.mkEq(allOs[i], allOs[j]));
 
 			BoolExpr depExprs[] = new BoolExpr[length];
 			BoolExpr prevAnmlExprs[] = null;
@@ -638,7 +654,8 @@ public class DynamicAssertsions {
 					: new BoolExpr[structure.size()];
 			prepareCompleteCycle(unVersionedAnml, depExprs, prevAnmlExprs, structure, completeStructure, cycleTxns,
 					length, Os, allOs, additionalOs);
-			BoolExpr body = ctx.mkAnd(ctx.mkAnd(notEqExprs), ctx.mkAnd(prevAnmlExprs), ctx.mkAnd(depExprs), ctx.mkAnd(txnRestrExprs));
+			//BoolExpr body = ctx.mkAnd(ctx.mkAnd(notEqExprs), ctx.mkAnd(prevAnmlExprs), ctx.mkAnd(depExprs), ctx.mkAnd(txnRestrExprs));
+			BoolExpr body = ctx.mkAnd(ctx.mkAnd(notEqExprs), ctx.mkAnd(prevAnmlExprs), ctx.mkAnd(depExprs));
 			x = ctx.mkExists(allOs, body, 1, null, null, null, null);
 		} else {
 			BoolExpr notEqExprs2[] = new BoolExpr[length * (length - 1) / 2];
@@ -648,7 +665,7 @@ public class DynamicAssertsions {
 			int iter2 = 0;
 			FuncDecl ottypeFunc = objs.getfuncs("ottype");
 			FuncDecl originalTransactionFunc = objs.getfuncs("original_transaction");
-			for (int i = 0; i < length - 1; i++) {
+			/*for (int i = 0; i < length - 1; i++) {
 				txnRestrExpr = new BoolExpr[txnsNamesComb.size()];
 				for (int j = 0; j < txnsNamesComb.size(); j++)
 					txnRestrExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
@@ -660,11 +677,15 @@ public class DynamicAssertsions {
 			txnRestrExpr = new BoolExpr[txnsNamesComb.size()];
 			for (int j = 0; j < txnsNamesComb.size(); j++)
 				txnRestrExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
-			txnRestrExprs[iter2] = ctx.mkOr(txnRestrExpr);
+			txnRestrExprs[iter2] = ctx.mkOr(txnRestrExpr);*/
+			for (int i = 0; i < length - 1; i++)
+				for (int j = i + 1; j < length; j++)
+					notEqExprs2[iter++] = ctx.mkNot(ctx.mkEq(Os[i], Os[j]));
 
 			BoolExpr depExprs[] = new BoolExpr[length];
 			prepareBasicCycle(depExprs, Os, length);
-			BoolExpr body = ctx.mkAnd(ctx.mkAnd(notEqExprs2), ctx.mkAnd(depExprs), ctx.mkAnd(txnRestrExprs));
+			//BoolExpr body = ctx.mkAnd(ctx.mkAnd(notEqExprs2), ctx.mkAnd(depExprs), ctx.mkAnd(txnRestrExprs));
+			BoolExpr body = ctx.mkAnd(ctx.mkAnd(notEqExprs2), ctx.mkAnd(depExprs));
 			x = ctx.mkExists(Os, body, 1, null, null, null, null);
 		}
 		return x;
@@ -883,7 +904,7 @@ public class DynamicAssertsions {
 		int iter2 = 0;
 		FuncDecl ottypeFunc = objs.getfuncs("ottype");
 		FuncDecl originalTransactionFunc = objs.getfuncs("original_transaction");
-		for (int i = 0; i < length - 1; i++) {
+		/*for (int i = 0; i < length - 1; i++) {
 			txnRestrExpr = new BoolExpr[txnsNamesComb.size()];
 			for (int j = 0; j < txnsNamesComb.size(); j++)
 				txnRestrExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
@@ -895,7 +916,11 @@ public class DynamicAssertsions {
 		txnRestrExpr = new BoolExpr[txnsNamesComb.size()];
 		for (int j = 0; j < txnsNamesComb.size(); j++)
 			txnRestrExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
-		txnRestrExprs[iter2] = ctx.mkOr(txnRestrExpr);
+		txnRestrExprs[iter2] = ctx.mkOr(txnRestrExpr);*/
+
+		for (int i = 0; i < length - 1; i++)
+			for (int j = i + 1; j < length; j++)
+				notEqExprs[iter++] = ctx.mkNot(ctx.mkEq(Os[i], Os[j]));
 
 		// constraints regarding previously found anomaly (limit the
 		// solutions to structurally close ones )
@@ -952,9 +977,13 @@ public class DynamicAssertsions {
 
 			}
 		}
-		BoolExpr body = (structure != null && structure.size() > 0 && structure.size() == Os.length)
+		/*BoolExpr body = (structure != null && structure.size() > 0 && structure.size() == Os.length)
 				? ctx.mkAnd(ctx.mkAnd(notEqExprs), ctx.mkAnd(prevAnmlExprs), ctx.mkAnd(depExprs), ctx.mkAnd(txnRestrExprs))
-				: ctx.mkAnd(ctx.mkAnd(notEqExprs), ctx.mkAnd(depExprs), ctx.mkAnd(txnRestrExprs));
+				: ctx.mkAnd(ctx.mkAnd(notEqExprs), ctx.mkAnd(depExprs), ctx.mkAnd(txnRestrExprs));*/
+
+		BoolExpr body = (structure != null && structure.size() > 0 && structure.size() == Os.length)
+				? ctx.mkAnd(ctx.mkAnd(notEqExprs), ctx.mkAnd(prevAnmlExprs), ctx.mkAnd(depExprs))
+				: ctx.mkAnd(ctx.mkAnd(notEqExprs), ctx.mkAnd(depExprs));
 		Quantifier x = ctx.mkExists(Os, body, 1, null, null, null, null);
 		return x;
 
