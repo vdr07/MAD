@@ -140,29 +140,13 @@ public class Transformer extends BodyTransformer {
 		}
 
 		Set<List<String>> txnsNamesCombsSet = new HashSet<>();
-		/*// Assuming that the cycle max length is 4, so max combinations size is 3 original transactions
+		// Assuming that the cycle max length is 4, so max combinations size is 3 original transactions
 		for (int i = 0; i < app.getOrigTxns().size(); i++) {
 			for (int j = i; j < app.getOrigTxns().size(); j++) {
 				for (int k = j; k < app.getOrigTxns().size(); k++) {
 					Set<String> txnsNamesCombSet = new HashSet<>();
 					txnsNamesCombSet.addAll(Arrays.asList(app.getOrigTxns().get(i).getName(), app.getOrigTxns().get(j).getName(), app.getOrigTxns().get(k).getName()));
 					txnsNamesCombsSet.add(new ArrayList<>(txnsNamesCombSet));
-				}
-			}
-		}
-		List<List<String>> txnsNamesCombs = new ArrayList<>(txnsNamesCombsSet);
-		Collections.sort(txnsNamesCombs, (txnsNamesComb1, txnsNamesComb2) -> Integer.compare(txnsNamesComb1.size(), txnsNamesComb2.size()));
-		*/
-
-		// Assuming that the cycle max length is 4, so max combinations size is 4 transactions
-		for (int i = 0; i < app.getTxns().size(); i++) {
-			for (int j = i; j < app.getTxns().size(); j++) {
-				for (int k = j; k < app.getTxns().size(); k++) {
-					for (int l = k; l < app.getTxns().size(); l++) {
-						Set<String> txnsNamesCombSet = new HashSet<>();
-						txnsNamesCombSet.addAll(Arrays.asList(app.getTxns().get(i).getName(), app.getTxns().get(j).getName(), app.getTxns().get(k).getName(), app.getTxns().get(l).getName()));
-						txnsNamesCombsSet.add(new ArrayList<>(txnsNamesCombSet));
-					}
 				}
 			}
 		}
