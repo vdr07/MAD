@@ -998,6 +998,8 @@ public class DynamicAssertsions {
 				txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ttypeFunc, ctx.mkApp(parentFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("TType", app.getTxns().get(j).getName())))));
 		txnRestrExpr = txnRestrExprList.toArray(new BoolExpr[txnRestrExprList.size()]);
 
+		txnRestrExprs[iter2] = ctx.mkAnd(ctx.mkOr(txnAssExpr), ctx.mkAnd(txnRestrExpr));
+
 		/*for (int i = 0; i < length - 1; i++)
 			for (int j = i + 1; j < length; j++)
 				notEqExprs[iter++] = ctx.mkNot(ctx.mkEq(Os[i], Os[j]));*/
