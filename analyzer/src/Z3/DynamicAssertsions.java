@@ -626,17 +626,23 @@ public class DynamicAssertsions {
 			BoolExpr txnRestrExpr[];
 			int iter = 0;
 			int iter2 = 0;
-			FuncDecl ottypeFunc = objs.getfuncs("ottype");
-			FuncDecl originalTransactionFunc = objs.getfuncs("original_transaction");
+			//FuncDecl ottypeFunc = objs.getfuncs("ottype");
+			//FuncDecl originalTransactionFunc = objs.getfuncs("original_transaction");
+			FuncDecl ttypeFunc = objs.getfuncs("ttype");
+			FuncDecl parentFunc = objs.getfuncs("parent");
 			for (int i = 0; i < length - 1; i++) {
 				txnAssExpr = new BoolExpr[txnsNamesComb.size()];
 				for (int j = 0; j < txnsNamesComb.size(); j++)
-					txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
+					//txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
+					txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ttypeFunc, ctx.mkApp(parentFunc, Os[i])), ctx.mkApp(objs.getConstructor("TType", txnsNamesComb.get(j))));
 				
 				txnRestrExprList = new ArrayList<BoolExpr>();
-				for (int j = 0; j < app.getOrigTxns().size(); j++)
+				/*for (int j = 0; j < app.getOrigTxns().size(); j++)
 					if (!txnsNamesComb.contains(app.getOrigTxns().get(j).getName()))
-						txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", app.getOrigTxns().get(j).getName())))));
+						txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", app.getOrigTxns().get(j).getName())))));*/
+				for (int j = 0; j < app.getTxns().size(); j++)
+					if (!txnsNamesComb.contains(app.getTxns().get(j).getName()))				
+						txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ttypeFunc, ctx.mkApp(parentFunc, Os[i])), ctx.mkApp(objs.getConstructor("TType", app.getTxns().get(j).getName())))));
 				txnRestrExpr = txnRestrExprList.toArray(new BoolExpr[txnRestrExprList.size()]);
 
 				txnRestrExprs[iter2++] = ctx.mkAnd(ctx.mkOr(txnAssExpr), ctx.mkAnd(txnRestrExpr));
@@ -647,12 +653,16 @@ public class DynamicAssertsions {
 
 			txnAssExpr = new BoolExpr[txnsNamesComb.size()];
 			for (int j = 0; j < txnsNamesComb.size(); j++)
-				txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
+				//txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
+				txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ttypeFunc, ctx.mkApp(parentFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("TType", txnsNamesComb.get(j))));
 			
 			txnRestrExprList = new ArrayList<BoolExpr>();
-			for (int j = 0; j < app.getOrigTxns().size(); j++)
+			/*for (int j = 0; j < app.getOrigTxns().size(); j++)
 				if (!txnsNamesComb.contains(app.getOrigTxns().get(j).getName()))
-					txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("OTType", app.getOrigTxns().get(j).getName())))));
+					txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", app.getOrigTxns().get(j).getName())))));*/
+			for (int j = 0; j < app.getTxns().size(); j++)
+				if (!txnsNamesComb.contains(app.getTxns().get(j).getName()))				
+					txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ttypeFunc, ctx.mkApp(parentFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("TType", app.getTxns().get(j).getName())))));
 			txnRestrExpr = txnRestrExprList.toArray(new BoolExpr[txnRestrExprList.size()]);
 
 			txnRestrExprs[iter2] = ctx.mkAnd(ctx.mkOr(txnAssExpr), ctx.mkAnd(txnRestrExpr));
@@ -682,17 +692,23 @@ public class DynamicAssertsions {
 			BoolExpr txnRestrExpr[];
 			int iter = 0;
 			int iter2 = 0;
-			FuncDecl ottypeFunc = objs.getfuncs("ottype");
-			FuncDecl originalTransactionFunc = objs.getfuncs("original_transaction");
+			// FuncDecl ottypeFunc = objs.getfuncs("ottype");
+			// FuncDecl originalTransactionFunc = objs.getfuncs("original_transaction");
+			FuncDecl ttypeFunc = objs.getfuncs("ttype");
+			FuncDecl parentFunc = objs.getfuncs("parent");
 			for (int i = 0; i < length - 1; i++) {
 				txnAssExpr = new BoolExpr[txnsNamesComb.size()];
 				for (int j = 0; j < txnsNamesComb.size(); j++)
-					txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
+					//txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
+					txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ttypeFunc, ctx.mkApp(parentFunc, Os[i])), ctx.mkApp(objs.getConstructor("TType", txnsNamesComb.get(j))));
 				
 				txnRestrExprList = new ArrayList<BoolExpr>();
-				for (int j = 0; j < app.getOrigTxns().size(); j++)
+				/*for (int j = 0; j < app.getOrigTxns().size(); j++)
 					if (!txnsNamesComb.contains(app.getOrigTxns().get(j).getName()))
-						txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", app.getOrigTxns().get(j).getName())))));
+						txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", app.getOrigTxns().get(j).getName())))));*/
+				for (int j = 0; j < app.getTxns().size(); j++)
+					if (!txnsNamesComb.contains(app.getTxns().get(j).getName()))				
+						txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ttypeFunc, ctx.mkApp(parentFunc, Os[i])), ctx.mkApp(objs.getConstructor("TType", app.getTxns().get(j).getName())))));
 				txnRestrExpr = txnRestrExprList.toArray(new BoolExpr[txnRestrExprList.size()]);
 
 				txnRestrExprs[iter2++] = ctx.mkAnd(ctx.mkOr(txnAssExpr), ctx.mkAnd(txnRestrExpr));
@@ -703,15 +719,20 @@ public class DynamicAssertsions {
 
 			txnAssExpr = new BoolExpr[txnsNamesComb.size()];
 			for (int j = 0; j < txnsNamesComb.size(); j++)
-				txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
+				//txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
+				txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ttypeFunc, ctx.mkApp(parentFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("TType", txnsNamesComb.get(j))));
 			
 			txnRestrExprList = new ArrayList<BoolExpr>();
-			for (int j = 0; j < app.getOrigTxns().size(); j++)
+			/*for (int j = 0; j < app.getOrigTxns().size(); j++)
 				if (!txnsNamesComb.contains(app.getOrigTxns().get(j).getName()))
-					txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("OTType", app.getOrigTxns().get(j).getName())))));
+					txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", app.getOrigTxns().get(j).getName())))));*/
+			for (int j = 0; j < app.getTxns().size(); j++)
+				if (!txnsNamesComb.contains(app.getTxns().get(j).getName()))				
+					txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ttypeFunc, ctx.mkApp(parentFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("TType", app.getTxns().get(j).getName())))));
 			txnRestrExpr = txnRestrExprList.toArray(new BoolExpr[txnRestrExprList.size()]);
 
 			txnRestrExprs[iter2] = ctx.mkAnd(ctx.mkOr(txnAssExpr), ctx.mkAnd(txnRestrExpr));
+
 			/*for (int i = 0; i < length - 1; i++)
 				for (int j = i + 1; j < length; j++)
 					notEqExprs2[iter++] = ctx.mkNot(ctx.mkEq(Os[i], Os[j]));*/
@@ -938,17 +959,23 @@ public class DynamicAssertsions {
 		BoolExpr txnRestrExpr[];
 		int iter = 0;
 		int iter2 = 0;
-		FuncDecl ottypeFunc = objs.getfuncs("ottype");
-		FuncDecl originalTransactionFunc = objs.getfuncs("original_transaction");
+		// FuncDecl ottypeFunc = objs.getfuncs("ottype");
+		// FuncDecl originalTransactionFunc = objs.getfuncs("original_transaction");
+		FuncDecl ttypeFunc = objs.getfuncs("ttype");
+		FuncDecl parentFunc = objs.getfuncs("parent");
 		for (int i = 0; i < length - 1; i++) {
 			txnAssExpr = new BoolExpr[txnsNamesComb.size()];
 			for (int j = 0; j < txnsNamesComb.size(); j++)
-				txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
+				//txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
+				txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ttypeFunc, ctx.mkApp(parentFunc, Os[i])), ctx.mkApp(objs.getConstructor("TType", txnsNamesComb.get(j))));
 			
 			txnRestrExprList = new ArrayList<BoolExpr>();
-			for (int j = 0; j < app.getOrigTxns().size(); j++)
+			/*for (int j = 0; j < app.getOrigTxns().size(); j++)
 				if (!txnsNamesComb.contains(app.getOrigTxns().get(j).getName()))
-					txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", app.getOrigTxns().get(j).getName())))));
+					txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", app.getOrigTxns().get(j).getName())))));*/
+			for (int j = 0; j < app.getTxns().size(); j++)
+				if (!txnsNamesComb.contains(app.getTxns().get(j).getName()))				
+					txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ttypeFunc, ctx.mkApp(parentFunc, Os[i])), ctx.mkApp(objs.getConstructor("TType", app.getTxns().get(j).getName())))));
 			txnRestrExpr = txnRestrExprList.toArray(new BoolExpr[txnRestrExprList.size()]);
 
 			txnRestrExprs[iter2++] = ctx.mkAnd(ctx.mkOr(txnAssExpr), ctx.mkAnd(txnRestrExpr));
@@ -959,15 +986,17 @@ public class DynamicAssertsions {
 
 		txnAssExpr = new BoolExpr[txnsNamesComb.size()];
 		for (int j = 0; j < txnsNamesComb.size(); j++)
-			txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
+			//txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
+			txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ttypeFunc, ctx.mkApp(parentFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("TType", txnsNamesComb.get(j))));
 		
 		txnRestrExprList = new ArrayList<BoolExpr>();
-		for (int j = 0; j < app.getOrigTxns().size(); j++)
+		/*for (int j = 0; j < app.getOrigTxns().size(); j++)
 			if (!txnsNamesComb.contains(app.getOrigTxns().get(j).getName()))
-				txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("OTType", app.getOrigTxns().get(j).getName())))));
+				txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", app.getOrigTxns().get(j).getName())))));*/
+		for (int j = 0; j < app.getTxns().size(); j++)
+			if (!txnsNamesComb.contains(app.getTxns().get(j).getName()))				
+				txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ttypeFunc, ctx.mkApp(parentFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("TType", app.getTxns().get(j).getName())))));
 		txnRestrExpr = txnRestrExprList.toArray(new BoolExpr[txnRestrExprList.size()]);
-
-		txnRestrExprs[iter2] = ctx.mkAnd(ctx.mkOr(txnAssExpr), ctx.mkAnd(txnRestrExpr));
 
 		/*for (int i = 0; i < length - 1; i++)
 			for (int j = i + 1; j < length; j++)
@@ -980,8 +1009,8 @@ public class DynamicAssertsions {
 		if (structure != null && structure.size() > 0 && structure.size() == Os.length) {
 			prevAnmlExprs = new BoolExpr[structure.size()];
 			iter = 0;
-			FuncDecl ttypeFunc = objs.getfuncs("ttype");
-			FuncDecl parentFunc = objs.getfuncs("parent");
+			// FuncDecl ttypeFunc = objs.getfuncs("ttype");
+			// FuncDecl parentFunc = objs.getfuncs("parent");
 			for (int i = 0; i < structure.size(); i++) {
 				String xs = structure.get(i).y.x;
 				String ts = xs.split("-")[0];
