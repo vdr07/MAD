@@ -742,7 +742,7 @@ public class Z3Driver {
 				addAssertion("gen_dep", staticAssrtions.mk_gen_dep());
 				// addAssertion("gen_dep_props", staticAssrtions.mk_gen_dep_props());
 				addAssertion("gen_depx", staticAssrtions.mk_gen_depx());
-				addAssertion("txns_restr", dynamicAssertions.mk_txns_restr(txnsNamesComb));
+				//addAssertion("txns_restr", dynamicAssertions.mk_txns_restr(txnsNamesComb));
 				// addAssertion("gen_depx_props", staticAssrtions.mk_gen_depx_props());
 				addAssertion("base_cycle_enforcement", dynamicAssertions.mk_cycle(findCore, null, txnsNamesComb));
 				HeaderZ3("EOF");
@@ -777,7 +777,7 @@ public class Z3Driver {
 				addAssertion("gen_dep", staticAssrtions.mk_gen_dep());
 				// addAssertion("gen_dep_props", staticAssrtions.mk_gen_dep_props());
 				addAssertion("gen_depx", staticAssrtions.mk_gen_depx());
-				addAssertion("txns_restr", dynamicAssertions.mk_txns_restr(txnsNamesComb));
+				//addAssertion("txns_restr", dynamicAssertions.mk_txns_restr(txnsNamesComb));
 				// addAssertion("gen_depx_props", staticAssrtions.mk_gen_depx_props());
 				slv.push();
 				addAssertion("exact_cycle_enforcement", dynamicAssertions.mk_cycle(findCore, unVersionedAnml, txnsNamesComb));
