@@ -388,18 +388,6 @@ public class DynamicAssertsions {
 		return x;
 	}
 
-	public BoolExpr mk_txns_restr(List<String> txnsNamesComb) {
-		FuncDecl ottypeFunc = objs.getfuncs("ottype");
-		FuncDecl originalTransactionFunc = objs.getfuncs("original_transaction");
-		BoolExpr txnRestrExprs[] = new BoolExpr[txnsNamesComb.size()];
-		for (int i = 0; i < txnsNamesComb.size(); i++)
-			txnRestrExprs[i] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, o1)), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(i))));
-		
-		BoolExpr body = ctx.mkOr(txnRestrExprs);
-		Quantifier x = ctx.mkForall(new Expr[]{o1}, body, 1, null, null, null, null);
-		return x;
-	}
-
 	public List<FuncDecl> mk_declare_lhs(String label, VarExp ve) {
 		// PrimitiveVarExp
 		try {

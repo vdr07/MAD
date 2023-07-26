@@ -316,53 +316,6 @@ public class Z3Driver {
 			}
 		}
 
-		HeaderZ3("EDGES RESTRICTIONS");
-		for (String origTxnName : app.getAllOrigTxnNames()) {
-			Map<Integer, Statement> map = app.getStmtsOrigTxnMap(origTxnName);
-			for (int i = 2; i < map.size()+1; i++)
-				for (int j = 1; j < map.size()+1; j++) {
-					if (i == j)
-						break;
-					
-					Statement stmt = map.get(i);
-					InvokeStmt is = (InvokeStmt) stmt;
-					String sName = is.getType().toString();
-					Query q = is.getQuery();
-					
-					Statement stmt2 = map.get(j);
-					InvokeStmt is2 = (InvokeStmt) stmt2;
-					String s2Name = is2.getType().toString();
-					Query q2 = is2.getQuery();
-					
-					if(!q.getTable().equals(q2.getTable()))
-						continue;
-					for (Statement stmt3 : app.getAllStmts()) {
-						InvokeStmt is3 = (InvokeStmt) stmt3;
-						String s3Name = is3.getType().toString();
-						Query q3 = is3.getQuery();
-						
-						if((q2.getKind() == Kind.SELECT && q3.getKind() == Kind.SELECT) || (!q2.getTable().equals(q3.getTable())))
-							continue;
-						for (Statement stmt4 : app.getAllStmts()) {
-							InvokeStmt is4 = (InvokeStmt) stmt4;
-							String s4Name = is4.getType().toString();
-							Query q4 = is4.getQuery();
-							if((q.getKind() == Kind.SELECT && q4.getKind() == Kind.SELECT) || (!q.getTable().equals(q4.getTable())))
-								continue;
-							// Assuming that q2 and q3 acess the same table
-							// Assuming that q and q4 acess the same table
-							// q and q3 need to acess the same table, otherwise the conflict rows will be incompatible
-							if(!q.getTable().equals(q3.getTable()))
-								continue;
-							addAssertion("incoming_edges_restrictions_" + sName + "_" + s2Name + "_" + s3Name + "_" + s4Name,
-								dynamicAssertions.edges_restrictions(sName, s2Name, s3Name, s4Name, 0));
-							addAssertion("outgoing_edges_restrictions_" + sName + "_" + s2Name + "_" + s3Name + "_" + s4Name,
-								dynamicAssertions.edges_restrictions(s2Name, sName, s4Name, s3Name, 1));
-						}
-					}
-				}
-		}
-
 		HeaderZ3("TABLE FUNCTIONS & PROPS");
 		// create table sorts and constraints
 		for (Table t : tables) {
@@ -577,10 +530,14 @@ public class Z3Driver {
 	// ---------------------------------------------------------------------------
 	// functions adding assertions for every pair of operations that 'potentially'
 	// create the edge
-	private void RWthen(Set<Table> includedTables) throws UnexoectedOrUnhandledConditionalExpression {
+	private void RWthen(Set<Table> includedTables, List<String> txnsNamesComb) throws UnexoectedOrUnhandledConditionalExpression {
 		Map<String, FuncDecl> Ts = objs.getAllTTypes();
 		for (FuncDecl t1 : Ts.values()) {
+			if (!txnsNamesComb.contains(mapTxnToOrigTxn.get(t1.getName().toString())))
+				continue;
 			for (FuncDecl t2 : Ts.values()) {
+				if (!txnsNamesComb.contains(mapTxnToOrigTxn.get(t2.getName().toString())))
+					continue;
 				List<BoolExpr> conditions = ruleGenerator.return_conditions_rw_then(t1, t2, vo1, vo2, vt1, vt2, vot1, vot2,
 						includedTables);
 				conditions.add(ctx.mkFalse());
@@ -612,13 +569,16 @@ public class Z3Driver {
 				addAssertion(rule_name, rw_then);
 			}
 		}
-
 	}
 
-	private void WRthen(Set<Table> includedTables) throws UnexoectedOrUnhandledConditionalExpression {
+	private void WRthen(Set<Table> includedTables, List<String> txnsNamesComb) throws UnexoectedOrUnhandledConditionalExpression {
 		Map<String, FuncDecl> Ts = objs.getAllTTypes();
-		for (FuncDecl t1 : Ts.values())
+		for (FuncDecl t1 : Ts.values()) {
+			if (!txnsNamesComb.contains(mapTxnToOrigTxn.get(t1.getName().toString())))
+				continue;
 			for (FuncDecl t2 : Ts.values()) {
+				if (!txnsNamesComb.contains(mapTxnToOrigTxn.get(t2.getName().toString())))
+					continue;
 				List<BoolExpr> conditions = ruleGenerator.return_conditions_wr_then(t1, t2, vo1, vo2, vt1, vt2, vot1, vot2,
 						includedTables);
 				conditions.add(ctx.mkFalse());
@@ -649,12 +609,17 @@ public class Z3Driver {
 				String rule_name = t1.getName().toString() + "-" + t2.getName().toString() + "-wr-then";
 				addAssertion(rule_name, wr_then);
 			}
+		}
 	}
 
-	private void WWthen(Set<Table> includedTables) throws UnexoectedOrUnhandledConditionalExpression {
+	private void WWthen(Set<Table> includedTables, List<String> txnsNamesComb) throws UnexoectedOrUnhandledConditionalExpression {
 		Map<String, FuncDecl> Ts = objs.getAllTTypes();
-		for (FuncDecl t1 : Ts.values())
+		for (FuncDecl t1 : Ts.values()) {
+			if (!txnsNamesComb.contains(mapTxnToOrigTxn.get(t1.getName().toString())))
+				continue;
 			for (FuncDecl t2 : Ts.values()) {
+				if (!txnsNamesComb.contains(mapTxnToOrigTxn.get(t2.getName().toString())))
+					continue;
 				List<BoolExpr> conditions = ruleGenerator.return_conditions_ww_then(t1, t2, vo1, vo2, vt1, vt2, vot1, vot2,
 						includedTables);
 				conditions.add(ctx.mkFalse());
@@ -685,6 +650,7 @@ public class Z3Driver {
 				String rule_name = t1.getName().toString() + "-" + t2.getName().toString() + "-ww-then";
 				addAssertion(rule_name, ww_then);
 			}
+		}
 	}
 
 	private void thenWR(Set<Table> includedTables) {
@@ -720,6 +686,53 @@ public class Z3Driver {
 				for (List<Tuple<String, Tuple<String, String>>> strc : seenStructures)
 					excludeAnomalyFromStructure(strc, iter530++);
 
+				HeaderZ3("EDGES RESTRICTIONS");
+				for (String origTxnName : txnsNamesComb) {
+					Map<Integer, Statement> map = app.getStmtsOrigTxnMap(origTxnName);
+					for (int i = 2; i < map.size()+1; i++)
+						for (int j = 1; j < map.size()+1; j++) {
+							if (i == j)
+								break;
+							
+							Statement stmt = map.get(i);
+							InvokeStmt is = (InvokeStmt) stmt;
+							String sName = is.getType().toString();
+							Query q = is.getQuery();
+							
+							Statement stmt2 = map.get(j);
+							InvokeStmt is2 = (InvokeStmt) stmt2;
+							String s2Name = is2.getType().toString();
+							Query q2 = is2.getQuery();
+							
+							if(!q.getTable().equals(q2.getTable()))
+								continue;
+							for (Statement stmt3 : app.getAllStmts()) {
+								InvokeStmt is3 = (InvokeStmt) stmt3;
+								String s3Name = is3.getType().toString();
+								Query q3 = is3.getQuery();
+								
+								if((q2.getKind() == Kind.SELECT && q3.getKind() == Kind.SELECT) || (!q2.getTable().equals(q3.getTable())))
+									continue;
+								for (Statement stmt4 : app.getAllStmts()) {
+									InvokeStmt is4 = (InvokeStmt) stmt4;
+									String s4Name = is4.getType().toString();
+									Query q4 = is4.getQuery();
+									if((q.getKind() == Kind.SELECT && q4.getKind() == Kind.SELECT) || (!q.getTable().equals(q4.getTable())))
+										continue;
+									// Assuming that q2 and q3 acess the same table
+									// Assuming that q and q4 acess the same table
+									// q and q3 need to acess the same table, otherwise the conflict rows will be incompatible
+									if(!q.getTable().equals(q3.getTable()))
+										continue;
+									addAssertion("incoming_edges_restrictions_" + sName + "_" + s2Name + "_" + s3Name + "_" + s4Name,
+										dynamicAssertions.edges_restrictions(sName, s2Name, s3Name, s4Name, 0));
+									addAssertion("outgoing_edges_restrictions_" + sName + "_" + s2Name + "_" + s3Name + "_" + s4Name,
+										dynamicAssertions.edges_restrictions(s2Name, sName, s4Name, s3Name, 1));
+								}
+							}
+						}
+				}
+
 				try {
 					// rules
 					slv.push();
@@ -728,11 +741,11 @@ public class Z3Driver {
 					HeaderZ3(" ->WR ");
 					thenWR(includedTables);
 					HeaderZ3(" WW-> ");
-					WWthen(includedTables);
+					WWthen(includedTables, txnsNamesComb);
 					HeaderZ3(" WR-> ");
-					WRthen(includedTables);
+					WRthen(includedTables, txnsNamesComb);
 					HeaderZ3(" RW-> ");
-					RWthen(includedTables);
+					RWthen(includedTables, txnsNamesComb);
 				} catch (UnexoectedOrUnhandledConditionalExpression e) {
 					e.printStackTrace();
 				}
@@ -742,7 +755,6 @@ public class Z3Driver {
 				addAssertion("gen_dep", staticAssrtions.mk_gen_dep());
 				// addAssertion("gen_dep_props", staticAssrtions.mk_gen_dep_props());
 				addAssertion("gen_depx", staticAssrtions.mk_gen_depx());
-				//addAssertion("txns_restr", dynamicAssertions.mk_txns_restr(txnsNamesComb));
 				// addAssertion("gen_depx_props", staticAssrtions.mk_gen_depx_props());
 				addAssertion("base_cycle_enforcement", dynamicAssertions.mk_cycle(findCore, null, txnsNamesComb));
 				HeaderZ3("EOF");
@@ -761,11 +773,11 @@ public class Z3Driver {
 					HeaderZ3(" ->WR ");
 					thenWR(includedTables);
 					HeaderZ3(" WW-> ");
-					WWthen(includedTables);
+					WWthen(includedTables, txnsNamesComb);
 					HeaderZ3(" WR-> ");
-					WRthen(includedTables);
+					WRthen(includedTables, txnsNamesComb);
 					HeaderZ3(" RW-> ");
-					RWthen(includedTables);
+					RWthen(includedTables, txnsNamesComb);
 				} catch (UnexoectedOrUnhandledConditionalExpression e) {
 					e.printStackTrace();
 				}
@@ -777,7 +789,6 @@ public class Z3Driver {
 				addAssertion("gen_dep", staticAssrtions.mk_gen_dep());
 				// addAssertion("gen_dep_props", staticAssrtions.mk_gen_dep_props());
 				addAssertion("gen_depx", staticAssrtions.mk_gen_depx());
-				//addAssertion("txns_restr", dynamicAssertions.mk_txns_restr(txnsNamesComb));
 				// addAssertion("gen_depx_props", staticAssrtions.mk_gen_depx_props());
 				slv.push();
 				addAssertion("exact_cycle_enforcement", dynamicAssertions.mk_cycle(findCore, unVersionedAnml, txnsNamesComb));
