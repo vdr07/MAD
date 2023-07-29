@@ -369,14 +369,18 @@ public class Z3Driver {
 
 		// =====================================================================================================================================================
 
+		List<String> origTxnsParamsSeen = new ArrayList<>();
 		for (Transaction txn : app.getTxns()) {
 			HeaderZ3("TXN: " + txn.getName().toUpperCase());
 			// declare functions for txn's input parameters
 			SubHeaderZ3("parameters");
 			for (ParamValExp p : txn.getParams().values()) {
-				String label = txn.getName() + "_PARAM_" + p.getName();
-				objs.addFunc(label, ctx.mkFuncDecl(label, new Sort[]{objs.getSort("T")},
-						objs.getSort(p.getType().toZ3String())));
+				String label = txn.getOriginalTransaction() + "_PARAM_" + p.getName();
+				if (!origTxnsParamsSeen.contains(label)) {
+					objs.addFunc(label, ctx.mkFuncDecl(label, new Sort[]{objs.getSort("OT")},
+							objs.getSort(p.getType().toZ3String())));
+					origTxnsParamsSeen.add(label);
+				}
 			}
 			SubHeaderZ3("?");
 			// define lhs assignees [[XXX not sure what this does -> might be a legacy
@@ -423,8 +427,8 @@ public class Z3Driver {
 			// add expressions for each trn
 			for (Value val : sortedMap.keySet()) {
 				Expression exp = txn.getAllExps().get(val);
-				String label = txn.getName() + "_" + val.toString();
-				Sort tSort = objs.getSort("T");
+				String label = txn.getOriginalTransaction() + "_" + val.toString();
+				Sort otSort = objs.getSort("OT");
 				Sort oSort = objs.getSort("O");
 
 				switch (exp.getClass().getSimpleName()) {
@@ -434,11 +438,11 @@ public class Z3Driver {
 						RowSetVarExp rsv = (RowSetVarExp) exp;
 						String table = rsv.getTable().getName();
 						objs.addFunc(label,
-								ctx.mkFuncDecl(label, new Sort[]{tSort, objs.getSort(table)}, objs.getSort("Bool")));
+								ctx.mkFuncDecl(label, new Sort[]{otSort, objs.getSort(table)}, objs.getSort("Bool")));
 						objs.addFunc(label + "_isNull",
 								ctx.mkFuncDecl(label + "_isNull", new Sort[]{oSort}, objs.getSort("Bool")));
 						// add props for SVar
-						BoolExpr prop = dynamicAssertions.mk_svar_props(txn.getName(), val.toString(), table,
+						BoolExpr prop = dynamicAssertions.mk_svar_props(txn.getOriginalTransaction(), val.toString(), table,
 								rsv.getWhClause());
 						addAssertion(label + "_props", prop);
 
@@ -448,9 +452,9 @@ public class Z3Driver {
 						String tableName = rv.getTable().getName();
 						RowSetVarExp setVar = rv.getSetVar();
 						// declare rowVar
-						objs.addFunc(label, ctx.mkFuncDecl(label, new Sort[]{tSort}, objs.getSort(tableName)));
+						objs.addFunc(label, ctx.mkFuncDecl(label, new Sort[]{otSort}, objs.getSort(tableName)));
 						// add props for rowVar
-						prop = dynamicAssertions.mk_row_var_props(txn.getName(), val.toString(), setVar);
+						prop = dynamicAssertions.mk_row_var_props(txn.getOriginalTransaction(), val.toString(), setVar);
 						addAssertion(label + "_props", prop);
 
 						break;
@@ -459,10 +463,10 @@ public class Z3Driver {
 						RowVarLoopExp vle = (RowVarLoopExp) exp;
 						tableName = vle.getTable().getName();
 						setVar = vle.getSetVar();
-						objs.addFunc(label, ctx.mkFuncDecl(label, new Sort[]{tSort, objs.getSort("BitVec")},
+						objs.addFunc(label, ctx.mkFuncDecl(label, new Sort[]{otSort, objs.getSort("BitVec")},
 								objs.getSort(tableName)));
 						// add props for loopVar
-						prop = dynamicAssertions.mk_row_var_loop_props(txn.getName(), val.toString(), setVar);
+						prop = dynamicAssertions.mk_row_var_loop_props(txn.getOriginalTransaction(), val.toString(), setVar);
 						addAssertion(label + "_props", prop);
 
 					case "ParamValExp":

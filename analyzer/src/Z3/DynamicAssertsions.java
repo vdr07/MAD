@@ -250,13 +250,13 @@ public class DynamicAssertsions {
 
 	public BoolExpr mk_svar_props(String txnName, String ValueName, String table, Expression whClause) {
 		Expr rsort = ctx.mkFreshConst("r", objs.getSort(table));
-		Expr tsort = ctx.mkFreshConst("t", objs.getSort("T"));
-		BoolExpr rowBelongsToSet = (BoolExpr) ctx.mkApp(objs.getfuncs(txnName + "_" + ValueName), tsort, rsort);
+		Expr otsort = ctx.mkFreshConst("ot", objs.getSort("OT"));
+		BoolExpr rowBelongsToSet = (BoolExpr) ctx.mkApp(objs.getfuncs(txnName + "_" + ValueName), otsort, rsort);
 		Quantifier x = null;
 		try {
-			x = ctx.mkForall(new Expr[] { o1, tsort, rsort },
+			x = ctx.mkForall(new Expr[] { o1, otsort, rsort },
 					ctx.mkImplies(rowBelongsToSet,
-							(BoolExpr) z3Util.irCondToZ3Expr(txnName, tsort, rsort, o1, whClause)),
+							(BoolExpr) z3Util.irCondToZ3Expr(txnName, otsort, rsort, o1, whClause)),
 					1, null, null, null, null);
 		} catch (UnexoectedOrUnhandledConditionalExpression e) {
 			e.printStackTrace();
@@ -265,24 +265,24 @@ public class DynamicAssertsions {
 	}
 
 	public BoolExpr mk_row_var_props(String txnName, String valueName, RowSetVarExp setVar) {
-		Expr tsort = ctx.mkFreshConst("t", objs.getSort("T"));
+		Expr otsort = ctx.mkFreshConst("ot", objs.getSort("OT"));
 		Quantifier x = null;
 		String sVarName = txnName + "_" + setVar.getName();
 		String rowVarName = txnName + "_" + valueName;
-		x = ctx.mkForall(new Expr[] { tsort },
-				ctx.mkApp(objs.getfuncs(sVarName), tsort, (ctx.mkApp(objs.getfuncs(rowVarName), tsort))), 1, null, null,
+		x = ctx.mkForall(new Expr[] { otsort },
+				ctx.mkApp(objs.getfuncs(sVarName), otsort, (ctx.mkApp(objs.getfuncs(rowVarName), otsort))), 1, null, null,
 				null, null);
 		return x;
 	}
 
 	public BoolExpr mk_row_var_loop_props(String txnName, String valueName, RowSetVarExp setVar) {
-		Expr tsort = ctx.mkFreshConst("t", objs.getSort("T"));
+		Expr otsort = ctx.mkFreshConst("ot", objs.getSort("OT"));
 		Expr isort = ctx.mkFreshConst("i", objs.getSort("LoopBitVec"));
 		Quantifier x = null;
 		String sVarName = txnName + "_" + setVar.getName();
 		String rowVarName = txnName + "_" + valueName;
-		x = ctx.mkForall(new Expr[] { tsort, isort },
-				ctx.mkApp(objs.getfuncs(sVarName), tsort, (ctx.mkApp(objs.getfuncs(rowVarName), tsort, isort))), 1,
+		x = ctx.mkForall(new Expr[] { otsort, isort },
+				ctx.mkApp(objs.getfuncs(sVarName), otsort, (ctx.mkApp(objs.getfuncs(rowVarName), otsort, isort))), 1,
 				null, null, null, null);
 		return x;
 	}

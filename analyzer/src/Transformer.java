@@ -152,7 +152,9 @@ public class Transformer extends BodyTransformer {
 		}
 		List<List<String>> txnsNamesCombs = new ArrayList<>(txnsNamesCombsSet);
 		Collections.sort(txnsNamesCombs, (txnsNamesComb1, txnsNamesComb2) -> Integer.compare(txnsNamesComb1.size(), txnsNamesComb2.size()));
-		txnsNamesCombs.removeIf(l -> l.size() < 3);
+		
+		if (app.getOrigTxns().size() >= 3)
+			txnsNamesCombs.removeIf(l -> l.size() < 3);
 		
 		int txnsNamesCombIdx = 0;
 		long analysis_begin_time = System.currentTimeMillis();
@@ -220,7 +222,9 @@ public class Transformer extends BodyTransformer {
 								anml2.setExtractionTime(-1, anml2_finish_time - anml2_begin_time);
 								// anml2.announce(false, seenStructures.size());
 								// LOG.info("Versioned anomaly generated (" + seenStructures.size() + ") -- " + anml2);
-								anml2.announce(false, seenVersAnmls.size());
+								
+								// Commented since it is not being used and contributing to an error
+								// anml2.announce(false, seenVersAnmls.size());
 								LOG.info("Versioned anomaly generated (" + seenVersAnmls.size() + ") -- " + anml2);
 
 								// inner loop for finding structurally similar anomalies
@@ -238,7 +242,10 @@ public class Transformer extends BodyTransformer {
 										seenStructures.writeToCSV(seenStructures.size(), iter - 1, anml3);
 										LOG.info("A structurally similar anomaly generated (" + seenVersAnmls.size()
 												+ ") -- " + anml3);
-										anml3.announce(false, seenVersAnmls.size());
+										
+										// Commented since it is not being used and contributing to an error
+										// anml3.announce(false, seenVersAnmls.size());
+										
 										// repeat
 										anml3 = zdr.analyze(4, null, seenAnmls, includedTables, anml3, null);
 									}

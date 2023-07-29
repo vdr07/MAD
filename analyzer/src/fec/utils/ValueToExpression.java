@@ -68,11 +68,11 @@ public class ValueToExpression {
 					valueToExpression(shouldAbsConsts, loopNo, tp, callerU, gme.getOp2()));
 		case "GLeExpr":
 			GLeExpr gle = (GLeExpr) v;
-			return new BinOpExp(BinOp.LT, valueToExpression(shouldAbsConsts, loopNo, Type.REAL, callerU, gle.getOp1()),
+			return new BinOpExp(BinOp.LEQ, valueToExpression(shouldAbsConsts, loopNo, Type.REAL, callerU, gle.getOp1()),
 					valueToExpression(shouldAbsConsts, loopNo, Type.REAL, callerU, gle.getOp2()));
 		case "GLtExpr":
 			GLtExpr glt = (GLtExpr) v;
-			return new BinOpExp(BinOp.LEQ, valueToExpression(shouldAbsConsts, loopNo, Type.REAL, callerU, glt.getOp1()),
+			return new BinOpExp(BinOp.LT, valueToExpression(shouldAbsConsts, loopNo, Type.REAL, callerU, glt.getOp1()),
 					valueToExpression(shouldAbsConsts, loopNo, Type.REAL, callerU, glt.getOp2()));
 
 		case "GNeExpr":
