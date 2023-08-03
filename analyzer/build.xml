@@ -24,6 +24,7 @@
         <pathelement location="lib/apache-log4j-2.12.0-bin/log4j-api-2.12.0-sources.jar"/>
         <pathelement location="lib/jsqlparser-1.4-SNAPSHOT.jar"/>
         <pathelement location="lib/com.microsoft.z3.jar"/>
+        <pathelement location="lib/json-simple-1.1.1.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>

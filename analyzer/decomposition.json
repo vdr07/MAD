@@ -1,0 +1,17 @@
+{
+    "M1": [
+        "member"
+    ],
+    "M2": [
+        "items"
+    ],
+    "M3": [
+        "delivery"
+    ],
+    "M4": [
+        "order_item"
+    ],
+    "M5": [
+        "orders"
+    ]
+}

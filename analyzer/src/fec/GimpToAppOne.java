@@ -3,9 +3,18 @@ package fec;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.FileReader;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.*;
 
 import exceptions.SqlTypeNotFoundException;
 import exceptions.UnknownUnitException;
@@ -16,6 +25,7 @@ import ar.Type;
 import ar.expression.vals.ParamValExp;
 import ar.ddl.Table;
 import ar.statement.Statement;
+import ar.statement.InvokeStmt;
 import cons.ConstantArgs;
 import soot.Body;
 import soot.Local;
@@ -32,50 +42,59 @@ public class GimpToAppOne extends GimpToApp {
 		super(v2, bodies, tables);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Application transform() throws UnknownUnitException {
 		Application app = new Application();
+
+		Map<String, String> entitiesMicroservicesMap = new HashMap<String, String>();
+		try {
+			Object obj = new JSONParser().parse(new FileReader("decomposition.json"));
+			JSONObject jo = (JSONObject) obj;
+			for (Object key : jo.keySet()) {
+				String keyStr = (String) key;
+
+				JSONArray microserviceEntities = (JSONArray) jo.get(key);
+				microserviceEntities.forEach(entity -> {
+					String entityStr = (String) entity;
+					entitiesMicroservicesMap.put(entityStr, keyStr);
+				});
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		for (Body b : bodies) {
 			if (!b.getMethod().getName().contains("init")
 					&& !ConstantArgs._EXCLUDED_TXNS.contains(b.getMethod().getName())) {
-				Transaction txn = extractTxn(b, app);
+				OriginalTransaction origTxn = extractOrigTxn(b, app, entitiesMicroservicesMap);
 				LOG.info("Transaction <<" + b.getMethod().getName() + ">> compiled to AR");
 
-				if (txn != null)
-					app.addTxn(txn);
-				
-				String origTxnName = txn.getOriginalTransaction();
-				if (app.getOrigTxns().stream().filter(ot -> ot.getName().equals(origTxnName)).findFirst().isPresent()) {
-					app.getOrigTxnByName(origTxnName).addAllStmts(txn.getStmts());
-				} else {
-					OriginalTransaction origTxn = new OriginalTransaction(origTxnName);
-					origTxn.addAllStmts(txn.getStmts());
+				if (origTxn != null)
 					app.addOrigTxn(origTxn);
-				}
 			}
 		}
 		LOG.info("AR application successfully generated");
 		return app;
 	}
 
-	private Transaction extractTxn(Body b, Application app) throws UnknownUnitException {
+	private OriginalTransaction extractOrigTxn(Body b, Application app, Map<String, String> entitiesMicroservicesMap) throws UnknownUnitException {
 
 		if (ConstantArgs.DEBUG_MODE)
 			super.printGimpBody(b);
 		String name = b.getMethod().getName();
-		Transaction txn = new Transaction(name);
+		OriginalTransaction origTxn = new OriginalTransaction(name);
 		UnitHandler unitHandler = new UnitHandler(b, super.tables);
 		// INTERNAL ANALYSIS
 		// Parameter extraction
 		unitHandler.extractParams();
-		LOG.info("Transaction <<" + name + ">> parameters extracted");
+		LOG.info("Original Transaction <<" + name + ">> parameters extracted");
+
 		for (Local l : unitHandler.data.getParams().keySet()) {
 			Type t = Type.INT; // just to instantiate it, needed for calling the typing function
 			Value v = unitHandler.data.getParams().get(l);
 
 			try {
 				ParamValExp exp = (ParamValExp) new ParamValExp(l.toString(), t.fromJavaTypes(v), "to-do");
-				txn.addParam(l.toString(), exp);
-				// Also add it the unit data
 				unitHandler.data.addExp(l, exp);
 			} catch (SqlTypeNotFoundException e) {
 				e.printStackTrace();
@@ -91,62 +110,43 @@ public class GimpToAppOne extends GimpToApp {
 		unitHandler.finalizeStatements();
 		LOG.info("Statements finalized");
 
+		// Considering that indexes start at 0 and the first subtxn will be at 0
+		int subTransactionsIdx = -1;
+		String currentMicroservice = "";
+		List<Transaction> subTxns = new ArrayList<>();
 		// craft the output transaction from the extracted data
+		System.out.println("entitiesMicroservicesMap: "+entitiesMicroservicesMap);
 		for (Statement s : unitHandler.data.getStmts()) {
-			txn.addStmt(s);
-		}
-		txn.setExps(unitHandler.data.getExps());
-		txn.setTypes();
-
-		Tag tags = b.getMethod().getTag("VisibilityAnnotationTag");
-		if (tags != null) {
-			for (AnnotationTag tag : ((VisibilityAnnotationTag) tags).getAnnotations()) {
-				if (Objects.equals(tag.getType(), "Lar/DependsOn;")) {
-					Optional<String> dependency = tag.getElems().stream().filter((a) -> Objects.equals(a.getName(), "name")).
-							map((x) -> ((AnnotationStringElem) x).getValue()).
-							findFirst();
-					dependency.ifPresent(s -> {
-						LOG.info("Found dependency: {} depends on {}", name, s);
-						//txn.addDependency(s);
-
-						// Add the transaction statements to the dependant transaction that happens before
-						Optional<Transaction> depTxn = app.getTxns().stream().filter((a) -> Objects.equals(a.getName(), s)).
-							findFirst();
-						depTxn.ifPresent(dt -> {
-							for (Statement st : txn.getStmts()) {
-								dt.addStmt(st);
-							}
-							dt.setTypes();	// Update the statements names to the dependant transaction
-						});
-					});
-					return null;	// Discard the current transaction, only accounting for the dependant transaction
-				} else if (Objects.equals(tag.getType(), "Lar/ChoppedTransaction;")) {
-					Optional<String> originalTransaction = tag.getElems().stream().filter((a) -> Objects.equals(a.getName(), "originalTransaction")).
-							map((x) -> ((AnnotationStringElem) x).getValue()).
-							findFirst();
-					originalTransaction.ifPresent(ot -> {
-						LOG.info("Chopped transaction: {} belonged to transaction {}", name,ot);
-						txn.setOriginalTransaction(ot);
-					});
-
-					Optional<String> microservice = tag.getElems().stream().filter((a) -> Objects.equals(a.getName(), "microservice")).
-							map((x) -> ((AnnotationStringElem) x).getValue()).
-							findFirst();
-					microservice.ifPresent(m -> {
-						LOG.info("Chopped transaction: {} executes on microservice {}", name, microservice);
-						txn.setMicroservice(m);
-					});
-				}
+			String entityName = ((InvokeStmt) s).getQuery().getTable().getName();
+			System.out.println("entityName: "+entityName);
+			if (!currentMicroservice.equals(entitiesMicroservicesMap.get(entityName))) {
+				currentMicroservice = entitiesMicroservicesMap.get(entityName);
+				Transaction newSubTxn = new Transaction(name + "_" + (subTransactionsIdx+1));
+				newSubTxn.setOriginalTransaction(name);
+				newSubTxn.setMicroservice(currentMicroservice);
+				newSubTxn.addStmt(s);
+				subTxns.add(newSubTxn);
+				subTransactionsIdx++;
+			} else {
+				subTxns.get(subTransactionsIdx).addStmt(s);
 			}
+			origTxn.addStmt(s);
+			
 		}
 
-		if(txn.getOriginalTransaction() == null || txn.getOriginalTransaction().equals("")) txn.setOriginalTransaction(name);
+		for (Transaction subTxn : subTxns) {
+			for (Local l : unitHandler.data.getParams().keySet()) {
+				subTxn.addParam(l.toString(), (ParamValExp) unitHandler.data.getExp(l));
+			}
+			subTxn.setExps(unitHandler.data.getExps());
+			subTxn.setTypes();
 
-		if(txn.getMicroservice() == null) txn.setMicroservice("_MONOLITH_");
+			app.addTxn(subTxn);
+		}
 
 		// if (ConstantArgs.DEBUG_MODE)
 		// printExpressions(unitHandler);
-		return txn;
+		return origTxn;
 	}
 
 	// just a helping function for dev phase

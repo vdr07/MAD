@@ -29,7 +29,7 @@ public class Initializer {
 				+ briefLabelOptionName + ":false ");
 		PackManager.v().getPack("jtp").add(printTransform);
 		LOG.info("Preparing Args");
-		String[] soot_args = new String[6];
+		String[] soot_args = new String[3];
 		soot_args[0] = "--soot-classpath";
 		if (_RT_PATH == null)
 			LOG.fatal("CLOTHO_RT_PATH = \"\". Make sure environment variables are correctly set");
@@ -37,9 +37,6 @@ public class Initializer {
 			LOG.fatal("CLOTHO_JCE_PATH = \"\". Make sure environment variables are correctly set");
 		soot_args[1] = System.getProperty("user.dir") + "/bin:" + _RT_PATH + ":" + _JCE_PATH;
 		soot_args[2] = "benchmarks." + ConstantArgs._BENCHMARK_NAME + "." + ConstantArgs._BENCHMARK_NAME;
-		soot_args[3] = "-p";
-		soot_args[4] = "jb";
-		soot_args[5] = "use-original-names:true";
 		LOG.info(soot_args[1]);
 		LOG.info("Args prepared: ready to return");
 

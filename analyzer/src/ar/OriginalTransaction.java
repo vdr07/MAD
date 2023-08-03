@@ -29,6 +29,10 @@ public class OriginalTransaction {
 		this.stmts = new ArrayList<Statement>();
 	}
 
+	public void addStmt(Statement stmt) {
+		this.stmts.add(stmt);
+	}
+
 	public void addAllStmts(List<Statement> stmts) {
 		this.stmts.addAll(stmts);
 	}

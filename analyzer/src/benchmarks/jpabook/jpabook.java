@@ -44,7 +44,7 @@ public class jpabook {
 	public void memberCreate(long memberId, String memberName, String city,
 			String street, String zipcode) throws SQLException {
 		String getMemberByNameSQL = 
-				"SELECT id FROM " + "MEMBER"+
+				"SELECT * FROM " + "MEMBER"+
 				" WHERE name = ?";
 
 		String insertMemberSQL = 
@@ -197,11 +197,11 @@ public class jpabook {
 	public void order(long memberId, long itemId, int count, long orderId, long deliveryId,
 			long orderItemId, String orderDate) throws SQLException {
 		String findOneMemberSQL = 
-				"SELECT city, street, zipcode FROM " + "MEMBER"+
+				"SELECT * FROM " + "MEMBER"+
 				" WHERE id = ?";
 
 		String findOneItemSQL = 
-				"SELECT price, stockQuantity FROM " + "ITEMS"+
+				"SELECT * FROM " + "ITEMS"+
 				" WHERE id = ?";
 
 		String insertDeliverySQL = 
@@ -285,7 +285,7 @@ public class jpabook {
 	@ChoppedTransaction(microservice="m1")
 	public void orderList(String orderStatus, String memberName) throws SQLException {
 		String findMemberByNameSQL = 
-				"SELECT id FROM " + "MEMBER"+
+				"SELECT * FROM " + "MEMBER"+
 				" WHERE name = ?";
 
 		String findOrdersSQL = 
@@ -314,7 +314,7 @@ public class jpabook {
 	@ChoppedTransaction(microservice="m1")
 	public void processCancelBuy(long orderId) throws SQLException {
 		String findOneOrderSQL = 
-				"SELECT id, deliveryId FROM " + "ORDERS"+
+				"SELECT * FROM " + "ORDERS"+
 				" WHERE id = ?";
 
 		String findOneDeliverySQL = 

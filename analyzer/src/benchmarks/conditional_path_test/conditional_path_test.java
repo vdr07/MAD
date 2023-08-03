@@ -26,13 +26,11 @@ public class conditional_path_test {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
-	public void conditional_path(int accountId, int personId, int newValue) throws SQLException {
+	public void conditional_path(int accountId, int personId, int newValue, int read_val) throws SQLException {
 		PreparedStatement stmt = connect.prepareStatement("SELECT value " + "FROM " + "ACCOUNTS" + " WHERE id = ?");
 		stmt.setInt(1, accountId);
 		ResultSet rs = stmt.executeQuery();
 		rs.next();
-		int read_val = rs.getInt("VALUE");
 		if(read_val > 0) {
 			PreparedStatement stmt1 = connect.prepareStatement("UPDATE PERSON SET value = ?" + " WHERE id = ?");
 			stmt1.setInt(1, read_val);
@@ -46,7 +44,6 @@ public class conditional_path_test {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void update_person_account(int personId, int accountId, int personValue, int accountValue) throws SQLException {
 		PreparedStatement stmt1 = connect.prepareStatement("UPDATE PERSON SET value = ?" + " WHERE id = ?");
 		stmt1.setInt(1, personValue);
