@@ -485,8 +485,7 @@ public class DynamicAssertsions {
 
 			// WR then version increases
 			lhs = (BoolExpr) ctx.mkApp(wrFunc, r, o1, o2);
-			rhs = ctx.mkEq(ctx.mkApp(verFunc, r, o2), 
-					ctx.mkBVAdd((BitVecExpr) ctx.mkApp(verFunc, r, o1), ctx.mkBV(0, ConstantArgs._MAX_BV_)));
+			rhs = ctx.mkEq(ctx.mkApp(verFunc, r, o2), ctx.mkApp(verFunc, r, o1));
 			body = ctx.mkImplies(lhs, rhs);
 			x = ctx.mkForall(new Expr[] { r, o1, o2 }, body, 1, null, null, null, null);
 			result.add(x);

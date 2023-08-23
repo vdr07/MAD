@@ -105,7 +105,7 @@ public class Rules {
 							// relate the updated velues to the projected values at the next version
 							// ZZZ
 							BoolExpr versionCond2 = ConstantArgs._current_version_enforcement
-									? ctx.mkAnd(getVersionCondsRW(txn2, vot2, vo2, vo1, q2, rowVar))
+									? ctx.mkAnd(getVersionCondsRW(txn1, txn2, vot1, vo1, vot2, vo2, q2, rowVar))
 									: ctx.mkTrue();
 
 							Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2,
@@ -230,15 +230,16 @@ public class Rules {
 		return result;
 	}
 
-	private BoolExpr[] getVersionCondsRW(Transaction txn, Expr ot, Expr o, Expr oldO, Query q, Expr rowVar)
-			throws UnexoectedOrUnhandledConditionalExpression {
+	private BoolExpr[] getVersionCondsRW(Transaction oldTxn, Transaction txn, Expr oldOt, Expr oldO,
+			Expr ot, Expr o, Query q, Expr rowVar) throws UnexoectedOrUnhandledConditionalExpression {
 		Map<Column, Expression> updateFuncs = q.getU_updates();
 		String tableName = q.getTable().getName();
-		BoolExpr[] versionConds = new BoolExpr[updateFuncs.size() * 2];
+		FuncDecl verFunc = objs.getfuncs(tableName + "_VERSION");
+		FuncDecl lrvFunc = objs.getfuncs(oldTxn.getOriginalTransaction() + "_LAST_READ_VERSION_" + tableName);
+		BoolExpr[] versionConds = new BoolExpr[updateFuncs.size() * 2 + 1];
 		int iter96 = 0;
 		for (Column c : updateFuncs.keySet()) {
 			FuncDecl projFunc = objs.getfuncs(tableName + "_PROJ_" + c);
-			FuncDecl verFunc = objs.getfuncs(tableName + "_VERSION");
 			Expr lhsVal = ctx.mkApp(projFunc, rowVar, (ctx.mkApp(verFunc, rowVar, o)));
 			switch (c.type) {
 			case STRING:
@@ -265,32 +266,36 @@ public class Rules {
 
 		}
 
+		versionConds[iter96++] = (ctx.mkBVSGE((BitVecExpr) ctx.mkApp(lrvFunc, oldOt), (BitVecExpr) ctx.mkApp(verFunc, rowVar, oldO)));
+
 		return versionConds;
 	}
 
-	public BoolExpr[] getVersionCondsWR(Transaction txn, Expr ot, Expr o, Query q, Expr rowVar)
-			throws UnexoectedOrUnhandledConditionalExpression {
+	public BoolExpr[] getVersionCondsWR(Transaction oldTxn, Transaction txn, Expr oldOt, Expr oldO, 
+			Expr ot, Expr o, Query q, Expr rowVar) throws UnexoectedOrUnhandledConditionalExpression {
 		Map<Column, Expression> updateFuncs = q.getU_updates();
 		String tableName = q.getTable().getName();
-		BoolExpr[] versionConds = new BoolExpr[updateFuncs.size() + 1];
+		BoolExpr[] versionConds = new BoolExpr[updateFuncs.size() + 2];
 		int iter96 = 0;
 		FuncDecl verFunc = objs.getfuncs(tableName + "_VERSION");
+		FuncDecl lrvFunc = objs.getfuncs(txn.getOriginalTransaction() + "_LAST_READ_VERSION_" + tableName);
 		for (Column c : updateFuncs.keySet()) {
 			FuncDecl projFunc = objs.getfuncs(tableName + "_PROJ_" + c);
-			Expr lhsVal = ctx.mkApp(projFunc, rowVar, (ctx.mkApp(verFunc, rowVar, o)));
+			Expr lhsVal = ctx.mkApp(projFunc, rowVar, (ctx.mkApp(verFunc, rowVar, oldO)));
 			Expression rhsVal = updateFuncs.get(c);
 			try {
-				versionConds[iter96++] = (ctx.mkEq(z3Util.irCondToZ3Expr(txn.getOriginalTransaction(), ot, rowVar, o, rhsVal), lhsVal));
+				versionConds[iter96++] = (ctx.mkEq(z3Util.irCondToZ3Expr(oldTxn.getOriginalTransaction(), oldOt, rowVar, oldO, rhsVal), lhsVal));
 			} catch (Exception e) {
 				System.out.println(e);
 				System.out.println("rhsVal:" + rhsVal);
-				System.out.println("tr(rhsVal):" + z3Util.irCondToZ3Expr(txn.getOriginalTransaction(), ot, rowVar, o, rhsVal));
+				System.out.println("tr(rhsVal):" + z3Util.irCondToZ3Expr(oldTxn.getOriginalTransaction(), oldOt, rowVar, oldO, rhsVal));
 				System.out.println("lhsVal:" + lhsVal);
 			}
 		}
 		// last condition enforcing the version to be >0
-		versionConds[iter96++] = ctx.mkBVSGT((BitVecExpr) ctx.mkApp(verFunc, rowVar, o),
+		versionConds[iter96++] = ctx.mkBVSGT((BitVecExpr) ctx.mkApp(verFunc, rowVar, oldO),
 				ctx.mkBV(0, ConstantArgs._MAX_BV_));
+		versionConds[iter96++] = (ctx.mkBVSGE((BitVecExpr) ctx.mkApp(lrvFunc, ot), (BitVecExpr) ctx.mkApp(verFunc, rowVar, o)));
 		return versionConds;
 	}
 
@@ -347,7 +352,7 @@ public class Rules {
 								.mkApp(objs.getfuncs(txn2.getOriginalTransaction() + "_" + lhsVarName + "_isNull"), vo2);
 						// ZZZ
 						BoolExpr versionCond1 = ConstantArgs._current_version_enforcement
-								? ctx.mkAnd(getVersionCondsWR(txn1, vot1, vo1, q1, rowVar))
+								? ctx.mkAnd(getVersionCondsWR(txn1, txn2, vot1, vo1, vot2, vo2, q1, rowVar))
 								: ctx.mkTrue();
 
 						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2,

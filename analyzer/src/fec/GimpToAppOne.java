@@ -115,10 +115,8 @@ public class GimpToAppOne extends GimpToApp {
 		String currentMicroservice = "";
 		List<Transaction> subTxns = new ArrayList<>();
 		// craft the output transaction from the extracted data
-		System.out.println("entitiesMicroservicesMap: "+entitiesMicroservicesMap);
 		for (Statement s : unitHandler.data.getStmts()) {
 			String entityName = ((InvokeStmt) s).getQuery().getTable().getName();
-			System.out.println("entityName: "+entityName);
 			if (!currentMicroservice.equals(entitiesMicroservicesMap.get(entityName))) {
 				currentMicroservice = entitiesMicroservicesMap.get(entityName);
 				Transaction newSubTxn = new Transaction(name + "_" + (subTransactionsIdx+1));

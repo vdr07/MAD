@@ -445,6 +445,8 @@ public class Z3Driver {
 						BoolExpr prop = dynamicAssertions.mk_svar_props(txn.getOriginalTransaction(), val.toString(), table,
 								rsv.getWhClause());
 						addAssertion(label + "_props", prop);
+						String txnLastReadVersionLabel1 = txn.getOriginalTransaction() + "_LAST_READ_VERSION_" + table;
+						objs.addFunc(txnLastReadVersionLabel1, ctx.mkFuncDecl(txnLastReadVersionLabel1, new Sort[]{otSort}, objs.getSort("BitVec")));
 
 						break;
 					case "RowVarExp":
@@ -456,6 +458,8 @@ public class Z3Driver {
 						// add props for rowVar
 						prop = dynamicAssertions.mk_row_var_props(txn.getOriginalTransaction(), val.toString(), setVar);
 						addAssertion(label + "_props", prop);
+						String txnLastReadVersionLabel2 = txn.getOriginalTransaction() + "_LAST_READ_VERSION_" + tableName;
+						objs.addFunc(txnLastReadVersionLabel2, ctx.mkFuncDecl(txnLastReadVersionLabel2, new Sort[]{otSort}, objs.getSort("BitVec")));
 
 						break;
 					case "RowVarLoopExp":
