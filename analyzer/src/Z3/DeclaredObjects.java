@@ -29,7 +29,15 @@ public class DeclaredObjects {
 	}
 
 	public Map<String, FuncDecl> getAllNextVars() {
-		List<String> allKeys = funcs.keySet().stream().filter(x -> x.contains("-next")).collect(Collectors.toList());
+		List<String> allKeys = funcs.keySet().stream().filter(x -> x.contains("-next") && !x.contains("_READ_VERSION")).collect(Collectors.toList());
+		Map<String, FuncDecl> results = new HashMap<>();
+		for (String key : allKeys)
+			results.put(key, funcs.get(key));
+		return results;
+	}
+
+	public Map<String, FuncDecl> getNextReadVersionVars(String rId) {
+		List<String> allKeys = funcs.keySet().stream().filter(x -> x.contains(rId+"-next") && x.contains("_READ_VERSION")).collect(Collectors.toList());
 		Map<String, FuncDecl> results = new HashMap<>();
 		for (String key : allKeys)
 			results.put(key, funcs.get(key));

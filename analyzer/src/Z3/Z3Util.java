@@ -63,7 +63,7 @@ public class Z3Util {
 			FuncDecl projFunc = objs.getfuncs(pv.getRVar().getTable().getName() + "_PROJ_" + pv.getColumn().toString());
 			Expr rowVar = irCondToZ3Expr(txnName, txn, row, o1, pv.getRVar());
 			return ctx.mkApp(projFunc, irCondToZ3Expr(txnName, txn, row, o1, pv.getRVar()),
-					ctx.mkApp(objs.getfuncs(txnName+"_LAST_READ_VERSION_"+pv.getRVar().getTable().getName()), txn));
+					ctx.mkApp(objs.getfuncs(txnName+"_"+pv.getRVar().getName()+"_READ_VERSION"), txn));
 
 		case "RowSetVarExp":
 			break;

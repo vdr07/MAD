@@ -105,7 +105,7 @@ public class Rules {
 							// relate the updated velues to the projected values at the next version
 							// ZZZ
 							BoolExpr versionCond2 = ConstantArgs._current_version_enforcement
-									? ctx.mkAnd(getVersionCondsRW(txn1, txn2, vot1, vo1, vot2, vo2, q2, rowVar))
+									? ctx.mkAnd(getVersionCondsRW(txn1, txn2, vot1, vo1, vot2, vo2, q1, q2, rowVar))
 									: ctx.mkTrue();
 
 							Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2,
@@ -231,12 +231,14 @@ public class Rules {
 	}
 
 	private BoolExpr[] getVersionCondsRW(Transaction oldTxn, Transaction txn, Expr oldOt, Expr oldO,
-			Expr ot, Expr o, Query q, Expr rowVar) throws UnexoectedOrUnhandledConditionalExpression {
-		Map<Column, Expression> updateFuncs = q.getU_updates();
-		String tableName = q.getTable().getName();
+			Expr ot, Expr o, Query q1, Query q2, Expr rowVar) throws UnexoectedOrUnhandledConditionalExpression {
+		Map<Column, Expression> updateFuncs = q2.getU_updates();
+		String selectVarName = ((RowSetVarExp) q1.getsVar()).getName();
+		String txnSelectVarName = oldTxn.getOriginalTransaction() + "_" + selectVarName;
+		Map<String, FuncDecl> nextReadVersionVars = objs.getNextReadVersionVars(txnSelectVarName);
+		String tableName = q2.getTable().getName();
 		FuncDecl verFunc = objs.getfuncs(tableName + "_VERSION");
-		FuncDecl lrvFunc = objs.getfuncs(oldTxn.getOriginalTransaction() + "_LAST_READ_VERSION_" + tableName);
-		BoolExpr[] versionConds = new BoolExpr[updateFuncs.size() * 2 + 1];
+		BoolExpr[] versionConds = new BoolExpr[updateFuncs.size() * 2 + nextReadVersionVars.size()];
 		int iter96 = 0;
 		for (Column c : updateFuncs.keySet()) {
 			FuncDecl projFunc = objs.getfuncs(tableName + "_PROJ_" + c);
@@ -266,7 +268,10 @@ public class Rules {
 
 		}
 
-		versionConds[iter96++] = (ctx.mkBVSGE((BitVecExpr) ctx.mkApp(lrvFunc, oldOt), (BitVecExpr) ctx.mkApp(verFunc, rowVar, oldO)));
+		for (String readVersionVarName : nextReadVersionVars.keySet()) {
+			FuncDecl rvFunc = objs.getfuncs(readVersionVarName);
+			versionConds[iter96++] = (ctx.mkEq((BitVecExpr) ctx.mkApp(rvFunc, oldOt), (BitVecExpr) ctx.mkApp(verFunc, rowVar, oldO)));
+		}
 
 		return versionConds;
 	}
@@ -275,10 +280,9 @@ public class Rules {
 			Expr ot, Expr o, Query q, Expr rowVar) throws UnexoectedOrUnhandledConditionalExpression {
 		Map<Column, Expression> updateFuncs = q.getU_updates();
 		String tableName = q.getTable().getName();
-		BoolExpr[] versionConds = new BoolExpr[updateFuncs.size() + 2];
+		BoolExpr[] versionConds = new BoolExpr[updateFuncs.size() + 1];
 		int iter96 = 0;
 		FuncDecl verFunc = objs.getfuncs(tableName + "_VERSION");
-		FuncDecl lrvFunc = objs.getfuncs(txn.getOriginalTransaction() + "_LAST_READ_VERSION_" + tableName);
 		for (Column c : updateFuncs.keySet()) {
 			FuncDecl projFunc = objs.getfuncs(tableName + "_PROJ_" + c);
 			Expr lhsVal = ctx.mkApp(projFunc, rowVar, (ctx.mkApp(verFunc, rowVar, oldO)));
@@ -295,7 +299,7 @@ public class Rules {
 		// last condition enforcing the version to be >0
 		versionConds[iter96++] = ctx.mkBVSGT((BitVecExpr) ctx.mkApp(verFunc, rowVar, oldO),
 				ctx.mkBV(0, ConstantArgs._MAX_BV_));
-		versionConds[iter96++] = (ctx.mkBVSGE((BitVecExpr) ctx.mkApp(lrvFunc, ot), (BitVecExpr) ctx.mkApp(verFunc, rowVar, o)));
+
 		return versionConds;
 	}
 
