@@ -22,6 +22,7 @@ import fec.GimpToAppOne;
 import fec.utils.DDLParser;
 import ar.Application;
 import ar.Transaction;
+import ar.OriginalTransaction;
 import soot.Body;
 import soot.BodyTransformer;
 import soot.PhaseOptions;
@@ -141,10 +142,14 @@ public class Transformer extends BodyTransformer {
 
 		List<List<String>> txnsNamesCombs = new ArrayList<>();
 		// Assuming that the cycle max length is 4, so max combinations size is 3 original transactions
-		for (int i = 0; i < app.getOrigTxns().size()-2; i++) {
-			for (int j = i+1; j < app.getOrigTxns().size()-1; j++) {
-				for (int k = j+1; k < app.getOrigTxns().size(); k++) {
-					txnsNamesCombs.add(Arrays.asList(app.getOrigTxns().get(i).getName(), app.getOrigTxns().get(j).getName(), app.getOrigTxns().get(k).getName()));
+		if (app.getOrigTxns().size() < 3) {
+			txnsNamesCombs.add(app.getOrigTxns().stream().map(OriginalTransaction::getName).collect(Collectors.toList()));
+		} else {
+			for (int i = 0; i < app.getOrigTxns().size()-2; i++) {
+				for (int j = i+1; j < app.getOrigTxns().size()-1; j++) {
+					for (int k = j+1; k < app.getOrigTxns().size(); k++) {
+						txnsNamesCombs.add(Arrays.asList(app.getOrigTxns().get(i).getName(), app.getOrigTxns().get(j).getName(), app.getOrigTxns().get(k).getName()));
+					}
 				}
 			}
 		}
