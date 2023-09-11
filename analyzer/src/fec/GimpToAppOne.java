@@ -119,17 +119,16 @@ public class GimpToAppOne extends GimpToApp {
 			String entityName = ((InvokeStmt) s).getQuery().getTable().getName();
 			if (!currentMicroservice.equals(entitiesMicroservicesMap.get(entityName))) {
 				currentMicroservice = entitiesMicroservicesMap.get(entityName);
-				Transaction newSubTxn = new Transaction(name + "_" + (subTransactionsIdx+1));
+				subTransactionsIdx++;
+				Transaction newSubTxn = new Transaction(name + "_" + subTransactionsIdx);
 				newSubTxn.setOriginalTransaction(name);
 				newSubTxn.setMicroservice(currentMicroservice);
 				newSubTxn.addStmt(s);
 				subTxns.add(newSubTxn);
-				subTransactionsIdx++;
 			} else {
 				subTxns.get(subTransactionsIdx).addStmt(s);
 			}
 			origTxn.addStmt(s);
-			
 		}
 
 		for (Transaction subTxn : subTxns) {

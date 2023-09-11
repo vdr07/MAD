@@ -139,22 +139,15 @@ public class Transformer extends BodyTransformer {
 			}
 		}
 
-		Set<List<String>> txnsNamesCombsSet = new HashSet<>();
+		List<List<String>> txnsNamesCombs = new ArrayList<>();
 		// Assuming that the cycle max length is 4, so max combinations size is 3 original transactions
-		for (int i = 0; i < app.getOrigTxns().size(); i++) {
-			for (int j = i; j < app.getOrigTxns().size(); j++) {
-				for (int k = j; k < app.getOrigTxns().size(); k++) {
-					Set<String> txnsNamesCombSet = new HashSet<>();
-					txnsNamesCombSet.addAll(Arrays.asList(app.getOrigTxns().get(i).getName(), app.getOrigTxns().get(j).getName(), app.getOrigTxns().get(k).getName()));
-					txnsNamesCombsSet.add(new ArrayList<>(txnsNamesCombSet));
+		for (int i = 0; i < app.getOrigTxns().size()-2; i++) {
+			for (int j = i+1; j < app.getOrigTxns().size()-1; j++) {
+				for (int k = j+1; k < app.getOrigTxns().size(); k++) {
+					txnsNamesCombs.add(Arrays.asList(app.getOrigTxns().get(i).getName(), app.getOrigTxns().get(j).getName(), app.getOrigTxns().get(k).getName()));
 				}
 			}
 		}
-		List<List<String>> txnsNamesCombs = new ArrayList<>(txnsNamesCombsSet);
-		Collections.sort(txnsNamesCombs, (txnsNamesComb1, txnsNamesComb2) -> Integer.compare(txnsNamesComb1.size(), txnsNamesComb2.size()));
-		
-		if (app.getOrigTxns().size() >= 3)
-			txnsNamesCombs.removeIf(l -> l.size() < 3);
 		
 		int txnsNamesCombIdx = 0;
 		long analysis_begin_time = System.currentTimeMillis();
