@@ -24,7 +24,7 @@ public class microbenchmark1 {
 		}
 	}
 
-	public void update_vars(int memberId, int newStatus, int itemId, int newPrice) throws SQLException {
+	public void UpdateMI(int memberId, int newStatus, int itemId, int newPrice) throws SQLException {
 		PreparedStatement stmt1 = connect.prepareStatement("UPDATE MEMBER SET status = ?" + " WHERE id = ?");
 		stmt1.setInt(1, newStatus);
 		stmt1.setInt(2, memberId);
@@ -33,6 +33,16 @@ public class microbenchmark1 {
 		PreparedStatement stmt2 = connect.prepareStatement("UPDATE ITEM SET price = ?" + " WHERE id = ?");
 		stmt2.setInt(1, newPrice);
 		stmt2.setInt(2, itemId);
+		stmt2.executeUpdate();
+	}
+
+	public void ResetMI(int memberId, int itemId) throws SQLException {
+		PreparedStatement stmt1 = connect.prepareStatement("UPDATE MEMBER SET status = 0" + " WHERE id = ?");
+		stmt1.setInt(1, memberId);
+		stmt1.executeUpdate();
+
+		PreparedStatement stmt2 = connect.prepareStatement("UPDATE ITEM SET price = 0" + " WHERE id = ?");
+		stmt2.setInt(1, itemId);
 		stmt2.executeUpdate();
 	}
 }
