@@ -1,0 +1,65 @@
+package benchmarks.program_luis;
+
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Properties;
+import java.util.concurrent.ThreadLocalRandom;
+
+public class program_luis {
+	private Connection connect = null;
+	private int _ISOLATION = Connection.TRANSACTION_READ_COMMITTED;
+	private int id;
+	Properties p;
+
+	public program_luis(int id) {
+		this.id = id;
+		p = new Properties();
+		p.setProperty("id", String.valueOf(this.id));
+		Object o;
+		try {
+			o = Class.forName("MyDriver").newInstance();
+			DriverManager.registerDriver((Driver) o);
+			Driver driver = DriverManager.getDriver("jdbc:mydriver://");
+			connect = driver.connect("", p);
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void writeVars_c1(int x) throws SQLException {
+		String stmtstring = "INSERT INTO VALUES (var_name, value) VALUES (?, ?);";
+		PreparedStatement stmt = connect.prepareStatement(stmtstring);
+		stmt.setString(1, "a");
+		stmt.setInt(2, x);
+		stmt.executeUpdate();
+
+		String stmtstring2 = "INSERT INTO VALUES (var_name, value) VALUES (?, ?);";
+		PreparedStatement stmt2 = connect.prepareStatement(stmtstring2);
+		stmt2.setString(1, "b");
+		stmt2.setInt(2, x);
+		stmt2.executeUpdate();
+	}
+
+	public void checkVars_c2() throws SQLException {
+		String stmtstring = "SELECT value FROM values WHERE var_name = ?;";
+		PreparedStatement stmt = connect.prepareStatement(stmtstring);
+		stmt.setString(1, "a");
+		ResultSet rs = stmt.executeQuery();
+		rs.next();
+		int a = rs.getInt("VALUE");
+
+		String stmtstring2 = "SELECT value FROM values WHERE var_name = ?;";
+		PreparedStatement stmt2 = connect.prepareStatement(stmtstring2);
+		stmt2.setString(1, "b");
+		ResultSet rs2 = stmt2.executeQuery();
+		rs2.next();
+		int b = rs2.getInt("VALUE");
+
+		if (a != b)
+			System.out.println("-----ERROR----");
+	}
+}

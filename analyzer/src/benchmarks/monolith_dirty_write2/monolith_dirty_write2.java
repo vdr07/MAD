@@ -1,0 +1,54 @@
+package benchmarks.monolith_dirty_write2;
+
+import ar.ChoppedTransaction;
+
+import java.sql.*;
+import java.util.Properties;
+
+public class monolith_dirty_write2 {
+	private Connection connect = null;
+	private int _ISOLATION = Connection.TRANSACTION_READ_COMMITTED;
+	private int id;
+	Properties p;
+
+	public monolith_dirty_write2(int id) {
+		this.id = id;
+		p = new Properties();
+		p.setProperty("id", String.valueOf(this.id));
+		Object o;
+		try {
+			o = Class.forName("MyDriver").newInstance();
+			DriverManager.registerDriver((Driver) o);
+			Driver driver = DriverManager.getDriver("jdbc:mydriver://");
+			connect = driver.connect("", p);
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@ChoppedTransaction(microservice="m1")
+	public void update_vars_to_50(int key1, int key2) throws SQLException {
+		PreparedStatement stmt1 = connect.prepareStatement("UPDATE X SET value = ?" + " WHERE id = ?");
+		stmt1.setInt(1, 50);
+		stmt1.setInt(2, key1);
+		stmt1.executeUpdate();
+
+		PreparedStatement stmt2 = connect.prepareStatement("UPDATE Y SET value = ?" + " WHERE id = ?");
+		stmt2.setInt(1, 50);
+		stmt2.setInt(2, key2);
+		stmt2.executeUpdate();
+	}
+
+	@ChoppedTransaction(microservice="m2")
+	public void update_vars_to_100(int key1, int key2) throws SQLException {
+		PreparedStatement stmt1 = connect.prepareStatement("UPDATE X SET value = ?" + " WHERE id = ?");
+		stmt1.setInt(1, 100);
+		stmt1.setInt(2, key1);
+		stmt1.executeUpdate();
+
+		PreparedStatement stmt2 = connect.prepareStatement("UPDATE Y SET value = ?" + " WHERE id = ?");
+		stmt2.setInt(1, 100);
+		stmt2.setInt(2, key2);
+		stmt2.executeUpdate();
+	}
+}
