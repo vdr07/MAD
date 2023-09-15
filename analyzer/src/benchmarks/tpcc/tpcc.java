@@ -1,7 +1,5 @@
 package benchmarks.tpcc;
 
-import ar.ChoppedTransaction;
-
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -63,7 +61,6 @@ public class tpcc {
 		r = new Random();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void delivery(int d_id, int w_id, int C_DELIVERY_CNT, int C_BALANCE) throws SQLException {
 		String delivGetOrderIdSQL = 
 				"SELECT NO_O_ID FROM " + "NEW_ORDER" + 
@@ -198,7 +195,6 @@ public class tpcc {
 		result = delivUpdateCustBalDelivCnt.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void newOrder(int terminalWarehouseID, int numWarehouses,
 			int terminalDistrictLowerID, int terminalDistrictUpperID,
 			int w_id, int d_id, int c_id,
@@ -489,7 +485,6 @@ public class tpcc {
 			stmtUpdateStock.clearBatch();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void orderStatus(int w_id, int terminalDistrictLowerID,
 			int terminalDistrictUpperID) throws SQLException {
 		String ordStatGetNewestOrdSQL = 
@@ -668,7 +663,6 @@ public class tpcc {
         rs = null;
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void payment(int w_id, int numWarehouses,
             int terminalDistrictLowerID, int terminalDistrictUpperID) throws SQLException {
 
@@ -966,7 +960,6 @@ public class tpcc {
         payInsertHist.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void stockLevel(int w_id, int terminalDistrictLowerID,
 			int terminalDistrictUpperID) throws SQLException {
 		String stockGetDistOrderIdSQL =
