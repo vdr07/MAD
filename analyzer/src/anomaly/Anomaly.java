@@ -20,6 +20,7 @@ import com.microsoft.z3.Model;
 
 import ar.Application;
 import ar.Transaction;
+import ar.OriginalTransaction;
 import ar.ddl.Table;
 import utils.Tuple;
 import cons.ConstantArgs;
@@ -74,7 +75,7 @@ public class Anomaly {
 	private Application app;
 	private boolean isCore;
 
-	public List<Expr> Ts, Os;
+	public List<Expr> Ts, Os, OTs;
 	ArrayList<Table> tables;
 
 	public Anomaly(Model model, Context ctx, DeclaredObjects objs, ArrayList<Table> tables, Application app,
@@ -118,6 +119,7 @@ public class Anomaly {
 		isUpdate = getIsUpdate(functions.get("is_update"));
 		this.Ts = Arrays.asList(model.getSortUniverse(objs.getSort("T")));
 		this.Os = Arrays.asList(model.getSortUniverse(objs.getSort("O")));
+		this.OTs = Arrays.asList(model.getSortUniverse(objs.getSort("OT")));
 
 		this.cycleStructure = new ArrayList<>();
 		this.completeStructure = new HashMap<>();
@@ -310,19 +312,19 @@ public class Anomaly {
 // XXX
 			// System.out.println("--- TXN Params --- ");
 			addData("\\l");
-			for (Expr t : Ts) {
-				String tVal = t.toString().replaceAll("!val!", "") + ": ";
+			for (Expr ot : OTs) {
+				String otVal = ot.toString().replaceAll("!val!", "") + ": ";
 				// System.out.print(tVal);
-				addData(tVal);
-				Expr ttype = model.eval(objs.getfuncs("ttype").apply(t), true);
+				addData(otVal);
+				Expr ottype = model.eval(objs.getfuncs("ottype").apply(ot), true);
 				// System.out.print(ttype + "(");
-				addData(ttype + "(");
-				Transaction txn = app.getTxnByName(ttype.toString());
+				addData(ottype + "(");
+				OriginalTransaction origTxn = app.getOrigTxnByName(ottype.toString());
 				String delim = "";
-				for (String pm : txn.getParams().keySet()) {
+				for (String pm : origTxn.getParams().keySet()) {
 					// System.out.print(delim + pm + "=");
 					addData(delim + pm + "=");
-					String modelVal = (model.eval(ctx.mkApp(objs.getfuncs(ttype.toString() + "_PARAM_" + pm), t), true))
+					String modelVal = (model.eval(ctx.mkApp(objs.getfuncs(origTxn.getName() + "_PARAM_" + pm), ot), true))
 							.toString();
 					// System.out.print(modelVal);
 					addData(modelVal);
@@ -350,7 +352,7 @@ public class Anomaly {
 			av.createGraph("anomaly#" + anmlNo + "/anomaly_" + anmlNo + ".dot");
 
 			// create schedule
-			scheduleGen sg = new scheduleGen(ctx, model, objs, tables, conflictingRow, this.Ts, this.Os, this.app);
+			scheduleGen sg = new scheduleGen(ctx, model, objs, tables, conflictingRow, this.Ts, this.Os, this.OTs, this.app);
 			sg.createSchedule("anomaly#" + anmlNo + "/schedule" + ".json");
 			sg.createInstance("anomaly#" + anmlNo + "/instance" + ".json");
 			sg.createData("anomaly#" + anmlNo + "/" + anmlNo + ".cql");

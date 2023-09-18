@@ -19,6 +19,7 @@ import soot.Value;
 public class OriginalTransaction {
 	private String name;
 	private ArrayList<Statement> stmts;
+	private Map<String, ParamValExp> params;
 
 	public String getName() {
 		return this.name;
@@ -27,10 +28,15 @@ public class OriginalTransaction {
 	public OriginalTransaction(String name) {
 		this.name = name;
 		this.stmts = new ArrayList<Statement>();
+		this.params = new HashMap<String, ParamValExp>();
 	}
 
 	public void addStmt(Statement stmt) {
 		this.stmts.add(stmt);
+	}
+
+	public void addParam(String l, ParamValExp p) {
+		this.params.put(l, p);
 	}
 
 	public void addAllStmts(List<Statement> stmts) {
@@ -41,9 +47,21 @@ public class OriginalTransaction {
 		return this.stmts;
 	}
 
+	public Map<String, ParamValExp> getParams() {
+		return this.params;
+	}
+
 	public void printOrigTxn() {
+		String paramList = " (";
 		int iter = 0;
-		System.out.println("\nORIG_TXN_" + name);
+		for (String s : params.keySet()) {
+			paramList += (s + ":" + params.get(s).getType());
+			if (iter++ < params.size() - 1)
+				paramList += ",";
+		}
+
+		paramList += ")";
+		System.out.println("\nORIG_TXN_" + name + paramList);
 		for (Statement stmt : stmts)
 			try {
 				System.out.println(" ++ " + ((InvokeStmt) stmt).toString());

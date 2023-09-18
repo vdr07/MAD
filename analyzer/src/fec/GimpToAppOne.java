@@ -131,6 +131,10 @@ public class GimpToAppOne extends GimpToApp {
 			origTxn.addStmt(s);
 		}
 
+		for (Local l : unitHandler.data.getParams().keySet()) {
+			origTxn.addParam(l.toString(), (ParamValExp) unitHandler.data.getExp(l));
+		}
+
 		for (Transaction subTxn : subTxns) {
 			for (Local l : unitHandler.data.getParams().keySet()) {
 				subTxn.addParam(l.toString(), (ParamValExp) unitHandler.data.getExp(l));

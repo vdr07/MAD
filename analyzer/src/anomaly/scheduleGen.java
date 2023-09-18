@@ -15,6 +15,7 @@ import com.microsoft.z3.Model;
 
 import ar.Application;
 import ar.Transaction;
+import ar.OriginalTransaction;
 import ar.ddl.Column;
 import ar.ddl.Table;
 import ar.statement.InvokeStmt;
@@ -34,11 +35,11 @@ public class scheduleGen {
 	private Map<String, FuncDecl> allNextVars;
 	Map<Tuple<Expr, Expr>, Tuple<Expr, Integer>> conflictingRow;
 	Context ctx;
-	List<Expr> ts, os;
+	List<Expr> ts, os, ots;
 
 	public scheduleGen(Context ctx, Model model, DeclaredObjects objs, ArrayList<Table> tables,
 			Map<Tuple<Expr, Expr>, Tuple<Expr, Integer>> conflictingRow, List<Expr> ts, List<Expr> os,
-			Application app) {
+			List<Expr> ots, Application app) {
 		this.app = app;
 		this.conflictingRow = conflictingRow;
 		this.model = model;
@@ -48,6 +49,7 @@ public class scheduleGen {
 		this.allNextVars = objs.getAllNextVars();
 		this.ts = ts;
 		this.os = os;
+		this.ots = ots;
 	}
 
 	//
@@ -65,25 +67,25 @@ public class scheduleGen {
 		PrintWriter printer = new PrintWriter(writer);
 		String delim = "";
 		printer.append("[");
-		for (Expr model_txn : ts) {
+		for (Expr model_origtxn : ots) {
 
 			printer.append(delim);
 			printer.append("\n{");
-			String txn_id = String.valueOf(Integer.valueOf(model_txn.toString().replace("T!val!", "")) + 1);
+			String origtxn_id = String.valueOf(Integer.valueOf(model_origtxn.toString().replace("OT!val!", "")) + 1);
 
-			printer.append("\"" + txn_id + "\"");
+			printer.append("\"" + origtxn_id + "\"");
 			printer.append(":{\"methodName\":");
-			String txn_type = (model.eval(objs.getfuncs("ttype").apply(model_txn), true).toString());
-			printer.append("\"" + txn_type + "\"");
+			String origtxn_type = (model.eval(objs.getfuncs("ottype").apply(model_origtxn), true).toString());
+			printer.append("\"" + origtxn_type + "\"");
 			printer.append(",\"args\":");
 			printer.append("[");
 			String inner_delim = "";
-			Transaction app_txn = app.getTxnByName(txn_type);
+			OriginalTransaction app_origtxn = app.getOrigTxnByName(origtxn_type);
 			// iterate over args
-			for (String app_param : app_txn.getParams().keySet()) {
+			for (String app_param : app_origtxn.getParams().keySet()) {
 				printer.append(inner_delim);
 				String modelVal = (model.eval(
-						ctx.mkApp(objs.getfuncs(app_txn.getName().toString() + "_PARAM_" + app_param), model_txn),
+						ctx.mkApp(objs.getfuncs(app_origtxn.getName().toString() + "_PARAM_" + app_param), model_origtxn),
 						true)).toString();
 				printer.append(modelVal);
 				inner_delim = ",";

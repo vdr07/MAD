@@ -145,13 +145,10 @@ public class Transformer extends BodyTransformer {
 		if (app.getOrigTxns().size() < 3) {
 			txnsNamesCombs.add(app.getOrigTxns().stream().map(OriginalTransaction::getName).collect(Collectors.toList()));
 		} else {
-			for (int i = 0; i < app.getOrigTxns().size()-2; i++) {
-				for (int j = i+1; j < app.getOrigTxns().size()-1; j++) {
-					for (int k = j+1; k < app.getOrigTxns().size(); k++) {
+			for (int i = 0; i < app.getOrigTxns().size()-2; i++)
+				for (int j = i+1; j < app.getOrigTxns().size()-1; j++)
+					for (int k = j+1; k < app.getOrigTxns().size(); k++)
 						txnsNamesCombs.add(Arrays.asList(app.getOrigTxns().get(i).getName(), app.getOrigTxns().get(j).getName(), app.getOrigTxns().get(k).getName()));
-					}
-				}
-			}
 		}
 		
 		int txnsNamesCombIdx = 0;
@@ -222,7 +219,7 @@ public class Transformer extends BodyTransformer {
 								// LOG.info("Versioned anomaly generated (" + seenStructures.size() + ") -- " + anml2);
 								
 								// Commented since it is not being used and contributing to an error
-								// anml2.announce(false, seenVersAnmls.size());
+								anml2.announce(false, seenVersAnmls.size());
 								LOG.info("Versioned anomaly generated (" + seenVersAnmls.size() + ") -- " + anml2);
 
 								// inner loop for finding structurally similar anomalies
@@ -242,7 +239,7 @@ public class Transformer extends BodyTransformer {
 												+ ") -- " + anml3);
 										
 										// Commented since it is not being used and contributing to an error
-										// anml3.announce(false, seenVersAnmls.size());
+										anml3.announce(false, seenVersAnmls.size());
 										
 										// repeat
 										anml3 = zdr.analyze(4, null, seenAnmls, includedTables, anml3, null);
