@@ -1,7 +1,5 @@
 package benchmarks.spring_mvc_react;
 
-import ar.ChoppedTransaction;
-
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -40,7 +38,6 @@ public class spring_mvc_react {
 	}
 
 	// AnswerController
-	@ChoppedTransaction(microservice="m1")
 	public void answerListAllAnswers() throws SQLException {
 		String answerGetAllAnswersSQL = 
 				"SELECT * FROM " + "ANSWERS"+
@@ -53,7 +50,6 @@ public class spring_mvc_react {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void answerGetAnswer(long answerId) throws SQLException {
 		String answerGetAnswerSQL = 
 				"SELECT * FROM " + "ANSWERS"+
@@ -67,7 +63,6 @@ public class spring_mvc_react {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void answerGetAnswersByUser(String username) throws SQLException {
 		String userGetByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -93,7 +88,6 @@ public class spring_mvc_react {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void answerCreateQuestion(String username, long questionId, long answerId, 
 			String comment, String currentDate) throws SQLException {
 		String userGetByUsernameSQL = 
@@ -152,7 +146,6 @@ public class spring_mvc_react {
 	}
 
 	// AuthorizationController
-	@ChoppedTransaction(microservice="m1")
 	public void authorizationLogin(String username, String password) throws SQLException {
 		String userGetByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -174,7 +167,6 @@ public class spring_mvc_react {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void authorizationRegister(long userId, String username, String password,
 			String currentDate) throws SQLException {
 		String userGetByUsernameSQL = 
@@ -205,7 +197,6 @@ public class spring_mvc_react {
 	}
 
 	// QuestionController
-	@ChoppedTransaction(microservice="m1")
 	public void questionListAllQuestions() throws SQLException {
 		String questionGetAllQuestionsSQL = 
 				"SELECT * FROM " + "QUESTIONS"+
@@ -218,7 +209,6 @@ public class spring_mvc_react {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void questionGetQuestion(long questionId) throws SQLException {
 		String questionGetQuestionSQL = 
 				"SELECT * FROM " + "QUESTIONS"+
@@ -232,7 +222,6 @@ public class spring_mvc_react {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void questionGetQuestionsByUser(String username) throws SQLException {
 		String userGetByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -258,7 +247,6 @@ public class spring_mvc_react {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void questionGetQuestionsByTag(String tagName) throws SQLException {
 		String tagGetByNameSQL = 
 				"SELECT * FROM " + "TAGS"+
@@ -294,7 +282,6 @@ public class spring_mvc_react {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void questionCreateQuestion(String username, String[] tagNames, long tagId, String currentDate,
 			long questionId, String questionTitle, String questionAgo, String questionComment) throws SQLException {
 		String userGetByUsernameSQL = 
@@ -385,7 +372,6 @@ public class spring_mvc_react {
 	}
 
 	// TagController
-	@ChoppedTransaction(microservice="m1")
 	public void tagListAllTags() throws SQLException {
 		String tagGetAllTagsSQL = 
 				"SELECT * FROM " + "TAGS"+
@@ -398,7 +384,6 @@ public class spring_mvc_react {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void tagGetTag(long tagId) throws SQLException {
 		String tagGetTagSQL = 
 				"SELECT * FROM " + "TAGS"+
@@ -412,7 +397,6 @@ public class spring_mvc_react {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void tagGetTagsByTerm(String term) throws SQLException {
 		String tagGetTagsByTermSQL = 
 				"SELECT * FROM " + "TAGS"+
@@ -427,7 +411,6 @@ public class spring_mvc_react {
 	}
 
 	// UserController
-	@ChoppedTransaction(microservice="m1")
 	public void userListAllUsers() throws SQLException {
 		String userListAllUsersSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -440,7 +423,6 @@ public class spring_mvc_react {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void userGetUserByName(String username) throws SQLException {
 		String userGetUserByNameSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -455,7 +437,6 @@ public class spring_mvc_react {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void userGetUser(long userId) throws SQLException {
 		String userGetUserByIdSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -470,7 +451,6 @@ public class spring_mvc_react {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void userCreateUser(long userId, String username, String password,
 			String currentDate, String status, int popular) throws SQLException {
 		String userGetByUsernameSQL = 
@@ -500,7 +480,6 @@ public class spring_mvc_react {
 		userAddUser.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void userCreateQuestion(String username, String newPassword, String oldPassword) throws SQLException {
 		String userGetByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -531,7 +510,6 @@ public class spring_mvc_react {
 		userUpdatePassword.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void userUpdateUser(long userId, String username, String password) throws SQLException {
 		String userGetByIdSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -558,7 +536,6 @@ public class spring_mvc_react {
 		userUpdateUsernamePassword.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void userDeleteUser(long userId) throws SQLException {
 		String userGetByIdSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -582,7 +559,6 @@ public class spring_mvc_react {
 	}
 
 	// VoteController
-	@ChoppedTransaction(microservice="m1")
 	public void voteCreateQuestion(String username, long questionId, long answerId, String mark,
 			long voteId, String currentDate) throws SQLException {
 		String userGetByUsernameSQL = 
@@ -709,7 +685,6 @@ public class spring_mvc_react {
 	}
 
 	// AjaxController
-	@ChoppedTransaction(microservice="m1")
 	public void ajaxGetSearchResultViaAjax(String username, String email) throws SQLException {
 		String userGetByUsernameOrEmailSQL = 
 				"SELECT * FROM " + "USERS"+

@@ -48,7 +48,7 @@ public class GimpToAppOne extends GimpToApp {
 
 		Map<String, String> entitiesMicroservicesMap = new HashMap<String, String>();
 		try {
-			Object obj = new JSONParser().parse(new FileReader("decomposition.json"));
+			Object obj = new JSONParser().parse(new FileReader("src/benchmarks/" + ConstantArgs._BENCHMARK_NAME + "/decomposition.json"));
 			JSONObject jo = (JSONObject) obj;
 			for (Object key : jo.keySet()) {
 				String keyStr = (String) key;

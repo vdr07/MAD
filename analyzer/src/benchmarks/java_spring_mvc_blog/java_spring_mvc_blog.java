@@ -1,7 +1,5 @@
 package benchmarks.java_spring_mvc_blog;
 
-import ar.ChoppedTransaction;
-
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -40,7 +38,6 @@ public class java_spring_mvc_blog {
 	}
 
 	// CommentController
-	@ChoppedTransaction(microservice="m1")
 	public void showComments(long postId) throws SQLException {
 		String getPostSQL = 
 				"SELECT * FROM " + "POSTS"+
@@ -65,7 +62,6 @@ public class java_spring_mvc_blog {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void addComment(long postId, long commentId, String commentText,
 			long currentDate, String authName, long parentId) throws SQLException {
 		String getPostSQL = 
@@ -168,7 +164,6 @@ public class java_spring_mvc_blog {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void deleteComment(long commentId, String authName,
 			long currentTime, long maxDeleteTime) throws SQLException {
 		String getCommentSQL = 
@@ -272,7 +267,6 @@ public class java_spring_mvc_blog {
 		deleteComment.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void editComment(long commentId, String authName,
 			long currentTime, long maxEditTime, String newCommentText) throws SQLException {
 		String getCommentSQL = 
@@ -378,7 +372,6 @@ public class java_spring_mvc_blog {
 		updateComment.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void getCommentSource(long commentId) throws SQLException {
 		String getCommentSQL = 
 				"SELECT * FROM " + "COMMENTS"+
@@ -394,7 +387,6 @@ public class java_spring_mvc_blog {
 		String commentText = rs.getString("commentText");
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void commentLike(long commentId, String authName, long ratingId) throws SQLException {
 		String getUserByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -453,7 +445,6 @@ public class java_spring_mvc_blog {
 		insertCommentRating.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void commentDislike(long commentId, String authName, long ratingId) throws SQLException {
 		String getUserByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -521,7 +512,6 @@ public class java_spring_mvc_blog {
 	}
 
 	// PostsController
-	@ChoppedTransaction(microservice="m1")
 	public void showPostsList(String authName) throws SQLException {
 		String getCurrentUserSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -600,7 +590,6 @@ public class java_spring_mvc_blog {
 		currentUserId = rs.getLong("id");
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void getPostsList() throws SQLException {
 		String getPublicPostsSQL = 
 				"SELECT * FROM " + "POSTS"+
@@ -613,7 +602,6 @@ public class java_spring_mvc_blog {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void getTopPostsList() throws SQLException {
 		String getPublicPostsSQL = 
 				"SELECT * FROM " + "POSTS"+
@@ -637,7 +625,6 @@ public class java_spring_mvc_blog {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void searchByTag(String authName, String[] tags) throws SQLException {
 		String getTagSQL = 
 				"SELECT * FROM " + "TAGS"+
@@ -743,7 +730,6 @@ public class java_spring_mvc_blog {
 		long currentUserId = rs.getLong("id");
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void showPost(long postId, String authName) throws SQLException {
 		String getCurrentUserSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -817,7 +803,6 @@ public class java_spring_mvc_blog {
 		currentUserId = rs.getLong("id");
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void createPost(long postId, String title, String fullPostText, int cutInd,
 			long currentTime, String[] tags) throws SQLException {
 		String insertPostSQL = 
@@ -863,7 +848,6 @@ public class java_spring_mvc_blog {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void showEditPostForm(long postId) throws SQLException {
 		String getPostSQL = 
 				"SELECT * FROM " + "POSTS"+
@@ -892,7 +876,6 @@ public class java_spring_mvc_blog {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void updatePost(long postId, String title, String fullPostText, int cutInd,
 			String[] newTags) throws SQLException {
 		String getPostSQL = 
@@ -958,7 +941,6 @@ public class java_spring_mvc_blog {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void hidePost(long postId) throws SQLException {
 		String getPostSQL = 
 				"SELECT * FROM " + "POSTS"+
@@ -983,7 +965,6 @@ public class java_spring_mvc_blog {
 		setPostVisibility.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void unhidePost(long postId) throws SQLException {
 		String getPostSQL = 
 				"SELECT * FROM " + "POSTS"+
@@ -1008,7 +989,6 @@ public class java_spring_mvc_blog {
 		setPostVisibility.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void deletePost(long postId) throws SQLException {
 		String getPostSQL = 
 				"SELECT * FROM " + "POSTS"+
@@ -1039,7 +1019,6 @@ public class java_spring_mvc_blog {
 		deletePostTags.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void postLike(long postId, String authName, long ratingId) throws SQLException {
 		String getUserByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -1092,7 +1071,6 @@ public class java_spring_mvc_blog {
 		insertPostRating.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void postDislike(long postId, String authName, long ratingId) throws SQLException {
 		String getUserByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -1146,7 +1124,6 @@ public class java_spring_mvc_blog {
 	}
 
 	// Users Controller
-	@ChoppedTransaction(microservice="m1")
 	public void registerUser(long userId, String username, String email, String password,
 		long currentTime) throws SQLException {
 		String getUserByUsernameSQL = 
@@ -1236,7 +1213,6 @@ public class java_spring_mvc_blog {
 		}		
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void checkEmail(String email) throws SQLException {
 		String getUserByEmailSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -1251,7 +1227,6 @@ public class java_spring_mvc_blog {
 		}		
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void checkUsername(String username) throws SQLException {
 		String getUserByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -1266,7 +1241,6 @@ public class java_spring_mvc_blog {
 		}	
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void showEditSettingsPage(String authName) throws SQLException {
 		String getUserByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -1281,7 +1255,6 @@ public class java_spring_mvc_blog {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void changeEmail(String username, String newEmail, String currentPassword,
 			String authName, long userId) throws SQLException {
 		String getUserByUsernameSQL = 
@@ -1333,7 +1306,6 @@ public class java_spring_mvc_blog {
 		updateEmail.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void changePassword(String newPassword, String currentPassword,
 			String authName, long userId) throws SQLException {
 		String getUserByUsernameSQL = 
@@ -1376,7 +1348,6 @@ public class java_spring_mvc_blog {
 		updateEmail.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void showEditProfilePage(String authName) throws SQLException {
 		String getUserByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -1391,7 +1362,6 @@ public class java_spring_mvc_blog {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void editProfile(int hasError, String authName, long userId,
 			String aboutText, String websiteLink) throws SQLException {
 		String getUserByUsernameSQL = 
@@ -1441,7 +1411,6 @@ public class java_spring_mvc_blog {
 		updateUserProfile.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void uploadAvatar(String authName, String newBigAvatarLink,
 			String newSmallAvatarLink) throws SQLException {
 		String getUserByUsernameSQL = 
@@ -1470,7 +1439,6 @@ public class java_spring_mvc_blog {
 		updateUserAvatars.executeUpdate();
 	}
 	
-	@ChoppedTransaction(microservice="m1")
 	public void removeAvatar(String authName) throws SQLException {
 		String getUserByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -1498,7 +1466,6 @@ public class java_spring_mvc_blog {
 		updateUserAvatars.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void showProfile(String username) throws SQLException {
 		String getUserByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+

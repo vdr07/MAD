@@ -1,7 +1,5 @@
 package benchmarks.petclinic;
 
-import ar.ChoppedTransaction;
-
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -40,7 +38,6 @@ public class petclinic {
 	}
 
 	// OwnerController
-	@ChoppedTransaction(microservice="m1")
 	public void ownerProcessCreationForm(int ownerId, String firstName, String lastName,
 			String address, String city, String telephone) throws SQLException {
 		String insertOwnerSQL = 
@@ -58,7 +55,6 @@ public class petclinic {
 		insertOwner.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void ownerProcessFindForm(int ownerId) throws SQLException {
 		String findOwnerByIdSQL = 
 				"SELECT last_name FROM " + "OWNERS"+
@@ -84,7 +80,6 @@ public class petclinic {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void ownerInitUpdateOwnerForm(int ownerId) throws SQLException {
 		String findOwnerByIdSQL = 
 				"SELECT * FROM " + "OWNERS"+
@@ -98,7 +93,6 @@ public class petclinic {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void ownerProcessUpdateOwnerForm(int currentId, int newId) throws SQLException {
 		String updateOwnerSQL = 
 				"UPDATE " + "OWNERS" +
@@ -111,7 +105,6 @@ public class petclinic {
 		updateOwner.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void ownerShowOwner(int ownerId) throws SQLException {
 		String findOwnerByIdSQL = 
 				"SELECT * FROM " + "OWNERS"+
@@ -126,7 +119,6 @@ public class petclinic {
 	}
 
 	// PetController
-	@ChoppedTransaction(microservice="m1")
 	public void petInitCreationForm(int petId, String name, String birthDate, 
 			int typeId, int ownerId) throws SQLException {
 		String insertPetSQL = 
@@ -143,7 +135,6 @@ public class petclinic {
 		insertPet.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void petProcessCreationForm(String petName, int ownerId) throws SQLException {
 		String findPetByNameSQL = 
 				"SELECT id FROM " + "PETS"+
@@ -169,7 +160,6 @@ public class petclinic {
 		updatePetOwner.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void petInitUpdateForm(int petId) throws SQLException {
 		String findPetByIdSQL = 
 				"SELECT * FROM " + "PETS"+
@@ -183,7 +173,6 @@ public class petclinic {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void petProcessUpdateForm(int ownerId, int petId) throws SQLException {
 		String updatePetOwnerSQL = 
 				"UPDATE " + "PETS" +
@@ -197,7 +186,6 @@ public class petclinic {
 	}
 
 	// VetController
-	@ChoppedTransaction(microservice="m1")
 	public void vetShowVetList() throws SQLException {
 		String findVetsSQL = 
 				"SELECT * FROM " + "VETS"+
@@ -234,7 +222,6 @@ public class petclinic {
 	}
 
 	// VisitController
-	@ChoppedTransaction(microservice="m1")
 	public void visitProcessNewVisitForm(int visitId, String date,
 			String description, int petId) throws SQLException {
 		String insertVisitSQL = 
@@ -250,10 +237,9 @@ public class petclinic {
 		insertVisit.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void visitShowVisits(int petId) throws SQLException {
 		String findPetByIdSQL = 
-				"SELECT id FROM " + "PETS"+
+				"SELECT * FROM " + "PETS"+
 				" WHERE id = ?";
 		
 		String findPetVisitsSQL = 

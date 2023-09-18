@@ -1,7 +1,5 @@
 package benchmarks.jpabook;
 
-import ar.ChoppedTransaction;
-
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -40,7 +38,6 @@ public class jpabook {
 	}
 
 	// MemberController
-	@ChoppedTransaction(microservice="m1")
 	public void memberCreate(long memberId, String memberName, String city,
 			String street, String zipcode) throws SQLException {
 		String getMemberByNameSQL = 
@@ -69,7 +66,6 @@ public class jpabook {
 		insertMember.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void memberList() throws SQLException {
 		String findAllMembersSQL = 
 				"SELECT * FROM " + "MEMBER"+
@@ -83,7 +79,6 @@ public class jpabook {
 	}
 
 	// ItemController
-	@ChoppedTransaction(microservice="m1")
 	public void itemCreate(long itemId, String itemName, int price,
 			int stockQuantity) throws SQLException {
 		String insertItemSQL = 
@@ -99,7 +94,6 @@ public class jpabook {
 		insertItem.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void updateItemForm(long itemId) throws SQLException {
 		String getItemSQL = 
 				"SELECT * FROM " + "ITEMS"+
@@ -114,7 +108,6 @@ public class jpabook {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void updateItem(long itemId, String itemName, int price,
 			int stockQuantity) throws SQLException {
 		String getItemSQL = 
@@ -153,7 +146,6 @@ public class jpabook {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void itemList() throws SQLException {
 		String findAllItemsSQL = 
 				"SELECT * FROM " + "ITEMS"+
@@ -168,7 +160,6 @@ public class jpabook {
 	}
 
 	// OrderController
-	@ChoppedTransaction(microservice="m1")
 	public void orderCreateForm() throws SQLException {
 		String findAllMembersSQL = 
 				"SELECT * FROM " + "MEMBER"+
@@ -193,7 +184,6 @@ public class jpabook {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void order(long memberId, long itemId, int count, long orderId, long deliveryId,
 			long orderItemId, String orderDate) throws SQLException {
 		String findOneMemberSQL = 
@@ -282,7 +272,6 @@ public class jpabook {
 		insertOrder.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void orderList(String orderStatus, String memberName) throws SQLException {
 		String findMemberByNameSQL = 
 				"SELECT * FROM " + "MEMBER"+
@@ -311,7 +300,6 @@ public class jpabook {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void processCancelBuy(long orderId) throws SQLException {
 		String findOneOrderSQL = 
 				"SELECT * FROM " + "ORDERS"+
@@ -346,7 +334,6 @@ public class jpabook {
 			System.out.println("empty");
 			return;
 		}
-		long memberId = rs.getLong("id");
 		long deliveryId = rs.getLong("deliveryId");
 
 		PreparedStatement findOneDelivery = connect.prepareStatement(findOneDeliverySQL);

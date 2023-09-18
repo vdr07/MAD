@@ -1,7 +1,5 @@
 package benchmarks.myweb;
 
-import ar.ChoppedTransaction;
-
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -40,18 +38,17 @@ public class myweb {
 	}
 
 	// IndexController
-	@ChoppedTransaction(microservice="m1")
 	public void index(long userId) throws SQLException {
 		String getRolesSQL = 
-				"SELECT role_id FROM " + "SYS_USER_ROLE"+
+				"SELECT * FROM " + "SYS_USER_ROLE"+
 				" WHERE user_id = ?";
 
 		String getPermissionsByRoleSQL = 
-				"SELECT permission_id FROM " + "SYS_ROLE_PERMISSION"+
+				"SELECT * FROM " + "SYS_ROLE_PERMISSION"+
 				" WHERE role_id = ?";
 
 		String getResourceByPermissionIdSQL = 
-				"SELECT resource_id FROM " + "SYS_PERMISSIONS"+
+				"SELECT * FROM " + "SYS_PERMISSIONS"+
 				" WHERE id = ?";
 
 		PreparedStatement getRoles = connect.prepareStatement(getRolesSQL);
@@ -77,7 +74,6 @@ public class myweb {
 	}
 
 	// OperationController
-	@ChoppedTransaction(microservice="m1")
 	public void operationGetAll() throws SQLException {
 		String getAllOperationsSQL = 
 				"SELECT * FROM " + "SYS_OPERATIONS"+
@@ -90,7 +86,6 @@ public class myweb {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void operationGetOne(long operationId) throws SQLException {
 		String getOperationByIdSQL = 
 				"SELECT * FROM " + "SYS_OPERATIONS"+
@@ -104,7 +99,6 @@ public class myweb {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void operationSave(long operationId, String operationName, String operation,
 			String description) throws SQLException {
 		String insertOperationSQL = 
@@ -120,7 +114,6 @@ public class myweb {
 		insertOperation.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void operationGetOperation(long operationId, String operationName, String operation,
 			String description) throws SQLException {
 		String getOperationByIdSQL = 
@@ -149,7 +142,6 @@ public class myweb {
 		updateOperation.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void operationDelete(long operationId) throws SQLException {
 		String deleteOperationSQL = 
 				"DELETE FROM " + "SYS_OPERATIONS"+
@@ -161,7 +153,6 @@ public class myweb {
 	}
 
 	// ResourceController
-	@ChoppedTransaction(microservice="m1")
 	public void resourceGetAll() throws SQLException {
 		String getAllResourcesSQL = 
 				"SELECT * FROM " + "SYS_RESOURCES"+
@@ -174,7 +165,6 @@ public class myweb {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void resourceGetOne(long resourceId) throws SQLException {
 		String getResourceByIdSQL = 
 				"SELECT * FROM " + "SYS_RESOURCES"+
@@ -188,7 +178,6 @@ public class myweb {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void resourceSave(long resourceId, String resourceName, String resourceIdentity,
 			String resourceUrl) throws SQLException {
 		String insertResourceSQL = 
@@ -204,7 +193,6 @@ public class myweb {
 		insertResource.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void resourceGetResource(long resourceId, String resourceName, String resourceIdentity,
 			String resourceUrl) throws SQLException {
 		String getResourceByIdSQL = 
@@ -231,7 +219,6 @@ public class myweb {
 		updateResource.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void resourceDelete(long resourceId) throws SQLException {
 		String deleteResourceSQL = 
 				"DELETE FROM " + "SYS_RESOURCES"+
@@ -243,7 +230,6 @@ public class myweb {
 	}
 
 	// RoleController
-	@ChoppedTransaction(microservice="m1")
 	public void roleGetAll() throws SQLException {
 		String getAllRolesSQL = 
 				"SELECT * FROM " + "SYS_ROLES"+
@@ -256,7 +242,6 @@ public class myweb {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void roleDelete(long roleId) throws SQLException {
 		String deleteRoleSQL = 
 				"DELETE FROM " + "SYS_ROLES"+
@@ -267,7 +252,6 @@ public class myweb {
 		deleteRole.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void roleSave(long roleId, String roleName, String roleRole,
 			String roleDescription) throws SQLException {
 		String insertRoleSQL = 
@@ -283,7 +267,6 @@ public class myweb {
 		insertRole.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void roleAuthorise(long roleId, long resourceId, long[] opsIds,
 			long newPermissionId) throws SQLException {
 		String getRoleByIdSQL = 
@@ -303,7 +286,7 @@ public class myweb {
 				" WHERE role_id = ?";
 
 		String getResourceByPermissionIdSQL = 
-				"SELECT resource_id FROM " + "SYS_PERMISSIONS"+
+				"SELECT * FROM " + "SYS_PERMISSIONS"+
 				" WHERE id = ?";
 
 		String updatePermissionResourceSQL = 
@@ -390,7 +373,6 @@ public class myweb {
 	}
 
 	// UserController
-	@ChoppedTransaction(microservice="m1")
 	public void userDelete(long userId) throws SQLException {
 		String deleteUserSQL = 
 				"DELETE FROM " + "SYS_USERS"+
@@ -401,7 +383,6 @@ public class myweb {
 		deleteUser.executeUpdate();
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void userSaveUser(long userId, String username, String password,
 			String salt, String email, String currentDate, long[] roleIds) throws SQLException {
 		String insertUserSQL = 
@@ -443,7 +424,6 @@ public class myweb {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void userUpdate(long userId, long[] roleIds) throws SQLException {
 		String getUserByIdSQL = 
 				"SELECT * FROM " + "SYS_USERS"+
@@ -499,7 +479,6 @@ public class myweb {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void userGetAll() throws SQLException {
 		String getUsersSQL = 
 				"SELECT * FROM " + "SYS_USERS"+
@@ -512,7 +491,6 @@ public class myweb {
 		}
 	}
 
-	@ChoppedTransaction(microservice="m1")
 	public void userRegister(long userId, String username, String password,
 			String salt, String email, String currentDate) throws SQLException {
 		String insertUserSQL = 
