@@ -204,14 +204,14 @@ public class scheduleGen {
 		for (Expr o : allOs)
 			for (String nextVar : allNextVars.keySet()) {
 				FuncDecl varFunc = allNextVars.get(nextVar);
-				FuncDecl parent = objs.getfuncs("parent");
-				Expr t = model.eval(parent.apply(o), true);
-				Expr row = model.eval(varFunc.apply(t), true);
+				FuncDecl origTxn = objs.getfuncs("original_transaction");
+				Expr ot = model.eval(origTxn.apply(o), true);
+				Expr row = model.eval(varFunc.apply(ot), true);
 				Table table = tables.stream().filter(tab -> row.toString().contains(tab.getName())).findAny().get();
-				FuncDecl verFunc = objs.getfuncs(table.getName() + "_VERSION");
-				model.eval(verFunc.apply(row, o), true);
+				FuncDecl nextVerFunc = objs.getfuncs(nextVar+"_READ_VERSION");
+				model.eval(nextVerFunc.apply(ot), true);
 
-				t.toString().replaceAll("!val!", "");
+				ot.toString().replaceAll("!val!", "");
 				o.toString().replaceAll("!val!", "");
 				table.getName();
 
@@ -293,16 +293,16 @@ public class scheduleGen {
 		for (Expr o : allOs)
 			for (String nextVar : allNextVars.keySet()) {
 				FuncDecl varFunc = allNextVars.get(nextVar);
-				FuncDecl parent = objs.getfuncs("parent");
-				Expr t = model.eval(parent.apply(o), true);
-				Expr row = model.eval(varFunc.apply(t), true);
+				FuncDecl origTxn = objs.getfuncs("original_transaction");
+				Expr ot = model.eval(origTxn.apply(o), true);
+				Expr row = model.eval(varFunc.apply(ot), true);
 				Table table = tables.stream().filter(tab -> row.toString().contains(tab.getName())).findAny().get();
-				FuncDecl verFunc = objs.getfuncs(table.getName() + "_VERSION");
-				Expr version = model.eval(verFunc.apply(row, o), true);
+				FuncDecl nextVerFunc = objs.getfuncs(nextVar+"_READ_VERSION");
+				Expr version = model.eval(nextVerFunc.apply(ot), true);
 
 				String columnNames = "";
 				String columnVals = "";
-				String header = t.toString().replaceAll("!val!", "") + "-" + o.toString().replaceAll("!val!", "") + ": "
+				String header = ot.toString().replaceAll("!val!", "") + "-" + o.toString().replaceAll("!val!", "") + ": "
 						+ table.getName() + ": V" + version + " ";
 
 				printer.append("\n" + header + columnNames + "" + columnVals + "");

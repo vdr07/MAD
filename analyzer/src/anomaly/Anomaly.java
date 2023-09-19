@@ -324,7 +324,7 @@ public class Anomaly {
 				for (String pm : origTxn.getParams().keySet()) {
 					// System.out.print(delim + pm + "=");
 					addData(delim + pm + "=");
-					String modelVal = (model.eval(ctx.mkApp(objs.getfuncs(origTxn.getName() + "_PARAM_" + pm), ot), true))
+					String modelVal = (model.eval(ctx.mkApp(objs.getfuncs(ottype.toString() + "_PARAM_" + pm), ot), true))
 							.toString();
 					// System.out.print(modelVal);
 					addData(modelVal);

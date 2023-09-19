@@ -20,6 +20,7 @@ public class OriginalTransaction {
 	private String name;
 	private ArrayList<Statement> stmts;
 	private Map<String, ParamValExp> params;
+	private Map<Value, Expression> exps;
 
 	public String getName() {
 		return this.name;
@@ -43,12 +44,54 @@ public class OriginalTransaction {
 		this.stmts.addAll(stmts);
 	}
 
+	public void setTypes() {
+		int selectCount = 0;
+		int insertCount = 0;
+		int deleteCount = 0;
+		int updateCount = 0;
+		int seq = 0;
+		for (Statement s : stmts)
+			try {
+				InvokeStmt is = (InvokeStmt) s;
+				if (is.getQuery().getText().toLowerCase().contains("select"))
+					is.setType(new SqlStmtType(name, "select", ++selectCount, false, ++seq));
+				else if (is.getQuery().getText().toLowerCase().contains("insert"))
+					is.setType(new SqlStmtType(name, "insert", ++insertCount, true, ++seq));
+				else if (is.getQuery().getText().toLowerCase().contains("update"))
+					is.setType(new SqlStmtType(name, "update", ++updateCount, true, ++seq));
+				else if (is.getQuery().getText().toLowerCase().contains("delete"))
+					is.setType(new SqlStmtType(name, "delete", ++deleteCount, true, ++seq));
+
+			} catch (Exception e) {
+			}
+	}
+
+	public List<VarExp> getAllLhsVars() {
+		List<VarExp> result = new ArrayList<VarExp>();
+		for (Statement s : this.stmts)
+			try {
+				AssignmentStmt as = (AssignmentStmt) s;
+				result.add(as.getLhs());
+			} catch (Exception e) {
+			}
+		return result;
+
+	}
+
+	public void setExps(Map<Value, Expression> exps) {
+		this.exps = exps;
+	}
+
 	public ArrayList<Statement> getStmts() {
 		return this.stmts;
 	}
 
 	public Map<String, ParamValExp> getParams() {
 		return this.params;
+	}
+
+	public Map<Value, Expression> getAllExps() {
+		return this.exps;
 	}
 
 	public void printOrigTxn() {

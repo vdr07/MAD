@@ -20,8 +20,6 @@ public class Transaction {
 	private String name;
 	private ArrayList<Statement> stmts;
 	private ArrayList<String> dependencies;
-	private Map<String, ParamValExp> params;
-	private Map<Value, Expression> exps;
 	private String originalTransaction;
 	private String microservice;
 
@@ -32,13 +30,7 @@ public class Transaction {
 	public Transaction(String name) {
 		this.name = name;
 		this.stmts = new ArrayList<Statement>();
-		this.params = new HashMap<String, ParamValExp>();
-		this.exps = new LinkedHashMap<Value, Expression>();
 		this.dependencies = new ArrayList<>();
-	}
-
-	public void addParam(String l, ParamValExp p) {
-		this.params.put(l, p);
 	}
 
 	public void addStmt(Statement stmt) {
@@ -98,10 +90,6 @@ public class Transaction {
 
 	}
 
-	public Map<String, ParamValExp> getParams() {
-		return this.params;
-	}
-
 	// return mapping from program order to the stmt name
 	public Map<Integer, String> getStmtNamesMap() {
 		Map<Integer, String> result = new HashMap<Integer, String>();
@@ -140,26 +128,6 @@ public class Transaction {
 		return result;
 	}
 
-	public List<VarExp> getAllLhsVars() {
-		List<VarExp> result = new ArrayList<VarExp>();
-		for (Statement s : this.stmts)
-			try {
-				AssignmentStmt as = (AssignmentStmt) s;
-				result.add(as.getLhs());
-			} catch (Exception e) {
-			}
-		return result;
-
-	}
-
-	public Map<Value, Expression> getAllExps() {
-		return this.exps;
-	}
-
-	public void setExps(Map<Value, Expression> exps) {
-		this.exps = exps;
-	}
-
 	public ArrayList<Statement> getStmts() {
 		return this.stmts;
 	}
@@ -177,16 +145,8 @@ public class Transaction {
 	}
 
 	public void printTxn() {
-		String paramList = " (";
-		int iter = 0;
-		for (String s : params.keySet()) {
-			paramList += (s + ":" + params.get(s).getType());
-			if (iter++ < params.size() - 1)
-				paramList += ",";
-		}
 
-		paramList += ")";
-		System.out.println("\nTXN_" + name + paramList);
+		System.out.println("\nTXN_" + name);
 		for (Statement stmt : stmts)
 			try {
 				System.out.println(" ++ " + ((InvokeStmt) stmt).toString());
@@ -195,7 +155,7 @@ public class Transaction {
 			}
 		
 		String dependenciesString = "Dependencies: ";
-		iter = 0;
+		int iter = 0;
 		for (String dependency : dependencies) {
 			dependenciesString += dependency;
 			if (iter++ < dependencies.size() - 1)

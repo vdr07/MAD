@@ -20,6 +20,7 @@ import anomaly.Anomaly;
 import exceptions.UnexoectedOrUnhandledConditionalExpression;
 import ar.Application;
 import ar.Transaction;
+import ar.OriginalTransaction;
 import ar.expression.Expression;
 import ar.expression.vals.*;
 import ar.expression.vars.*;
@@ -369,32 +370,27 @@ public class Z3Driver {
 
 		// =====================================================================================================================================================
 
-		List<String> origTxnsParamsSeen = new ArrayList<>();
-		List<String> origTxnsExprSeen = new ArrayList<>();
-		for (Transaction txn : app.getTxns()) {
-			HeaderZ3("TXN: " + txn.getName().toUpperCase());
+		for (OriginalTransaction origTxn : app.getOrigTxns()) {
+			HeaderZ3("ORIG_TXN: " + origTxn.getName().toUpperCase());
 			// declare functions for txn's input parameters
 			SubHeaderZ3("parameters");
-			for (ParamValExp p : txn.getParams().values()) {
-				String label = txn.getOriginalTransaction() + "_PARAM_" + p.getName();
-				if (!origTxnsParamsSeen.contains(label)) {
-					objs.addFunc(label, ctx.mkFuncDecl(label, new Sort[]{objs.getSort("OT")},
-							objs.getSort(p.getType().toZ3String())));
-					origTxnsParamsSeen.add(label);
-				}
+			for (ParamValExp p : origTxn.getParams().values()) {
+				String label = origTxn.getName() + "_PARAM_" + p.getName();
+				objs.addFunc(label, ctx.mkFuncDecl(label, new Sort[]{objs.getSort("OT")},
+						objs.getSort(p.getType().toZ3String())));
 			}
 			SubHeaderZ3("?");
 			// define lhs assignees [[XXX not sure what this does -> might be a legacy
 			// feature]]
-			for (VarExp ve : txn.getAllLhsVars()) {
-				String label = txn.getName() + "_" + ve.getName();
+			for (VarExp ve : origTxn.getAllLhsVars()) {
+				String label = origTxn.getName() + "_" + ve.getName();
 				for (AST f : dynamicAssertions.mk_declare_lhs(label, ve)) {
 					objs.addFunc(label, (FuncDecl) f);
 					// if there is more than one, the second function is isNull
 					label += "_isNull";
 				}
 				// assertion on existence of a record when not Null
-				label = txn.getName() + "_" + ve.getName();
+				label = origTxn.getName() + "_" + ve.getName();
 				BoolExpr isNullProp = dynamicAssertions.mk_assert_is_null(label, ve);
 				if (isNullProp != null)
 					addAssertion(label + "_isNull_prop", isNullProp);
@@ -403,7 +399,7 @@ public class Z3Driver {
 			// reorder the definitions to make sure the dependencies are satisfied when
 			// defining new vars
 			LinkedHashMap<Value, Expression> sortedMap = new LinkedHashMap<Value, Expression>();
-			Map<Value, Expression> orgMap = txn.getAllExps();
+			Map<Value, Expression> orgMap = origTxn.getAllExps();
 			LinkedBlockingQueue<Value> unAddedEntries = new LinkedBlockingQueue<>();
 
 			for (Value v : orgMap.keySet())
@@ -427,12 +423,10 @@ public class Z3Driver {
 				SubHeaderZ3("Expressions");
 			// add expressions for each trn
 			for (Value val : sortedMap.keySet()) {
-				Expression exp = txn.getAllExps().get(val);
-				String label = txn.getOriginalTransaction() + "_" + val.toString();
+				Expression exp = origTxn.getAllExps().get(val);
+				String label = origTxn.getName() + "_" + val.toString();
 				Sort otSort = objs.getSort("OT");
 				Sort oSort = objs.getSort("O");
-
-				if (origTxnsExprSeen.contains(label)) continue;
 
 				switch (exp.getClass().getSimpleName()) {
 					case "RowSetVarExp":
@@ -445,7 +439,7 @@ public class Z3Driver {
 						objs.addFunc(label + "_isNull",
 								ctx.mkFuncDecl(label + "_isNull", new Sort[]{oSort}, objs.getSort("Bool")));
 						// add props for SVar
-						BoolExpr prop = dynamicAssertions.mk_svar_props(txn.getOriginalTransaction(), val.toString(), table,
+						BoolExpr prop = dynamicAssertions.mk_svar_props(origTxn.getName(), val.toString(), table,
 								rsv.getWhClause());
 						addAssertion(label + "_props", prop);
 
@@ -457,7 +451,7 @@ public class Z3Driver {
 						// declare rowVar
 						objs.addFunc(label, ctx.mkFuncDecl(label, new Sort[]{otSort}, objs.getSort(tableName)));
 						// add props for rowVar
-						prop = dynamicAssertions.mk_row_var_props(txn.getOriginalTransaction(), val.toString(), setVar);
+						prop = dynamicAssertions.mk_row_var_props(origTxn.getName(), val.toString(), setVar);
 						addAssertion(label + "_props", prop);
 						String txnLastReadVersionLabel1 = label + "_READ_VERSION";
 						objs.addFunc(txnLastReadVersionLabel1, ctx.mkFuncDecl(txnLastReadVersionLabel1, new Sort[]{otSort}, objs.getSort("BitVec")));
@@ -471,7 +465,7 @@ public class Z3Driver {
 						objs.addFunc(label, ctx.mkFuncDecl(label, new Sort[]{otSort, objs.getSort("BitVec")},
 								objs.getSort(tableName)));
 						// add props for loopVar
-						prop = dynamicAssertions.mk_row_var_loop_props(txn.getOriginalTransaction(), val.toString(), setVar);
+						prop = dynamicAssertions.mk_row_var_loop_props(origTxn.getName(), val.toString(), setVar);
 						addAssertion(label + "_props", prop);
 						String txnLastReadVersionLabel2 = label + "_READ_VERSION";
 						objs.addFunc(txnLastReadVersionLabel2, ctx.mkFuncDecl(txnLastReadVersionLabel2, new Sort[]{otSort}, objs.getSort("BitVec")));
@@ -481,8 +475,6 @@ public class Z3Driver {
 					default:
 						break;
 				}
-
-				origTxnsExprSeen.add(label);
 			}
 		}
 	}
