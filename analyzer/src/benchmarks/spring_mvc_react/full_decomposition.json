@@ -3,7 +3,8 @@
         "answers"
     ],
     "M2": [
-        "questions"
+        "questions",
+        "question_tag"
     ],
     "M3": [
         "tags"

@@ -3,13 +3,16 @@
         "sys_operations"
     ],
     "M2": [
-        "sys_permissions"
+        "sys_permissions",
+        "sys_permission_operation",
+        "sys_role_permission"
     ],
     "M3": [
         "sys_resources"
     ],
     "M4": [
-        "sys_roles"
+        "sys_roles",
+        "sys_user_role"
     ],
     "M5": [
         "sys_users"

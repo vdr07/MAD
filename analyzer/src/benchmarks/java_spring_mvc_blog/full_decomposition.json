@@ -1,18 +1,21 @@
 {
     "M1": [
-        "comments"
+        "comments",
+        "children_comment"
     ],
     "M2": [
         "comment_rating"
     ],
     "M3": [
-        "posts"
+        "posts",
+        "post_tag"
     ],
     "M4": [
         "post_rating"
     ],
     "M5": [
-        "roles"
+        "roles",
+        "user_role"
     ],
     "M6": [
         "tags"

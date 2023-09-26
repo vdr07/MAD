@@ -2,8 +2,11 @@
     "M1": [
         "sys_operations",
         "sys_permissions",
+        "sys_permission_operation",
+        "sys_role_permission",
         "sys_resources",
         "sys_roles",
+        "sys_user_role",
         "sys_users"
     ]
 }

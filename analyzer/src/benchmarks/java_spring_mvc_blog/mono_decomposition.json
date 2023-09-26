@@ -1,10 +1,13 @@
 {
     "M1": [
         "comments",
+        "children_comment",
         "comment_rating",
         "posts",
+        "post_tag",
         "post_rating",
         "roles",
+        "user_role",
         "tags",
         "users"
     ]

@@ -2,6 +2,7 @@
     "M1": [
         "answers",
         "questions",
+        "question_tag",
         "tags",
         "users",
         "votes"
