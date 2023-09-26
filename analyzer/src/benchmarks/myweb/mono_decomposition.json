@@ -1,0 +1,9 @@
+{
+    "M1": [
+        "sys_operations",
+        "sys_permissions",
+        "sys_resources",
+        "sys_roles",
+        "sys_users"
+    ]
+}

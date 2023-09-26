@@ -1,17 +1,17 @@
 {
     "M1": [
-        "member"
+        "answers"
     ],
     "M2": [
-        "items"
+        "questions"
     ],
     "M3": [
-        "delivery"
+        "tags"
     ],
     "M4": [
-        "order_item"
+        "users"
     ],
     "M5": [
-        "orders"
+        "votes"
     ]
 }

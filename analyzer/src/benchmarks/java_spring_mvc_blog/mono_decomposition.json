@@ -1,0 +1,11 @@
+{
+    "M1": [
+        "comments",
+        "comment_rating",
+        "posts",
+        "post_rating",
+        "roles",
+        "tags",
+        "users"
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "M1": [
+        "owners",
+        "pets",
+        "types",
+        "specialties",
+        "vets",
+        "visits"
+    ]
+}

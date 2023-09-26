@@ -1,0 +1,23 @@
+{
+    "M1": [
+        "comments"
+    ],
+    "M2": [
+        "comment_rating"
+    ],
+    "M3": [
+        "posts"
+    ],
+    "M4": [
+        "post_rating"
+    ],
+    "M5": [
+        "roles"
+    ],
+    "M6": [
+        "tags"
+    ],
+    "M7": [
+        "users"
+    ]
+}

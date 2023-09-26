@@ -1,0 +1,9 @@
+{
+    "M1": [
+        "items",
+        "delivery",
+        "member",
+        "orders",
+        "order_item"
+    ]
+}

@@ -1,0 +1,13 @@
+{
+    "M1": [
+        "customer",
+        "district",
+        "history",
+        "item",
+        "new_order",
+        "oorder",
+        "order_line",
+        "stock",
+        "warehouse"
+    ]
+}

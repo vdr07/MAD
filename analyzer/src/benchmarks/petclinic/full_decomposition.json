@@ -1,0 +1,20 @@
+{
+    "M1": [
+        "owners"
+    ],
+    "M2": [
+        "pets"
+    ],
+    "M3": [
+        "types"
+    ],
+    "M4": [
+        "specialties"
+    ],
+    "M5": [
+        "vets"
+    ],
+    "M6": [
+        "visits"
+    ]
+}
