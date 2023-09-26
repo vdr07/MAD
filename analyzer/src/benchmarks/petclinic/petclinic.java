@@ -305,7 +305,7 @@ public class petclinic {
 		PreparedStatement findVets = connect.prepareStatement(findVetsSQL);
 		ResultSet vets = findVets.executeQuery();
 		while (vets.next()) {
-			int vetId = vets.getInt("id");
+			int vetId = vets.getInt("specialty_id");
 
 			PreparedStatement findVetSpecialities = connect.prepareStatement(findVetSpecialitiesSQL);
 			findVetSpecialities.setInt(1, vetId);
@@ -348,7 +348,7 @@ public class petclinic {
 			if (!vetSpecialty.next()) {
 				System.out.println("Empty");
 			}
-			int specialtyId = vetSpecialty.getInt("id");
+			int specialtyId = vetSpecialty.getInt("specialty_id");
 
 			PreparedStatement findSpecialities = connect.prepareStatement(findSpecialitiesSQL);
 			findSpecialities.setInt(1, specialtyId);
@@ -383,7 +383,7 @@ public class petclinic {
 			if (!vetSpecialty.next()) {
 				System.out.println("Empty");
 			}
-			int specialtyId = vetSpecialty.getInt("id");
+			int specialtyId = vetSpecialty.getInt("specialty_id");
 
 			PreparedStatement findSpecialities = connect.prepareStatement(findSpecialitiesSQL);
 			findSpecialities.setInt(1, specialtyId);
