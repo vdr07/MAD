@@ -12,7 +12,8 @@
         "specialties"
     ],
     "M5": [
-        "vets"
+        "vets",
+        "vet_specialties"
     ],
     "M6": [
         "visits"

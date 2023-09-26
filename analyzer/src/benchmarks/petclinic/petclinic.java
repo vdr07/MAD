@@ -199,8 +199,8 @@ public class petclinic {
 	public void petInitCreationForm(int petId, int ownerId) throws SQLException {
 		String insertPetSQL = 
 				"INSERT INTO " + "PETS" +
-				" (id) " +
-				" VALUES ( ? )";
+				" (id, name, birth_date, type_id, owner_id) " +
+				" VALUES ( ?, ?, ?, ?, ? )";
 
 		String updatePetOwnerSQL = 
 				"UPDATE " + "PETS" +
@@ -209,6 +209,10 @@ public class petclinic {
 
 		PreparedStatement insertPet = connect.prepareStatement(insertPetSQL);
 		insertPet.setInt(1, petId);
+		insertPet.setString(2, "");
+		insertPet.setString(3, "");
+		insertPet.setInt(4, -1);
+		insertPet.setInt(5, -1);
 		insertPet.executeUpdate();
 
 		PreparedStatement updatePetOwner = connect.prepareStatement(updatePetOwnerSQL);

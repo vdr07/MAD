@@ -5,6 +5,7 @@
         "types",
         "specialties",
         "vets",
+        "vet_specialties",
         "visits"
     ]
 }
