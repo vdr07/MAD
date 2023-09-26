@@ -324,6 +324,76 @@ public class petclinic {
 		}
 	}
 
+	public void vetShowJsonVetList() throws SQLException {
+		String findVetsSQL = 
+				"SELECT * FROM " + "VETS"+
+				" WHERE 1 = 1";
+
+		String findVetSpecialitiesSQL = 
+				"SELECT specialty_id FROM " + "VET_SPECIALTIES"+
+				" WHERE vet_id = ?";
+
+		String findSpecialitiesSQL = 
+				"SELECT * FROM " + "SPECIALTIES"+
+				" WHERE id = ?";
+
+		PreparedStatement findVets = connect.prepareStatement(findVetsSQL);
+		ResultSet vets = findVets.executeQuery();
+		while (vets.next()) {
+			int vetId = vets.getInt("id");
+
+			PreparedStatement findVetSpecialities = connect.prepareStatement(findVetSpecialitiesSQL);
+			findVetSpecialities.setInt(1, vetId);
+			ResultSet vetSpecialty = findVetSpecialities.executeQuery();
+			if (!vetSpecialty.next()) {
+				System.out.println("Empty");
+			}
+			int specialtyId = vetSpecialty.getInt("id");
+
+			PreparedStatement findSpecialities = connect.prepareStatement(findSpecialitiesSQL);
+			findSpecialities.setInt(1, specialtyId);
+			ResultSet specialty = findSpecialities.executeQuery();
+			if (!specialty.next()) {
+				System.out.println("Empty");
+			}
+		}
+	}
+
+	public void vetShowXmlVetList() throws SQLException {
+		String findVetsSQL = 
+				"SELECT * FROM " + "VETS"+
+				" WHERE 1 = 1";
+
+		String findVetSpecialitiesSQL = 
+				"SELECT specialty_id FROM " + "VET_SPECIALTIES"+
+				" WHERE vet_id = ?";
+
+		String findSpecialitiesSQL = 
+				"SELECT * FROM " + "SPECIALTIES"+
+				" WHERE id = ?";
+
+		PreparedStatement findVets = connect.prepareStatement(findVetsSQL);
+		ResultSet vets = findVets.executeQuery();
+		while (vets.next()) {
+			int vetId = vets.getInt("id");
+
+			PreparedStatement findVetSpecialities = connect.prepareStatement(findVetSpecialitiesSQL);
+			findVetSpecialities.setInt(1, vetId);
+			ResultSet vetSpecialty = findVetSpecialities.executeQuery();
+			if (!vetSpecialty.next()) {
+				System.out.println("Empty");
+			}
+			int specialtyId = vetSpecialty.getInt("id");
+
+			PreparedStatement findSpecialities = connect.prepareStatement(findSpecialitiesSQL);
+			findSpecialities.setInt(1, specialtyId);
+			ResultSet specialty = findSpecialities.executeQuery();
+			if (!specialty.next()) {
+				System.out.println("Empty");
+			}
+		}
+	}
+
 	// VisitController
 	public void visitProcessNewVisitForm(int visitId, String date,
 			String description, int petId) throws SQLException {
