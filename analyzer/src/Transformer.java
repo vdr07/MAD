@@ -285,7 +285,6 @@ public class Transformer extends BodyTransformer {
 		for (Anomaly seenVersAnml : seenVersAnmls) {
 			List<String> edges = new ArrayList<>();
 			List<String> seenTxns = new ArrayList<>();
-			System.out.println("structure: "+seenVersAnml.getCycleStructure());
 			for (Tuple<String, Tuple<String, String>> edge : seenVersAnml.getCycleStructure()) {
 				if(edge.x.contains("sibling")) {
 					edges.add("X");
