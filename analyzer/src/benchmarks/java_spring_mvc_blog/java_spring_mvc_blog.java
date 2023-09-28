@@ -1204,10 +1204,10 @@ public class java_spring_mvc_blog {
 		getUserRoles.setLong(1, registeredUserId);
 		rs = getUserRoles.executeQuery();
 		while (rs.next()) {
-			long roleId = rs.getLong("roleId");
+			long roleUserId = rs.getLong("roleId");
 
 			PreparedStatement getRoleById = connect.prepareStatement(getRoleByIdSQL);
-			getRoleById.setlong(1, roleId);
+			getRoleById.setLong(1, roleUserId);
 			ResultSet role = getRoleById.executeQuery();
 			if (!role.next()) {
 				System.out.println("empty");
