@@ -39,9 +39,13 @@ public class myweb {
 
 	// IndexController
 	public void index(long userId) throws SQLException {
-		String getRolesSQL = 
+		String getUserRolesSQL = 
 				"SELECT * FROM " + "SYS_USER_ROLE"+
 				" WHERE user_id = ?";
+
+		String getRolesSQL = 
+				"SELECT * FROM " + "SYS_ROLES"+
+				" WHERE id = ?";
 
 		String getPermissionsByRoleSQL = 
 				"SELECT * FROM " + "SYS_ROLE_PERMISSION"+
@@ -51,11 +55,15 @@ public class myweb {
 				"SELECT * FROM " + "SYS_PERMISSIONS"+
 				" WHERE id = ?";
 
-		PreparedStatement getRoles = connect.prepareStatement(getRolesSQL);
-		getRoles.setLong(1, userId);
-		ResultSet roles = getRoles.executeQuery();
-		while (roles.next()) {
-			long roleId = roles.getLong("role_id");
+		PreparedStatement getUserRoles = connect.prepareStatement(getUserRolesSQL);
+		getUserRoles.setLong(1, userId);
+		ResultSet rolesIds = getUserRoles.executeQuery();
+		while (rolesIds.next()) {
+			long roleId = rolesIds.getLong("role_id");
+
+			PreparedStatement getRoles = connect.prepareStatement(getRolesSQL);
+			getRoles.setLong(1, roleId);
+			ResultSet roles = getRoles.executeQuery();
 			
 			PreparedStatement getPermissionsByRole = connect.prepareStatement(getPermissionsByRoleSQL);
 			getPermissionsByRole.setLong(1, roleId);
