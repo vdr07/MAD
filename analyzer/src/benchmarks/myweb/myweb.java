@@ -64,6 +64,9 @@ public class myweb {
 			PreparedStatement getRoles = connect.prepareStatement(getRolesSQL);
 			getRoles.setLong(1, roleId);
 			ResultSet roles = getRoles.executeQuery();
+			if (!roles.next()) {
+				System.out.println("No roles");
+			}
 			
 			PreparedStatement getPermissionsByRole = connect.prepareStatement(getPermissionsByRoleSQL);
 			getPermissionsByRole.setLong(1, roleId);
