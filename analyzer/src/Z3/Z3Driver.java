@@ -151,7 +151,7 @@ public class Z3Driver {
 	}
 
 	@SuppressWarnings("unused")
-	private void ctxInitialize(Anomaly unVersionedAnml) {
+	private void ctxInitialize(Anomaly unVersionedAnml, List<String> txnsNamesComb) {
 
 		LogZ3(";data types");
 		objs.addDataType("TType", mkDataType("TType", app.getAllTxnNames()));
@@ -261,11 +261,6 @@ public class Z3Driver {
 			for (String stmtName : txn.getStmtNames()) {
 				addAssertion("op_types_" + name + "_" + stmtName,
 						dynamicAssertions.op_types_to_parent_type(name, stmtName));
-				/*for (String stmtName2 : txn.getStmtNames()) {
-					if (!stmtName2.equals(stmtName)) {
-						addAssertion("same_transaction", dynamicAssertions.same_transaction(name, stmtName, stmtName2));
-					}
-				}*/
 				addAssertion("op_types_orig_" + origTxnName + "_" + stmtName,
 					dynamicAssertions.op_types_to_original_transaction_type(origTxnName, stmtName));
 				
@@ -276,19 +271,20 @@ public class Z3Driver {
 			mapTxnToMicroTxn.put(name, microName);
 		}
 
-		for (Transaction txn : app.getTxns()) {
-			Map<Integer, String> map = txn.getStmtNamesMap();
-			for (int j = 1; j < map.size(); j++)
-				for (int i = j; i <= map.size(); i++) {
-					if (map.get(i + 1) != null) {
-						addAssertion("not_step_siblings_" + map.get(j) + "_" + map.get(i+1),
-								dynamicAssertions.mk_not_step_siblings(map.get(j), map.get(i + 1)));
+		for (String origTxnName : txnsNamesComb)
+			for (Transaction txn : app.getTxnsByOrigTxnName(origTxnName)) {
+				Map<Integer, String> map = txn.getStmtNamesMap();
+				for (int j = 1; j < map.size(); j++)
+					for (int i = j; i <= map.size(); i++) {
+						if (map.get(i + 1) != null) {
+							addAssertion("not_step_siblings_" + map.get(j) + "_" + map.get(i+1),
+									dynamicAssertions.mk_not_step_siblings(map.get(j), map.get(i + 1)));
+						}
 					}
-				}
-		}
+			}
 		
 		// make sure the otime assignment follows the program order
-		for (String origTxnName : app.getAllOrigTxnNames()) {
+		for (String origTxnName : txnsNamesComb) {
 			Map<Integer, String> map = app.getStmtNamesOrigTxnMap(origTxnName);
 			for (int j = 1; j < map.size(); j++)
 				for (int i = j; i <= map.size(); i++) {
@@ -301,11 +297,11 @@ public class Z3Driver {
 
 		// =====================================================================================================================================================
 		HeaderZ3("CONFLICTING ROWS");
-		for (Transaction txn1 : app.getTxns()) {
+		for (String origTxnName1 : txnsNamesComb) {
 			Sort oSort = objs.getSort("O");
-			for (Transaction txn2 : app.getTxns()) {
-				for (Statement o1 : txn1.getStmts())
-					for (Statement o2 : txn2.getStmts()) {
+			for (String origTxnName2 : txnsNamesComb) {
+				for (Statement o1 : app.getOrigTxnByName(origTxnName1).getStmts())
+					for (Statement o2 : app.getOrigTxnByName(origTxnName2).getStmts()) {
 						InvokeStmt io1 = (InvokeStmt) o1;
 						InvokeStmt io2 = (InvokeStmt) o2;
 						String tableName = io1.getQuery().getTable().getName();
@@ -370,7 +366,8 @@ public class Z3Driver {
 
 		// =====================================================================================================================================================
 
-		for (OriginalTransaction origTxn : app.getOrigTxns()) {
+		for (String origTxnName : txnsNamesComb) {
+			OriginalTransaction origTxn = app.getOrigTxnByName(origTxnName);
 			HeaderZ3("ORIG_TXN: " + origTxn.getName().toUpperCase());
 			// declare functions for txn's input parameters
 			SubHeaderZ3("parameters");
@@ -679,7 +676,7 @@ public class Z3Driver {
 		// annotated versions.
 		switch (round) {
 			case 1:
-				ctxInitialize(unVersionedAnml);
+				ctxInitialize(unVersionedAnml, txnsNamesComb);
 				int iter530 = 0;
 				// Valentim: Commenting this cycle since the structures one is more relevant
 				// for (Anomaly anml : seenAnmls)
@@ -710,14 +707,16 @@ public class Z3Driver {
 							
 							if(!q.getTable().equals(q2.getTable()))
 								continue;
-							for (Statement stmt3 : app.getAllStmts()) {
+							for (int k = 1; k < map.size()+1; k++) {
+								Statement stmt3 = map.get(k);
 								InvokeStmt is3 = (InvokeStmt) stmt3;
 								String s3Name = is3.getType().toString();
 								Query q3 = is3.getQuery();
 								
 								if((q2.getKind() == Kind.SELECT && q3.getKind() == Kind.SELECT) || (!q2.getTable().equals(q3.getTable())))
 									continue;
-								for (Statement stmt4 : app.getAllStmts()) {
+								for (int l = 1; l < map.size()+1; l++) {
+									Statement stmt4 = map.get(l);
 									InvokeStmt is4 = (InvokeStmt) stmt4;
 									String s4Name = is4.getType().toString();
 									Query q4 = is4.getQuery();
