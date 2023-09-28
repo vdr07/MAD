@@ -14,13 +14,13 @@
         "post_rating"
     ],
     "M5": [
-        "roles",
-        "user_role"
+        "roles"
     ],
     "M6": [
         "tags"
     ],
     "M7": [
-        "users"
+        "users",
+        "user_role"
     ]
 }

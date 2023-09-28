@@ -450,14 +450,6 @@ public class java_spring_mvc_blog {
 				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
 
-		String getUserRolesSQL = 
-				"SELECT * FROM " + "USER_ROLE"+
-				" WHERE userId = ?";
-
-		String getRoleNameSQL = 
-				"SELECT rname FROM " + "ROLES"+
-				" WHERE id = ?";
-
 		String getCommentSQL = 
 				"SELECT * FROM " + "COMMENTS"+
 				" WHERE id = ?";
@@ -1123,7 +1115,7 @@ public class java_spring_mvc_blog {
 		insertPostRating.executeUpdate();
 	}
 
-	// Users Controller
+	// UsersController
 	public void registerUser(long userId, String username, String email, String password,
 		long currentTime) throws SQLException {
 		String getUserByUsernameSQL = 
@@ -1151,6 +1143,10 @@ public class java_spring_mvc_blog {
 		String getUserRolesSQL = 
 				"SELECT * FROM " + "USER_ROLE"+
 				" WHERE userId = ?";
+
+		String getRoleByIdSQL = 
+				"SELECT * FROM " + "ROLES"+
+				" WHERE id = ?";
 
 		PreparedStatement getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
 		getUserByUsername.setString(1, username);
@@ -1207,9 +1203,16 @@ public class java_spring_mvc_blog {
 		PreparedStatement getUserRoles = connect.prepareStatement(getUserRolesSQL);
 		getUserRoles.setLong(1, registeredUserId);
 		rs = getUserRoles.executeQuery();
-		if (!rs.next()) {
-			System.out.println("empty");
-			return;
+		while (rs.next()) {
+			long roleId = rs.getLong("roleId");
+
+			PreparedStatement getRoleById = connect.prepareStatement(getRoleByIdSQL);
+			getRoleById.setlong(1, roleId);
+			ResultSet role = getRoleById.executeQuery();
+			if (!role.next()) {
+				System.out.println("empty");
+				return;
+			}
 		}		
 	}
 

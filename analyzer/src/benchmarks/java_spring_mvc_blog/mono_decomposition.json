@@ -7,8 +7,8 @@
         "post_tag",
         "post_rating",
         "roles",
-        "user_role",
         "tags",
-        "users"
+        "users",
+        "user_role"
     ]
 }
