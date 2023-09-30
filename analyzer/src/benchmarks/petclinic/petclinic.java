@@ -85,15 +85,11 @@ public class petclinic {
 				PreparedStatement findPetsVisits = connect.prepareStatement(findPetsVisitsSQL);
 				findPetsVisits.setInt(1, petId);
 				ResultSet petVisits = findPetsVisits.executeQuery();
-				if (!petVisits.next()) {
-					System.out.println("No visits");
-				}
+				petVisits.next();
 			}
 			PreparedStatement findPetTypes = connect.prepareStatement(findPetTypesSQL);
 			ResultSet petTypes = findPetTypes.executeQuery();
-			if (!petTypes.next()) {
-				System.out.println("No pet types");
-			}
+			petTypes.next();
 		}
 	}
 
@@ -117,9 +113,7 @@ public class petclinic {
 		PreparedStatement findOwnerById = connect.prepareStatement(findOwnerByIdSQL);
 		findOwnerById.setInt(1, ownerId);
 		ResultSet owner = findOwnerById.executeQuery();
-		if (!owner.next()) {
-			System.out.println("Empty");
-		}
+		owner.next();
 
 		PreparedStatement findOwnerPets = connect.prepareStatement(findOwnerPetsSQL);
 		findOwnerPets.setInt(1, ownerId);
@@ -129,15 +123,11 @@ public class petclinic {
 			PreparedStatement findPetsVisits = connect.prepareStatement(findPetsVisitsSQL);
 			findPetsVisits.setInt(1, petId);
 			ResultSet petVisits = findPetsVisits.executeQuery();
-			if (!petVisits.next()) {
-				System.out.println("No visits");
-			}
+			petVisits.next();
 		}
 		PreparedStatement findPetTypes = connect.prepareStatement(findPetTypesSQL);
 		ResultSet petTypes = findPetTypes.executeQuery();
-		if (!petTypes.next()) {
-			System.out.println("No pet types");
-		}
+		petTypes.next();
 	}
 
 	public void ownerProcessUpdateOwnerForm(int currentId, int newId) throws SQLException {
@@ -172,9 +162,7 @@ public class petclinic {
 		PreparedStatement findOwnerById = connect.prepareStatement(findOwnerByIdSQL);
 		findOwnerById.setInt(1, ownerId);
 		ResultSet owner = findOwnerById.executeQuery();
-		if (!owner.next()) {
-			System.out.println("Empty");
-		}
+		owner.next();
 
 		PreparedStatement findOwnerPets = connect.prepareStatement(findOwnerPetsSQL);
 		findOwnerPets.setInt(1, ownerId);
@@ -184,15 +172,11 @@ public class petclinic {
 			PreparedStatement findPetsVisits = connect.prepareStatement(findPetsVisitsSQL);
 			findPetsVisits.setInt(1, petId);
 			ResultSet petVisits = findPetsVisits.executeQuery();
-			if (!petVisits.next()) {
-				System.out.println("No visits");
-			}
+			petVisits.next();
 		}
 		PreparedStatement findPetTypes = connect.prepareStatement(findPetTypesSQL);
 		ResultSet petTypes = findPetTypes.executeQuery();
-		if (!petTypes.next()) {
-			System.out.println("No pet types");
-		}
+		petTypes.next();
 	}
 
 	// PetController
@@ -275,9 +259,7 @@ public class petclinic {
 		PreparedStatement findPetById = connect.prepareStatement(findPetByIdSQL);
 		findPetById.setInt(1, petId);
 		ResultSet pet = findPetById.executeQuery();
-		if (!pet.next()) {
-			System.out.println("Empty");
-		}
+		pet.next();
 	}
 
 	public void petProcessUpdateForm(int ownerId, int petId) throws SQLException {
@@ -314,17 +296,13 @@ public class petclinic {
 			PreparedStatement findVetSpecialities = connect.prepareStatement(findVetSpecialitiesSQL);
 			findVetSpecialities.setInt(1, vetId);
 			ResultSet vetSpecialty = findVetSpecialities.executeQuery();
-			if (!vetSpecialty.next()) {
-				System.out.println("Empty");
-			}
+			vetSpecialty.next();
 			int specialtyId = vetSpecialty.getInt("specialty_id");
 
 			PreparedStatement findSpecialities = connect.prepareStatement(findSpecialitiesSQL);
 			findSpecialities.setInt(1, specialtyId);
 			ResultSet specialty = findSpecialities.executeQuery();
-			if (!specialty.next()) {
-				System.out.println("Empty");
-			}
+			specialty.next();
 		}
 	}
 
@@ -349,17 +327,13 @@ public class petclinic {
 			PreparedStatement findVetSpecialities = connect.prepareStatement(findVetSpecialitiesSQL);
 			findVetSpecialities.setInt(1, vetId);
 			ResultSet vetSpecialty = findVetSpecialities.executeQuery();
-			if (!vetSpecialty.next()) {
-				System.out.println("Empty");
-			}
+			vetSpecialty.next();
 			int specialtyId = vetSpecialty.getInt("specialty_id");
 
 			PreparedStatement findSpecialities = connect.prepareStatement(findSpecialitiesSQL);
 			findSpecialities.setInt(1, specialtyId);
 			ResultSet specialty = findSpecialities.executeQuery();
-			if (!specialty.next()) {
-				System.out.println("Empty");
-			}
+			specialty.next();
 		}
 	}
 
@@ -384,17 +358,13 @@ public class petclinic {
 			PreparedStatement findVetSpecialities = connect.prepareStatement(findVetSpecialitiesSQL);
 			findVetSpecialities.setInt(1, vetId);
 			ResultSet vetSpecialty = findVetSpecialities.executeQuery();
-			if (!vetSpecialty.next()) {
-				System.out.println("Empty");
-			}
+			vetSpecialty.next();
 			int specialtyId = vetSpecialty.getInt("specialty_id");
 
 			PreparedStatement findSpecialities = connect.prepareStatement(findSpecialitiesSQL);
 			findSpecialities.setInt(1, specialtyId);
 			ResultSet specialty = findSpecialities.executeQuery();
-			if (!specialty.next()) {
-				System.out.println("Empty");
-			}
+			specialty.next();
 		}
 	}
 
@@ -426,16 +396,12 @@ public class petclinic {
 		PreparedStatement findPetById = connect.prepareStatement(findPetByIdSQL);
 		findPetById.setInt(1, petId);
 		ResultSet pet = findPetById.executeQuery();
-		if (!pet.next()) {
-			System.out.println("Empty");
-		}
+		pet.next();
 		int petTableId = pet.getInt("id");
 
 		PreparedStatement findPetVisits = connect.prepareStatement(findPetVisitsSQL);
 		findPetVisits.setInt(1, petTableId);
 		ResultSet petVisits = findPetVisits.executeQuery();
-		if (!petVisits.next()) {
-			System.out.println("Empty");
-		}		
+		petVisits.next();
 	}
 }

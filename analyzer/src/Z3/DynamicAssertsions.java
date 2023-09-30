@@ -165,25 +165,27 @@ public class DynamicAssertsions {
 		Expr confRowExpr2 = ctx.mkApp(funcConf2, o4, o1);
 		BoolExpr lhs5 = ctx.mkEq(confRowExpr, confRowExpr2);
 		// 0 == restricting incoming edges; 1 == restricting outgoing edges; 
-		BoolExpr lhs6, lhs7, lhs8;
+		BoolExpr lhs6, lhs7, lhs8, lhs9;
 		if (direction == 0) {
 			lhs6 = ctx.mkEq(ctx.mkApp(parent, o1), ctx.mkApp(parent, o2));
 			lhs7 = ctx.mkNot(ctx.mkEq(ctx.mkApp(parent, o2), ctx.mkApp(parent, o3)));
 			lhs8 = ctx.mkNot(ctx.mkEq(ctx.mkApp(parent, o1), ctx.mkApp(parent, o4)));
+			lhs9 = ctx.mkNot(ctx.mkEq(ctx.mkApp(parent, o3), ctx.mkApp(parent, o4)));
 		} else {
 			lhs6 = ctx.mkOr(ctx.mkEq(ctx.mkApp(originalTransaction, o1), ctx.mkApp(originalTransaction, o2)), ctx.mkEq(ctx.mkApp(parent, o1), ctx.mkApp(parent, o2)));
 			lhs7 = ctx.mkNot(ctx.mkEq(ctx.mkApp(originalTransaction, o2), ctx.mkApp(originalTransaction, o3)));
 			lhs8 = ctx.mkNot(ctx.mkEq(ctx.mkApp(originalTransaction, o1), ctx.mkApp(originalTransaction, o4)));
+			lhs9 = ctx.mkNot(ctx.mkEq(ctx.mkApp(originalTransaction, o3), ctx.mkApp(originalTransaction, o4)));
 		}
-		BoolExpr lhs9, rhs;
+		BoolExpr lhs10, rhs;
 		if (stmt.contains("-select#") || stmt2.contains("-select#")) {
-			lhs9 = (BoolExpr) ctx.mkApp(vis, o4, o1);
+			lhs10 = (BoolExpr) ctx.mkApp(vis, o4, o1);
 			rhs = (BoolExpr) ctx.mkApp(vis, o3, o2);
 		} else {
-			lhs9 = (BoolExpr) ctx.mkApp(vis, o2, o3);
+			lhs10 = (BoolExpr) ctx.mkApp(vis, o2, o3);
 			rhs = (BoolExpr) ctx.mkApp(vis, o1, o4);
 		}
-		BoolExpr lhs = ctx.mkAnd(lhs1, lhs2, lhs3, lhs4, lhs5, lhs6, lhs7, lhs8, lhs9);
+		BoolExpr lhs = ctx.mkAnd(lhs1, lhs2, lhs3, lhs4, lhs5, lhs6, lhs7, lhs8, lhs9, lhs10);
 		BoolExpr body = ctx.mkImplies(lhs, rhs);
 		Quantifier x = ctx.mkForall(new Expr[] { o1, o2, o3, o4 }, body, 1, null, null, null, null);
 		return x;

@@ -120,6 +120,14 @@ public class StaticAssertions {
 		return x;
 	}
 
+	public BoolExpr mk_pars_then_ots() {
+		BoolExpr lhs = ctx.mkEq(ctx.mkApp(objs.getfuncs("parent"), o1), ctx.mkApp(objs.getfuncs("parent"), o2));
+		BoolExpr rhs = ctx.mkEq(ctx.mkApp(objs.getfuncs("original_transaction"), o1), ctx.mkApp(objs.getfuncs("original_transaction"), o2));
+		BoolExpr body = ctx.mkImplies(lhs, rhs);
+		Quantifier x = ctx.mkForall(new Expr[]{o1, o2}, body, 1, null, null, null, null);
+		return x;
+	}
+
 	public BoolExpr mk_no_loops_o() {
 		BoolExpr ass1 = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_O"), o1, o1);
 		BoolExpr ass2 = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_O"), o1, o1);

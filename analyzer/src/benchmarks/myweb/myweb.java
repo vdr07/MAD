@@ -38,7 +38,7 @@ public class myweb {
 	}
 
 	// IndexController
-	public void index(long userId) throws SQLException {
+	public void index(int userId) throws SQLException {
 		String getUserRolesSQL = 
 				"SELECT * FROM " + "SYS_USER_ROLE"+
 				" WHERE user_id = ?";
@@ -56,30 +56,26 @@ public class myweb {
 				" WHERE id = ?";
 
 		PreparedStatement getUserRoles = connect.prepareStatement(getUserRolesSQL);
-		getUserRoles.setLong(1, userId);
+		getUserRoles.setInt(1, userId);
 		ResultSet rolesIds = getUserRoles.executeQuery();
 		while (rolesIds.next()) {
-			long roleId = rolesIds.getLong("role_id");
+			int roleId = rolesIds.getInt("role_id");
 
 			PreparedStatement getRoles = connect.prepareStatement(getRolesSQL);
-			getRoles.setLong(1, roleId);
+			getRoles.setInt(1, roleId);
 			ResultSet roles = getRoles.executeQuery();
-			if (!roles.next()) {
-				System.out.println("No roles");
-			}
+			roles.next();
 			
 			PreparedStatement getPermissionsByRole = connect.prepareStatement(getPermissionsByRoleSQL);
-			getPermissionsByRole.setLong(1, roleId);
+			getPermissionsByRole.setInt(1, roleId);
 			ResultSet permissions = getPermissionsByRole.executeQuery();
 			while (permissions.next()) {
-				long permissionId = permissions.getLong("permission_id");
+				int permissionId = permissions.getInt("permission_id");
 
 				PreparedStatement getResourceByPermissionId = connect.prepareStatement(getResourceByPermissionIdSQL);
-				getResourceByPermissionId.setLong(1, permissionId);
+				getResourceByPermissionId.setInt(1, permissionId);
 				ResultSet resource = getResourceByPermissionId.executeQuery();
-				if (!resource.next()) {
-					System.out.println("Empty");
-				}
+				resource.next();
 			}
 		}
 	}
@@ -92,25 +88,21 @@ public class myweb {
 
 		PreparedStatement getAllOperations = connect.prepareStatement(getAllOperationsSQL);
 		ResultSet ops = getAllOperations.executeQuery();
-		if (!ops.next()) {
-			System.out.println("Empty");
-		}
+		ops.next();
 	}
 
-	public void operationGetOne(long operationId) throws SQLException {
+	public void operationGetOne(int operationId) throws SQLException {
 		String getOperationByIdSQL = 
 				"SELECT * FROM " + "SYS_OPERATIONS"+
 				" WHERE id = ?";
 
 		PreparedStatement getOperationById = connect.prepareStatement(getOperationByIdSQL);
-		getOperationById.setLong(1, operationId);
+		getOperationById.setInt(1, operationId);
 		ResultSet op = getOperationById.executeQuery();
-		if (!op.next()) {
-			System.out.println("Empty");
-		}
+		op.next();
 	}
 
-	public void operationSave(long operationId, String operationName, String operation,
+	public void operationSave(int operationId, String operationName, String operation,
 			String description) throws SQLException {
 		String insertOperationSQL = 
 				"INSERT INTO " + "SYS_OPERATIONS" +
@@ -118,14 +110,14 @@ public class myweb {
 				" VALUES ( ?, ?, ?, ? )";
 
 		PreparedStatement insertOperation = connect.prepareStatement(insertOperationSQL);
-		insertOperation.setLong(1, operationId);
+		insertOperation.setInt(1, operationId);
 		insertOperation.setString(2, operationName);
 		insertOperation.setString(3, operation);
 		insertOperation.setString(4, description);
 		insertOperation.executeUpdate();
 	}
 
-	public void operationGetOperation(long operationId, String operationName, String operation,
+	public void operationGetOperation(int operationId, String operationName, String operation,
 			String description) throws SQLException {
 		String getOperationByIdSQL = 
 				"SELECT * FROM " + "SYS_OPERATIONS"+
@@ -139,27 +131,25 @@ public class myweb {
 				" WHERE id = ?";
 
 		PreparedStatement getOperationById = connect.prepareStatement(getOperationByIdSQL);
-		getOperationById.setLong(1, operationId);
+		getOperationById.setInt(1, operationId);
 		ResultSet op = getOperationById.executeQuery();
-		if (!op.next()) {
-			System.out.println("Empty");
-		}
+		op.next();
 
 		PreparedStatement updateOperation = connect.prepareStatement(updateOperationSQL);
 		updateOperation.setString(1, operationName);
 		updateOperation.setString(2, operation);
 		updateOperation.setString(3, description);
-		updateOperation.setLong(4, operationId);
+		updateOperation.setInt(4, operationId);
 		updateOperation.executeUpdate();
 	}
 
-	public void operationDelete(long operationId) throws SQLException {
+	public void operationDelete(int operationId) throws SQLException {
 		String deleteOperationSQL = 
 				"DELETE FROM " + "SYS_OPERATIONS"+
 				" WHERE id = ?";
 
 		PreparedStatement deleteOperation = connect.prepareStatement(deleteOperationSQL);
-		deleteOperation.setLong(1, operationId);
+		deleteOperation.setInt(1, operationId);
 		deleteOperation.executeUpdate();
 	}
 
@@ -171,25 +161,21 @@ public class myweb {
 
 		PreparedStatement getAllResources = connect.prepareStatement(getAllResourcesSQL);
 		ResultSet resources = getAllResources.executeQuery();
-		if (!resources.next()) {
-			System.out.println("Empty");
-		}
+		resources.next();
 	}
 
-	public void resourceGetOne(long resourceId) throws SQLException {
+	public void resourceGetOne(int resourceId) throws SQLException {
 		String getResourceByIdSQL = 
 				"SELECT * FROM " + "SYS_RESOURCES"+
 				" WHERE id = ?";
 
 		PreparedStatement getResourceById = connect.prepareStatement(getResourceByIdSQL);
-		getResourceById.setLong(1, resourceId);
+		getResourceById.setInt(1, resourceId);
 		ResultSet resource = getResourceById.executeQuery();
-		if (!resource.next()) {
-			System.out.println("Empty");
-		}
+		resource.next();
 	}
 
-	public void resourceSave(long resourceId, String resourceName, String resourceIdentity,
+	public void resourceSave(int resourceId, String resourceName, String resourceIdentity,
 			String resourceUrl) throws SQLException {
 		String insertResourceSQL = 
 				"INSERT INTO " + "SYS_RESOURCES" +
@@ -197,14 +183,14 @@ public class myweb {
 				" VALUES ( ?, ?, ?, ? )";
 
 		PreparedStatement insertResource = connect.prepareStatement(insertResourceSQL);
-		insertResource.setLong(1, resourceId);
+		insertResource.setInt(1, resourceId);
 		insertResource.setString(2, resourceName);
 		insertResource.setString(3, resourceIdentity);
 		insertResource.setString(4, resourceUrl);
 		insertResource.executeUpdate();
 	}
 
-	public void resourceGetResource(long resourceId, String resourceName, String resourceIdentity,
+	public void resourceGetResource(int resourceId, String resourceName, String resourceIdentity,
 			String resourceUrl) throws SQLException {
 		String getResourceByIdSQL = 
 				"SELECT * FROM " + "SYS_RESOURCES"+
@@ -217,26 +203,24 @@ public class myweb {
 				" WHERE id = ?";
 
 		PreparedStatement getResourceById = connect.prepareStatement(getResourceByIdSQL);
-		getResourceById.setLong(1, resourceId);
+		getResourceById.setInt(1, resourceId);
 		ResultSet resource = getResourceById.executeQuery();
-		if (!resource.next()) {
-			System.out.println("Empty");
-		}
+		resource.next();
 
 		PreparedStatement updateResource = connect.prepareStatement(updateResourceSQL);
 		updateResource.setString(1, resourceName);
 		updateResource.setString(2, resourceIdentity);
-		updateResource.setLong(3, resourceId);
+		updateResource.setInt(3, resourceId);
 		updateResource.executeUpdate();
 	}
 
-	public void resourceDelete(long resourceId) throws SQLException {
+	public void resourceDelete(int resourceId) throws SQLException {
 		String deleteResourceSQL = 
 				"DELETE FROM " + "SYS_RESOURCES"+
 				" WHERE id = ?";
 
 		PreparedStatement deleteResource = connect.prepareStatement(deleteResourceSQL);
-		deleteResource.setLong(1, resourceId);
+		deleteResource.setInt(1, resourceId);
 		deleteResource.executeUpdate();
 	}
 
@@ -248,22 +232,20 @@ public class myweb {
 
 		PreparedStatement getAllRoles = connect.prepareStatement(getAllRolesSQL);
 		ResultSet roles = getAllRoles.executeQuery();
-		if (!roles.next()) {
-			System.out.println("Empty");
-		}
+		roles.next();
 	}
 
-	public void roleDelete(long roleId) throws SQLException {
+	public void roleDelete(int roleId) throws SQLException {
 		String deleteRoleSQL = 
 				"DELETE FROM " + "SYS_ROLES"+
 				" WHERE id = ?";
 
 		PreparedStatement deleteRole = connect.prepareStatement(deleteRoleSQL);
-		deleteRole.setLong(1, roleId);
+		deleteRole.setInt(1, roleId);
 		deleteRole.executeUpdate();
 	}
 
-	public void roleSave(long roleId, String roleName, String roleRole,
+	public void roleSave(int roleId, String roleName, String roleRole,
 			String roleDescription) throws SQLException {
 		String insertRoleSQL = 
 				"INSERT INTO " + "SYS_ROLES" +
@@ -271,15 +253,15 @@ public class myweb {
 				" VALUES ( ?, ?, ?, ? )";
 
 		PreparedStatement insertRole = connect.prepareStatement(insertRoleSQL);
-		insertRole.setLong(1, roleId);
+		insertRole.setInt(1, roleId);
 		insertRole.setString(2, roleName);
 		insertRole.setString(3, roleRole);
 		insertRole.setString(4, roleDescription);
 		insertRole.executeUpdate();
 	}
 
-	public void roleAuthorise(long roleId, long resourceId, long[] opsIds,
-			long newPermissionId) throws SQLException {
+	public void roleAuthorise(int roleId, int resourceId, int[] opsIds,
+			int newPermissionId) throws SQLException {
 		String getRoleByIdSQL = 
 				"SELECT * FROM " + "SYS_ROLES"+
 				" WHERE id = ?";
@@ -316,42 +298,34 @@ public class myweb {
 				" VALUES ( ?, ? )";
 
 		PreparedStatement getRoleById = connect.prepareStatement(getRoleByIdSQL);
-		getRoleById.setLong(1, roleId);
+		getRoleById.setInt(1, roleId);
 		ResultSet role = getRoleById.executeQuery();
-		if (!role.next()) {
-			System.out.println("Empty");
-		}
+		role.next();
 
 		PreparedStatement getResourceById = connect.prepareStatement(getResourceByIdSQL);
-		getResourceById.setLong(1, resourceId);
+		getResourceById.setInt(1, resourceId);
 		ResultSet resource = getResourceById.executeQuery();
-		if (!resource.next()) {
-			System.out.println("Empty");
-		}
+		resource.next();
 
-		for (long opId : opsIds) {
+		for (int opId : opsIds) {
 			PreparedStatement getAllOperations = connect.prepareStatement(getAllOperationsSQL);
-			getAllOperations.setLong(1, opId);
+			getAllOperations.setInt(1, opId);
 			ResultSet operations = getAllOperations.executeQuery();
-			if (!operations.next()) {
-				System.out.println("Empty");
-			}
+			operations.next();
 		}
 
 		PreparedStatement getPermissionsByRole = connect.prepareStatement(getPermissionsByRoleSQL);
-		getPermissionsByRole.setLong(1, roleId);
+		getPermissionsByRole.setInt(1, roleId);
 		ResultSet permissions = getPermissionsByRole.executeQuery();
-		long permissionId = -1;
+		int permissionId = -1;
 		while (permissions.next()) {
-			permissionId = permissions.getLong("permission_id");
+			permissionId = permissions.getInt("permission_id");
 
 			PreparedStatement getResourceByPermissionId = connect.prepareStatement(getResourceByPermissionIdSQL);
-			getResourceByPermissionId.setLong(1, permissionId);
+			getResourceByPermissionId.setInt(1, permissionId);
 			ResultSet permission = getResourceByPermissionId.executeQuery();
-			if (!permission.next()) {
-				System.out.println("Empty");
-			}
-			long permissionResourceId = permission.getLong("resource_id");
+			permission.next();
+			int permissionResourceId = permission.getInt("resource_id");
 
 			if (resourceId == permissionResourceId) {
 				break;
@@ -360,42 +334,42 @@ public class myweb {
 
 		if (permissionId == -1) {
 			PreparedStatement updatePermissionResource = connect.prepareStatement(updatePermissionResourceSQL);
-			updatePermissionResource.setLong(1, resourceId);
-			updatePermissionResource.setLong(2, newPermissionId);
+			updatePermissionResource.setInt(1, resourceId);
+			updatePermissionResource.setInt(2, newPermissionId);
 			updatePermissionResource.executeUpdate();
-			for (long opId : opsIds) {
+			for (int opId : opsIds) {
 				PreparedStatement insertPermissionOp = connect.prepareStatement(insertPermissionOpSQL);
-				insertPermissionOp.setLong(1, newPermissionId);
-				insertPermissionOp.setLong(2, opId);
+				insertPermissionOp.setInt(1, newPermissionId);
+				insertPermissionOp.setInt(2, opId);
 				insertPermissionOp.executeUpdate();
 			}
 			PreparedStatement insertRolePermission = connect.prepareStatement(insertRolePermissionSQL);
-			insertRolePermission.setLong(1, roleId);
-			insertRolePermission.setLong(2, newPermissionId);
+			insertRolePermission.setInt(1, roleId);
+			insertRolePermission.setInt(2, newPermissionId);
 			insertRolePermission.executeUpdate();
 		} else {
-			for (long opId : opsIds) {
+			for (int opId : opsIds) {
 				PreparedStatement insertPermissionOp = connect.prepareStatement(insertPermissionOpSQL);
-				insertPermissionOp.setLong(1, permissionId);
-				insertPermissionOp.setLong(2, opId);
+				insertPermissionOp.setInt(1, permissionId);
+				insertPermissionOp.setInt(2, opId);
 				insertPermissionOp.executeUpdate();
 			}
 		}
 	}
 
 	// UserController
-	public void userDelete(long userId) throws SQLException {
+	public void userDelete(int userId) throws SQLException {
 		String deleteUserSQL = 
 				"DELETE FROM " + "SYS_USERS"+
 				" WHERE id = ?";
 
 		PreparedStatement deleteUser = connect.prepareStatement(deleteUserSQL);
-		deleteUser.setLong(1, userId);
+		deleteUser.setInt(1, userId);
 		deleteUser.executeUpdate();
 	}
 
-	public void userSaveUser(long userId, String username, String password,
-			String salt, String email, String currentDate, long[] roleIds) throws SQLException {
+	public void userSaveUser(int userId, String username, String password,
+			String salt, String email, String currentDate, int[] roleIds) throws SQLException {
 		String insertUserSQL = 
 				"INSERT INTO " + "SYS_USERS" +
 				" (id, username, password, salt, locked, email, createDate) " +
@@ -411,7 +385,7 @@ public class myweb {
 				" VALUES ( ?, ? )";
 
 		PreparedStatement insertUser = connect.prepareStatement(insertUserSQL);
-		insertUser.setLong(1, userId);
+		insertUser.setInt(1, userId);
 		insertUser.setString(2, username);
 		insertUser.setString(3, password);
 		insertUser.setString(4, salt);
@@ -420,22 +394,20 @@ public class myweb {
 		insertUser.setString(7, currentDate);
 		insertUser.executeUpdate();
 
-		for (long roleId : roleIds) {
+		for (int roleId : roleIds) {
 			PreparedStatement getRoleById = connect.prepareStatement(getRoleByIdSQL);
-			getRoleById.setLong(1, roleId);
+			getRoleById.setInt(1, roleId);
 			ResultSet role = getRoleById.executeQuery();
-			if (!role.next()) {
-				System.out.println("Empty");
-			}
+			role.next();
 
 			PreparedStatement insertUserRole = connect.prepareStatement(insertUserRoleSQL);
-			insertUserRole.setLong(1, userId);
-			insertUserRole.setLong(2, roleId);
+			insertUserRole.setInt(1, userId);
+			insertUserRole.setInt(2, roleId);
 			insertUserRole.executeUpdate();
 		}
 	}
 
-	public void userUpdate(long userId, long[] roleIds) throws SQLException {
+	public void userUpdate(int userId, int[] roleIds) throws SQLException {
 		String getUserByIdSQL = 
 				"SELECT * FROM " + "SYS_USERS"+
 				" WHERE id = ?";
@@ -454,28 +426,24 @@ public class myweb {
 				" VALUES ( ?, ? )";
 
 		PreparedStatement getUserById = connect.prepareStatement(getUserByIdSQL);
-		getUserById.setLong(1, userId);
+		getUserById.setInt(1, userId);
 		ResultSet user = getUserById.executeQuery();
-		if (!user.next()) {
-			System.out.println("Empty");
-		}
+		user.next();
 
-		for (long roleId : roleIds) {
+		for (int roleId : roleIds) {
 			PreparedStatement getRoleById = connect.prepareStatement(getRoleByIdSQL);
-			getRoleById.setLong(1, roleId);
+			getRoleById.setInt(1, roleId);
 			ResultSet role = getRoleById.executeQuery();
-			if (!role.next()) {
-				System.out.println("Empty");
-			}
+			role.next();
 		}
 
 		PreparedStatement getRoleIdByUserId = connect.prepareStatement(getRoleIdByUserIdSQL);
-		getRoleIdByUserId.setLong(1, userId);
+		getRoleIdByUserId.setInt(1, userId);
 		ResultSet userRole = getRoleIdByUserId.executeQuery();
-		for (long roleId : roleIds) {
+		for (int roleId : roleIds) {
 			boolean found = false;
 			while (userRole.next()) {
-				long userRoleId = userRole.getLong("role_id");
+				int userRoleId = userRole.getInt("role_id");
 				if (roleId == userRoleId) {
 					found = true;
 					break;
@@ -483,8 +451,8 @@ public class myweb {
 			}
 			if (!found) {
 				PreparedStatement insertUserRole = connect.prepareStatement(insertUserRoleSQL);
-				insertUserRole.setLong(1, userId);
-				insertUserRole.setLong(2, roleId);
+				insertUserRole.setInt(1, userId);
+				insertUserRole.setInt(2, roleId);
 				insertUserRole.executeUpdate();
 			}
 		}
@@ -497,12 +465,10 @@ public class myweb {
 
 		PreparedStatement getUsers = connect.prepareStatement(getUsersSQL);
 		ResultSet users = getUsers.executeQuery();
-		if (!users.next()) {
-			System.out.println("Empty");
-		}
+		users.next();
 	}
 
-	public void userRegister(long userId, String username, String password,
+	public void userRegister(int userId, String username, String password,
 			String salt, String email, String currentDate) throws SQLException {
 		String insertUserSQL = 
 				"INSERT INTO " + "SYS_USERS" +
@@ -510,7 +476,7 @@ public class myweb {
 				" VALUES ( ?, ?, ?, ?, ?, ?, ? )";
 
 		PreparedStatement insertUser = connect.prepareStatement(insertUserSQL);
-		insertUser.setLong(1, userId);
+		insertUser.setInt(1, userId);
 		insertUser.setString(2, username);
 		insertUser.setString(3, password);
 		insertUser.setString(4, salt);

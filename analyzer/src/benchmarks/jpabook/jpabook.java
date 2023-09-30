@@ -38,7 +38,7 @@ public class jpabook {
 	}
 
 	// MemberController
-	public void memberCreate(long memberId, String memberName, String city,
+	public void memberCreate(int memberId, String memberName, String city,
 			String street, String zipcode) throws SQLException {
 		String getMemberByNameSQL = 
 				"SELECT * FROM " + "MEMBER"+
@@ -58,7 +58,7 @@ public class jpabook {
 		}
 
 		PreparedStatement insertMember = connect.prepareStatement(insertMemberSQL);
-		insertMember.setLong(1, memberId);
+		insertMember.setInt(1, memberId);
 		insertMember.setString(2, memberName);
 		insertMember.setString(3, city);
 		insertMember.setString(4, street);
@@ -73,13 +73,11 @@ public class jpabook {
 
 		PreparedStatement findAllMembers = connect.prepareStatement(findAllMembersSQL);
 		ResultSet rs = findAllMembers.executeQuery();
-		if (!rs.next()) {
-			System.out.println("empty");
-		}
+		rs.next();
 	}
 
 	// ItemController
-	public void itemCreate(long itemId, String itemName, int price,
+	public void itemCreate(int itemId, String itemName, int price,
 			int stockQuantity) throws SQLException {
 		String insertItemSQL = 
 				"INSERT INTO " + "ITEMS" +
@@ -87,32 +85,26 @@ public class jpabook {
 				" VALUES ( ?, ?, ?, ? )";
 
 		PreparedStatement insertItem = connect.prepareStatement(insertItemSQL);
-		insertItem.setLong(1, itemId);
+		insertItem.setInt(1, itemId);
 		insertItem.setString(2, itemName);
 		insertItem.setInt(3, price);
 		insertItem.setInt(4, stockQuantity);
 		insertItem.executeUpdate();
 	}
 
-	public void updateItemForm(long itemId) throws SQLException {
+	public void updateItemForm(int itemId) throws SQLException {
 		String getItemSQL = 
 				"SELECT * FROM " + "ITEMS"+
 				" WHERE id = ?";
 
 		PreparedStatement getItem = connect.prepareStatement(getItemSQL);
-		getItem.setLong(1, itemId);
+		getItem.setInt(1, itemId);
 		ResultSet rs = getItem.executeQuery();
-		if (!rs.next()) {
-			System.out.println("empty");
-			return;
-		}
+		rs.next();
 	}
 
-	public void updateItem(long itemId, String itemName, int price,
-			int stockQuantity) throws SQLException {
-		String getItemSQL = 
-				"SELECT id FROM " + "ITEMS"+
-				" WHERE id = ?";
+	public void updateItem(int itemId, String itemName, int price,
+			int stockQuantity, int isNew) throws SQLException {
 
 		String updateItemSQL = 
 				"UPDATE " + "ITEMS" +
@@ -126,19 +118,16 @@ public class jpabook {
 				" (id, name, price, stockQuantity) " +
 				" VALUES ( ?, ?, ?, ? )";
 
-		PreparedStatement getItem = connect.prepareStatement(getItemSQL);
-		getItem.setLong(1, itemId);
-		ResultSet rs = getItem.executeQuery();
-		if (rs.next()) {
+		if (isNew == 0) {
 			PreparedStatement updateItem = connect.prepareStatement(updateItemSQL);
 			updateItem.setString(1, itemName);
 			updateItem.setInt(2, price);
 			updateItem.setInt(3, stockQuantity);
-			updateItem.setLong(4, itemId);
+			updateItem.setInt(4, itemId);
 			updateItem.executeUpdate();
 		} else {
 			PreparedStatement insertItem = connect.prepareStatement(insertItemSQL);
-			insertItem.setLong(1, itemId);
+			insertItem.setInt(1, itemId);
 			insertItem.setString(2, itemName);
 			insertItem.setInt(3, price);
 			insertItem.setInt(4, stockQuantity);
@@ -153,10 +142,7 @@ public class jpabook {
 
 		PreparedStatement findAllItems = connect.prepareStatement(findAllItemsSQL);
 		ResultSet rs = findAllItems.executeQuery();
-		if (!rs.next()) {
-			System.out.println("empty");
-			return;
-		}
+		rs.next();
 	}
 
 	// OrderController
@@ -171,21 +157,15 @@ public class jpabook {
 
 		PreparedStatement findAllMembers = connect.prepareStatement(findAllMembersSQL);
 		ResultSet rs = findAllMembers.executeQuery();
-		if (!rs.next()) {
-			System.out.println("empty");
-			return;
-		}
+		rs.next();
 
 		PreparedStatement findAllItems = connect.prepareStatement(findAllItemsSQL);
 		rs = findAllItems.executeQuery();
-		if (!rs.next()) {
-			System.out.println("empty");
-			return;
-		}
+		rs.next();
 	}
 
-	public void order(long memberId, long itemId, int count, long orderId, long deliveryId,
-			long orderItemId, String orderDate) throws SQLException {
+	public void order(int memberId, int itemId, int count, int orderId, int deliveryId,
+			int orderItemId, String orderDate) throws SQLException {
 		String findOneMemberSQL = 
 				"SELECT * FROM " + "MEMBER"+
 				" WHERE id = ?";
@@ -215,29 +195,23 @@ public class jpabook {
 				" VALUES ( ?, ?, ?, ?, ? )";
 
 		PreparedStatement findOneMember = connect.prepareStatement(findOneMemberSQL);
-		findOneMember.setLong(1, memberId);
+		findOneMember.setInt(1, memberId);
 		ResultSet rs = findOneMember.executeQuery();
-		if (!rs.next()) {
-			System.out.println("empty");
-			return;
-		}
+		rs.next();
 		String memberCity = rs.getString("city");
 		String memberStreet = rs.getString("street");
 		String memberZipcode = rs.getString("zipcode");
 
 		PreparedStatement findOneItem = connect.prepareStatement(findOneItemSQL);
-		findOneItem.setLong(1, itemId);
+		findOneItem.setInt(1, itemId);
 		rs = findOneItem.executeQuery();
-		if (!rs.next()) {
-			System.out.println("empty");
-			return;
-		}
+		rs.next();
 		int itemPrice = rs.getInt("price");
 		int itemStockQuantity = rs.getInt("stockQuantity");
 
 		PreparedStatement insertDelivery = connect.prepareStatement(insertDeliverySQL);
-		insertDelivery.setLong(1, deliveryId);
-		insertDelivery.setLong(2, orderId);
+		insertDelivery.setInt(1, deliveryId);
+		insertDelivery.setInt(2, orderId);
 		insertDelivery.setString(3, memberCity);
 		insertDelivery.setString(4, memberStreet);
 		insertDelivery.setString(5, memberZipcode);
@@ -245,10 +219,10 @@ public class jpabook {
 		insertDelivery.executeUpdate();
 
 		PreparedStatement insertOrderItem = connect.prepareStatement(insertOrderItemSQL);
-		insertOrderItem.setLong(1, orderItemId);
-		insertOrderItem.setLong(2, itemId);
-		insertOrderItem.setLong(3, orderId);
-		insertOrderItem.setLong(4, deliveryId);
+		insertOrderItem.setInt(1, orderItemId);
+		insertOrderItem.setInt(2, itemId);
+		insertOrderItem.setInt(3, orderId);
+		insertOrderItem.setInt(4, deliveryId);
 		insertOrderItem.setInt(5, itemPrice);
 		insertOrderItem.setInt(6, count);
 		insertOrderItem.executeUpdate();
@@ -260,13 +234,13 @@ public class jpabook {
 
 		PreparedStatement updateItem = connect.prepareStatement(updateItemSQL);
 		updateItem.setInt(1, itemStockQuantity-count);
-		updateItem.setLong(2, itemId);
+		updateItem.setInt(2, itemId);
 		updateItem.executeUpdate();
 
 		PreparedStatement insertOrder = connect.prepareStatement(insertOrderSQL);
-		insertOrder.setLong(1, orderId);
-		insertOrder.setLong(2, memberId);
-		insertOrder.setLong(3, deliveryId);
+		insertOrder.setInt(1, orderId);
+		insertOrder.setInt(2, memberId);
+		insertOrder.setInt(3, deliveryId);
 		insertOrder.setString(4, orderDate);
 		insertOrder.setString(5, "Order");
 		insertOrder.executeUpdate();
@@ -284,23 +258,17 @@ public class jpabook {
 		PreparedStatement findMemberByName = connect.prepareStatement(findMemberByNameSQL);
 		findMemberByName.setString(1, memberName);
 		ResultSet rs = findMemberByName.executeQuery();
-		if (!rs.next()) {
-			System.out.println("empty");
-			return;
-		}
-		long memberId = rs.getLong("id");
+		rs.next();
+		int memberId = rs.getInt("id");
 
 		PreparedStatement findOrders = connect.prepareStatement(findOrdersSQL);
 		findOrders.setString(1, orderStatus);
-		findOrders.setLong(2, memberId);
+		findOrders.setInt(2, memberId);
 		rs = findOrders.executeQuery();
-		if (!rs.next()) {
-			System.out.println("empty");
-			return;
-		}
+		rs.next();
 	}
 
-	public void processCancelBuy(long orderId) throws SQLException {
+	public void processCancelBuy(int orderId) throws SQLException {
 		String findOneOrderSQL = 
 				"SELECT * FROM " + "ORDERS"+
 				" WHERE id = ?";
@@ -328,21 +296,15 @@ public class jpabook {
 				" WHERE id = ?";
 
 		PreparedStatement findOneOrder = connect.prepareStatement(findOneOrderSQL);
-		findOneOrder.setLong(1, orderId);
+		findOneOrder.setInt(1, orderId);
 		ResultSet rs = findOneOrder.executeQuery();
-		if (!rs.next()) {
-			System.out.println("empty");
-			return;
-		}
-		long deliveryId = rs.getLong("deliveryId");
+		rs.next();
+		int deliveryId = rs.getInt("deliveryId");
 
 		PreparedStatement findOneDelivery = connect.prepareStatement(findOneDeliverySQL);
-		findOneDelivery.setLong(1, deliveryId);
+		findOneDelivery.setInt(1, deliveryId);
 		rs = findOneDelivery.executeQuery();
-		if (!rs.next()) {
-			System.out.println("empty");
-			return;
-		}
+		rs.next();
 		String deliveryStatus = rs.getString("status");
 
 		if (deliveryStatus.equals("Comp")) {
@@ -352,27 +314,25 @@ public class jpabook {
 
 		PreparedStatement updateOrder = connect.prepareStatement(updateOrderSQL);
 		updateOrder.setString(1, "Cancel");
-		updateOrder.setLong(2, orderId);
+		updateOrder.setInt(2, orderId);
 		updateOrder.executeUpdate();
 
 		PreparedStatement findOrderItemByOrderId = connect.prepareStatement(findOrderItemByOrderIdSQL);
-		findOrderItemByOrderId.setLong(1, orderId);
+		findOrderItemByOrderId.setInt(1, orderId);
 		rs = findOrderItemByOrderId.executeQuery();
 		while (rs.next()) {
-			long orderItemItemid = rs.getLong("itemId");
+			int orderItemItemid = rs.getInt("itemId");
 			int orderItemCount = rs.getInt("count");
 			
 			PreparedStatement findItem = connect.prepareStatement(findItemSQL);
-			findItem.setLong(1, orderItemItemid);
+			findItem.setInt(1, orderItemItemid);
 			ResultSet item = findItem.executeQuery();
-			if (!item.next()) {
-				System.out.println("empty");
-			}
+			item.next();
 			int itemStockQuantity = item.getInt("stockQuantity");
 			
 			PreparedStatement updateItem = connect.prepareStatement(updateItemSQL);
 			updateItem.setInt(1, itemStockQuantity+orderItemCount);
-			updateItem.setLong(2, orderItemItemid);
+			updateItem.setInt(2, orderItemItemid);
 			updateItem.executeUpdate();
 		}
 	}

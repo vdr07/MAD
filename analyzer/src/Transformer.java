@@ -184,6 +184,8 @@ public class Transformer extends BodyTransformer {
 					ConstantArgs._Current_Cycle_Length = ConstantArgs._Minimum_Cycle_Length;
 					// Iterate over different anomaly lengths
 					do {
+						if (txnsNamesCombIdx == txnsNamesCombs.size())
+							txnsNamesCombIdx--;
 						LOG.info("New round of analysis for an anomaly of length: "
 								+ ConstantArgs._Current_Cycle_Length);
 						LOG.info("Analysis for transactions: "

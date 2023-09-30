@@ -38,7 +38,7 @@ public class java_spring_mvc_blog {
 	}
 
 	// CommentController
-	public void showComments(long postId) throws SQLException {
+	public void showComments(int postId) throws SQLException {
 		String getPostSQL = 
 				"SELECT * FROM " + "POSTS"+
 				" WHERE id = ?";
@@ -48,22 +48,18 @@ public class java_spring_mvc_blog {
 				" WHERE postId = ? AND pCommentId = 0";
 
 		PreparedStatement getPost = connect.prepareStatement(getPostSQL);
-		getPost.setLong(1, postId);
+		getPost.setInt(1, postId);
 		ResultSet rs = getPost.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
+		rs.next();
 
 		PreparedStatement getTopLevelComments = connect.prepareStatement(getTopLevelCommentsSQL);
-		getTopLevelComments.setLong(1, postId);
-		rs = getTopLevelComments.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
+		getTopLevelComments.setInt(1, postId);
+		ResultSet topLevelComments = getTopLevelComments.executeQuery();
+		topLevelComments.next();
 	}
 
-	public void addComment(long postId, long commentId, String commentText,
-			long currentDate, String authName, long parentId) throws SQLException {
+	public void addComment(int postId, int commentId, String commentText,
+			int currentDate, String authName, int parentId) throws SQLException {
 		String getPostSQL = 
 				"SELECT * FROM " + "POSTS"+
 				" WHERE id = ?";
@@ -91,7 +87,7 @@ public class java_spring_mvc_blog {
 				" VALUES ( ?, ? )";
 
 		PreparedStatement getPost = connect.prepareStatement(getPostSQL);
-		getPost.setLong(1, postId);
+		getPost.setInt(1, postId);
 		ResultSet rs = getPost.executeQuery();
 		if (!rs.next()) {
 			System.out.println("post not found");
@@ -101,22 +97,22 @@ public class java_spring_mvc_blog {
 		// isAdmin
 		PreparedStatement getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
 		getCurrentUser.setString(1, authName);
-		rs = getCurrentUser.executeQuery();
-		if (!rs.next()) {
+		ResultSet currentUser = getCurrentUser.executeQuery();
+		if (!currentUser.next()) {
 			System.out.println("user not found");
 			return;
 		}
-		long currentUserId = rs.getLong("id");
+		int currentUserId = currentUser.getInt("id");
 
 		PreparedStatement getUserRoles = connect.prepareStatement(getUserRolesSQL);
-		getUserRoles.setLong(1, currentUserId);
-		rs = getUserRoles.executeQuery();
+		getUserRoles.setInt(1, currentUserId);
+		ResultSet userRoles = getUserRoles.executeQuery();
 		int isAdmin = 0;
-		while (rs.next()) {
-			long roleId = rs.getLong("roleId");
+		while (userRoles.next()) {
+			int roleId = userRoles.getInt("roleId");
 
 			PreparedStatement getRoleName = connect.prepareStatement(getRoleNameSQL);
-			getRoleName.setLong(1, roleId);
+			getRoleName.setInt(1, roleId);
 			ResultSet roleName = getRoleName.executeQuery();
 			if (!roleName.next()) {
 				System.out.println("role not found");
@@ -138,34 +134,34 @@ public class java_spring_mvc_blog {
 
 		getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
 		getCurrentUser.setString(1, authName);
-		rs = getCurrentUser.executeQuery();
-		if (!rs.next()) {
+		ResultSet currentUser2 = getCurrentUser.executeQuery();
+		if (!currentUser2.next()) {
 			System.out.println("user not found");
 			return;
 		}
-		currentUserId = rs.getLong("id");
+		int currentUser2Id = currentUser2.getInt("id");
 
 		PreparedStatement saveNewComment = connect.prepareStatement(saveNewCommentSQL);
-		saveNewComment.setLong(1, commentId);
+		saveNewComment.setInt(1, commentId);
 		saveNewComment.setString(2, commentText);
-		saveNewComment.setLong(3, currentDate);
-		saveNewComment.setLong(4, 0);
-		saveNewComment.setLong(5, currentUserId);
-		saveNewComment.setLong(6, postId);
-		saveNewComment.setLong(7, 0);
-		saveNewComment.setLong(8, parentId);
+		saveNewComment.setInt(3, currentDate);
+		saveNewComment.setInt(4, 0);
+		saveNewComment.setInt(5, currentUser2Id);
+		saveNewComment.setInt(6, postId);
+		saveNewComment.setInt(7, 0);
+		saveNewComment.setInt(8, parentId);
 		saveNewComment.executeUpdate();
 
 		if (parentId != 0) {
 			PreparedStatement insertIntoChildrenComments = connect.prepareStatement(insertIntoChildrenCommentsSQL);
-			insertIntoChildrenComments.setLong(1, parentId);
-			insertIntoChildrenComments.setLong(2, commentId);
+			insertIntoChildrenComments.setInt(1, parentId);
+			insertIntoChildrenComments.setInt(2, commentId);
 			insertIntoChildrenComments.executeUpdate();
 		}
 	}
 
-	public void deleteComment(long commentId, String authName,
-			long currentTime, long maxDeleteTime) throws SQLException {
+	public void deleteComment(int commentId, String authName,
+			int currentTime, int maxDeleteTime) throws SQLException {
 		String getCommentSQL = 
 				"SELECT * FROM " + "COMMENTS"+
 				" WHERE id = ?";
@@ -192,33 +188,33 @@ public class java_spring_mvc_blog {
 				" WHERE id = ? ";
 
 		PreparedStatement getComment = connect.prepareStatement(getCommentSQL);
-		getComment.setLong(1, commentId);
+		getComment.setInt(1, commentId);
 		ResultSet rs = getComment.executeQuery();
 		if (!rs.next()) {
 			System.out.println("comment not found");
 			return;
 		}
-		long userId = rs.getLong("userId");
+		int userId = rs.getInt("userId");
 
 		// isAdmin
 		PreparedStatement getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
 		getCurrentUser.setString(1, authName);
-		rs = getCurrentUser.executeQuery();
-		if (!rs.next()) {
+		ResultSet currentUser = getCurrentUser.executeQuery();
+		if (!currentUser.next()) {
 			System.out.println("user not found");
 			return;
 		}
-		long currentUserId = rs.getLong("id");
+		int currentUserId = currentUser.getInt("id");
 
 		PreparedStatement getUserRoles = connect.prepareStatement(getUserRolesSQL);
-		getUserRoles.setLong(1, currentUserId);
-		rs = getUserRoles.executeQuery();
+		getUserRoles.setInt(1, currentUserId);
+		ResultSet userRoles = getUserRoles.executeQuery();
 		int isAdmin = 0;
-		while (rs.next()) {
-			long roleId = rs.getLong("roleId");
+		while (userRoles.next()) {
+			int roleId = userRoles.getInt("roleId");
 
 			PreparedStatement getRoleName = connect.prepareStatement(getRoleNameSQL);
-			getRoleName.setLong(1, roleId);
+			getRoleName.setInt(1, roleId);
 			ResultSet roleName = getRoleName.executeQuery();
 			if (!roleName.next()) {
 				System.out.println("role not found");
@@ -235,21 +231,21 @@ public class java_spring_mvc_blog {
 
 		getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
 		getCurrentUser.setString(1, authName);
-		rs = getCurrentUser.executeQuery();
-		if (!rs.next()) {
+		ResultSet currentUser2 = getCurrentUser.executeQuery();
+		if (!currentUser2.next()) {
 			System.out.println("comment not found");
 			return;
 		}
-		String currentUsername = rs.getString("username");
+		String currentUsername = currentUser2.getString("username");
 
 		PreparedStatement getUser = connect.prepareStatement(getUserSQL);
-		getUser.setLong(1, userId);
-		rs = getUser.executeQuery();
-		if (!rs.next()) {
-			System.out.println("comment not found");
+		getUser.setInt(1, userId);
+		ResultSet user = getUser.executeQuery();
+		if (!user.next()) {
+			System.out.println("user not found");
 			return;
 		}
-		String username = rs.getString("username");
+		String username = user.getString("username");
 
 		if (isAdmin != 1 && username != currentUsername) {
 			System.out.println("forbidden");
@@ -263,12 +259,12 @@ public class java_spring_mvc_blog {
 
 		PreparedStatement deleteComment = connect.prepareStatement(deleteCommentSQL);
 		deleteComment.setInt(1, 1);
-		deleteComment.setLong(2, commentId);
+		deleteComment.setInt(2, commentId);
 		deleteComment.executeUpdate();
 	}
 
-	public void editComment(long commentId, String authName,
-			long currentTime, long maxEditTime, String newCommentText) throws SQLException {
+	public void editComment(int commentId, String authName,
+			int currentTime, int maxEditTime, String newCommentText) throws SQLException {
 		String getCommentSQL = 
 				"SELECT * FROM " + "COMMENTS"+
 				" WHERE id = ?";
@@ -296,33 +292,33 @@ public class java_spring_mvc_blog {
 				" WHERE id = ? ";
 
 		PreparedStatement getComment = connect.prepareStatement(getCommentSQL);
-		getComment.setLong(1, commentId);
+		getComment.setInt(1, commentId);
 		ResultSet rs = getComment.executeQuery();
 		if (!rs.next()) {
 			System.out.println("comment not found");
 			return;
 		}
-		long userId = rs.getLong("userId");
+		int userId = rs.getInt("userId");
 
 		// isAdmin
 		PreparedStatement getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
 		getCurrentUser.setString(1, authName);
-		rs = getCurrentUser.executeQuery();
-		if (!rs.next()) {
+		ResultSet currentUser = getCurrentUser.executeQuery();
+		if (!currentUser.next()) {
 			System.out.println("user not found");
 			return;
 		}
-		long currentUserId = rs.getLong("id");
+		int currentUserId = currentUser.getInt("id");
 
 		PreparedStatement getUserRoles = connect.prepareStatement(getUserRolesSQL);
-		getUserRoles.setLong(1, currentUserId);
-		rs = getUserRoles.executeQuery();
+		getUserRoles.setInt(1, currentUserId);
+		ResultSet userRoles = getUserRoles.executeQuery();
 		int isAdmin = 0;
-		while (rs.next()) {
-			long roleId = rs.getLong("roleId");
+		while (userRoles.next()) {
+			int roleId = userRoles.getInt("roleId");
 
 			PreparedStatement getRoleName = connect.prepareStatement(getRoleNameSQL);
-			getRoleName.setLong(1, roleId);
+			getRoleName.setInt(1, roleId);
 			ResultSet roleName = getRoleName.executeQuery();
 			if (!roleName.next()) {
 				System.out.println("role not found");
@@ -339,21 +335,21 @@ public class java_spring_mvc_blog {
 
 		getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
 		getCurrentUser.setString(1, authName);
-		rs = getCurrentUser.executeQuery();
-		if (!rs.next()) {
+		ResultSet currentUser2 = getCurrentUser.executeQuery();
+		if (!currentUser2.next()) {
 			System.out.println("comment not found");
 			return;
 		}
-		String currentUsername = rs.getString("username");
+		String currentUsername = currentUser2.getString("username");
 
 		PreparedStatement getUser = connect.prepareStatement(getUserSQL);
-		getUser.setLong(1, userId);
-		rs = getUser.executeQuery();
-		if (!rs.next()) {
-			System.out.println("comment user not found");
+		getUser.setInt(1, userId);
+		ResultSet user = getUser.executeQuery();
+		if (!user.next()) {
+			System.out.println("user not found");
 			return;
 		}
-		String username = rs.getString("username");
+		String username = user.getString("username");
 
 		if (isAdmin != 1 && username != currentUsername) {
 			System.out.println("forbidden");
@@ -367,27 +363,24 @@ public class java_spring_mvc_blog {
 
 		PreparedStatement updateComment = connect.prepareStatement(updateCommentSQL);
 		updateComment.setString(1, newCommentText);
-		updateComment.setLong(2, currentTime);
-		updateComment.setLong(3, commentId);
+		updateComment.setInt(2, currentTime);
+		updateComment.setInt(3, commentId);
 		updateComment.executeUpdate();
 	}
 
-	public void getCommentSource(long commentId) throws SQLException {
+	public void getCommentSource(int commentId) throws SQLException {
 		String getCommentSQL = 
 				"SELECT * FROM " + "COMMENTS"+
 				" WHERE id = ?";
 
 		PreparedStatement getComment = connect.prepareStatement(getCommentSQL);
-		getComment.setLong(1, commentId);
+		getComment.setInt(1, commentId);
 		ResultSet rs = getComment.executeQuery();
-		if (!rs.next()) {
-			System.out.println("comment not found");
-			return;
-		}
+		rs.next();
 		String commentText = rs.getString("commentText");
 	}
 
-	public void commentLike(long commentId, String authName, long ratingId) throws SQLException {
+	public void commentLike(int commentId, String authName, int ratingId) throws SQLException {
 		String getUserByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
@@ -409,19 +402,19 @@ public class java_spring_mvc_blog {
 		getUserByUsername.setString(1, authName);
 		ResultSet rs = getUserByUsername.executeQuery();
 		if (!rs.next()) {
-			System.out.println("comment not found");
+			System.out.println("user not found");
 			return;
 		}
-		long currentUserId = rs.getLong("id");
+		int currentUserId = rs.getInt("id");
 
 		PreparedStatement getComment = connect.prepareStatement(getCommentSQL);
-		getComment.setLong(1, commentId);
-		rs = getComment.executeQuery();
-		if (!rs.next()) {
+		getComment.setInt(1, commentId);
+		ResultSet comment = getComment.executeQuery();
+		if (!comment.next()) {
 			System.out.println("comment not found");
 			return;
 		}
-		long commentUserId = rs.getLong("userId");
+		int commentUserId = comment.getInt("userId");
 
 		if (currentUserId == commentUserId) {
 			System.out.println("cannot vote own comment");
@@ -429,23 +422,23 @@ public class java_spring_mvc_blog {
 		}
 
 		PreparedStatement getCommentRating = connect.prepareStatement(getCommentRatingSQL);
-		getCommentRating.setLong(1, currentUserId);
-		getCommentRating.setLong(2, commentId);
-		rs = getCommentRating.executeQuery();
-		if (rs.next()) {
+		getCommentRating.setInt(1, currentUserId);
+		getCommentRating.setInt(2, commentId);
+		ResultSet commentRating = getCommentRating.executeQuery();
+		if (commentRating.next()) {
 			System.out.println("already voted");
 			return;
 		}
 
 		PreparedStatement insertCommentRating = connect.prepareStatement(insertCommentRatingSQL);
-		insertCommentRating.setLong(1, ratingId);
-		insertCommentRating.setLong(2, currentUserId);
+		insertCommentRating.setInt(1, ratingId);
+		insertCommentRating.setInt(2, currentUserId);
 		insertCommentRating.setInt(3, 1);
-		insertCommentRating.setLong(4, commentId);
+		insertCommentRating.setInt(4, commentId);
 		insertCommentRating.executeUpdate();
 	}
 
-	public void commentDislike(long commentId, String authName, long ratingId) throws SQLException {
+	public void commentDislike(int commentId, String authName, int ratingId) throws SQLException {
 		String getUserByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
@@ -467,19 +460,19 @@ public class java_spring_mvc_blog {
 		getUserByUsername.setString(1, authName);
 		ResultSet rs = getUserByUsername.executeQuery();
 		if (!rs.next()) {
-			System.out.println("comment not found");
+			System.out.println("user not found");
 			return;
 		}
-		long currentUserId = rs.getLong("id");
+		int currentUserId = rs.getInt("id");
 
 		PreparedStatement getComment = connect.prepareStatement(getCommentSQL);
-		getComment.setLong(1, commentId);
-		rs = getComment.executeQuery();
-		if (!rs.next()) {
+		getComment.setInt(1, commentId);
+		ResultSet comment = getComment.executeQuery();
+		if (!comment.next()) {
 			System.out.println("comment not found");
 			return;
 		}
-		long commentUserId = rs.getLong("userId");
+		int commentUserId = comment.getInt("userId");
 
 		if (currentUserId == commentUserId) {
 			System.out.println("cannot vote own comment");
@@ -487,19 +480,19 @@ public class java_spring_mvc_blog {
 		}
 
 		PreparedStatement getCommentRating = connect.prepareStatement(getCommentRatingSQL);
-		getCommentRating.setLong(1, currentUserId);
-		getCommentRating.setLong(2, commentId);
-		rs = getCommentRating.executeQuery();
-		if (rs.next()) {
+		getCommentRating.setInt(1, currentUserId);
+		getCommentRating.setInt(2, commentId);
+		ResultSet commentRating = getCommentRating.executeQuery();
+		if (commentRating.next()) {
 			System.out.println("already voted");
 			return;
 		}
 
 		PreparedStatement insertCommentRating = connect.prepareStatement(insertCommentRatingSQL);
-		insertCommentRating.setLong(1, ratingId);
-		insertCommentRating.setLong(2, currentUserId);
+		insertCommentRating.setInt(1, ratingId);
+		insertCommentRating.setInt(2, currentUserId);
 		insertCommentRating.setInt(3, -1);
-		insertCommentRating.setLong(4, commentId);
+		insertCommentRating.setInt(4, commentId);
 		insertCommentRating.executeUpdate();
 	}
 
@@ -533,17 +526,17 @@ public class java_spring_mvc_blog {
 			System.out.println("user not found");
 			return;
 		}
-		long currentUserId = rs.getLong("id");
+		int currentUserId = rs.getInt("id");
 
 		PreparedStatement getUserRoles = connect.prepareStatement(getUserRolesSQL);
-		getUserRoles.setLong(1, currentUserId);
-		rs = getUserRoles.executeQuery();
+		getUserRoles.setInt(1, currentUserId);
+		ResultSet userRoles = getUserRoles.executeQuery();
 		int isAdmin = 0;
-		while (rs.next()) {
-			long roleId = rs.getLong("roleId");
+		while (userRoles.next()) {
+			int roleId = userRoles.getInt("roleId");
 
 			PreparedStatement getRoleName = connect.prepareStatement(getRoleNameSQL);
-			getRoleName.setLong(1, roleId);
+			getRoleName.setInt(1, roleId);
 			ResultSet roleName = getRoleName.executeQuery();
 			if (!roleName.next()) {
 				System.out.println("role not found");
@@ -560,26 +553,19 @@ public class java_spring_mvc_blog {
 
 		if (isAdmin == 1) {
 			PreparedStatement getAllPosts = connect.prepareStatement(getAllPostsSQL);
-			rs = getAllPosts.executeQuery();
-			if (!rs.next()) {
-				System.out.println("no posts");
-			}
+			ResultSet allPosts = getAllPosts.executeQuery();
+			allPosts.next();
 		} else {
 			PreparedStatement getPublicPosts = connect.prepareStatement(getPublicPostsSQL);
-			rs = getPublicPosts.executeQuery();
-			if (!rs.next()) {
-				System.out.println("no posts");
-			}
+			ResultSet publicPosts = getPublicPosts.executeQuery();
+			publicPosts.next();
 		}
 
 		getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
 		getCurrentUser.setString(1, authName);
-		rs = getCurrentUser.executeQuery();
-		if (!rs.next()) {
-			System.out.println("no current user");
-			return;
-		}
-		currentUserId = rs.getLong("id");
+		ResultSet currentUser = getCurrentUser.executeQuery();
+		currentUser.next();
+		currentUserId = currentUser.getInt("id");
 	}
 
 	public void getPostsList() throws SQLException {
@@ -589,9 +575,7 @@ public class java_spring_mvc_blog {
 
 		PreparedStatement getPublicPosts = connect.prepareStatement(getPublicPostsSQL);
 		ResultSet rs = getPublicPosts.executeQuery();
-		if (!rs.next()) {
-			System.out.println("no posts");
-		}
+		rs.next();
 	}
 
 	public void getTopPostsList() throws SQLException {
@@ -606,13 +590,11 @@ public class java_spring_mvc_blog {
 		PreparedStatement getPublicPosts = connect.prepareStatement(getPublicPostsSQL);
 		ResultSet rs = getPublicPosts.executeQuery();
 		while (rs.next()) {
-			long postId = rs.getLong("id");
+			int postId = rs.getInt("id");
 			PreparedStatement getPostRating = connect.prepareStatement(getPostRatingSQL);
-			getPostRating.setLong(1, postId);
+			getPostRating.setInt(1, postId);
 			ResultSet postRating = getPostRating.executeQuery();
-			if (!postRating.next()) {
-				System.out.println("no rating");
-			}
+			postRating.next();
 			int rating = postRating.getInt("rate");
 		}
 	}
@@ -646,35 +628,32 @@ public class java_spring_mvc_blog {
 				"SELECT * FROM " + "POSTS"+
 				" WHERE id = ? AND hide = 0";
 
-		ResultSet rs;
 		for (String tagName : tags) {
 			PreparedStatement getTag = connect.prepareStatement(getTagSQL);
 			getTag.setString(1, tagName);
-			rs = getTag.executeQuery();
-			if (!rs.next()) {
-				System.out.println("empty");
-			}
-			long tagId = rs.getLong("id");
+			ResultSet rs = getTag.executeQuery();
+			rs.next();
+			int tagId = rs.getInt("id");
 
 			// isAdmin
 			PreparedStatement getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
 			getCurrentUser.setString(1, authName);
-			rs = getCurrentUser.executeQuery();
-			if (!rs.next()) {
+			ResultSet currentUser = getCurrentUser.executeQuery();
+			if (!currentUser.next()) {
 				System.out.println("user not found");
 				return;
 			}
-			long currentUserId = rs.getLong("id");
+			int currentUserId = currentUser.getInt("id");
 
 			PreparedStatement getUserRoles = connect.prepareStatement(getUserRolesSQL);
-			getUserRoles.setLong(1, currentUserId);
-			rs = getUserRoles.executeQuery();
+			getUserRoles.setInt(1, currentUserId);
+			ResultSet userRoles = getUserRoles.executeQuery();
 			int isAdmin = 0;
-			while (rs.next()) {
-				long roleId = rs.getLong("roleId");
+			while (userRoles.next()) {
+				int roleId = userRoles.getInt("roleId");
 
 				PreparedStatement getRoleName = connect.prepareStatement(getRoleNameSQL);
-				getRoleName.setLong(1, roleId);
+				getRoleName.setInt(1, roleId);
 				ResultSet roleName = getRoleName.executeQuery();
 				if (!roleName.next()) {
 					System.out.println("role not found");
@@ -690,39 +669,32 @@ public class java_spring_mvc_blog {
 			//
 
 			PreparedStatement getPostByTag = connect.prepareStatement(getPostByTagSQL);
-			getPostByTag.setLong(1, tagId);
-			rs = getPostByTag.executeQuery();
-			while (rs.next()) {
-				long postId = rs.getLong("postId");
+			getPostByTag.setInt(1, tagId);
+			ResultSet postByTag = getPostByTag.executeQuery();
+			while (postByTag.next()) {
+				int postId = postByTag.getInt("postId");
 				if (isAdmin == 1) {
 					PreparedStatement getPost = connect.prepareStatement(getPostSQL);
-					getPost.setLong(1, postId);
+					getPost.setInt(1, postId);
 					ResultSet post = getPost.executeQuery();
-					if (!post.next()) {
-						System.out.println("empty");
-					}
+					post.next();
 				} else {
 					PreparedStatement getPostNotHidden = connect.prepareStatement(getPostNotHiddenSQL);
-					getPostNotHidden.setLong(1, postId);
+					getPostNotHidden.setInt(1, postId);
 					ResultSet post = getPostNotHidden.executeQuery();
-					if (!post.next()) {
-						System.out.println("empty");
-					}
+					post.next();
 				}
 			}
 		}
 
 		PreparedStatement getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
 		getCurrentUser.setString(1, authName);
-		rs = getCurrentUser.executeQuery();
-		if (!rs.next()) {
-			System.out.println("no current user");
-			return;
-		}
-		long currentUserId = rs.getLong("id");
+		ResultSet currentUser2 = getCurrentUser.executeQuery();
+		currentUser2.next();
+		int currentUserId = currentUser2.getInt("id");
 	}
 
-	public void showPost(long postId, String authName) throws SQLException {
+	public void showPost(int postId, String authName) throws SQLException {
 		String getCurrentUserSQL = 
 				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
@@ -740,32 +712,32 @@ public class java_spring_mvc_blog {
 				" WHERE id = ?";
 
 		PreparedStatement getPost = connect.prepareStatement(getPostSQL);
-		getPost.setLong(1, postId);
+		getPost.setInt(1, postId);
 		ResultSet rs = getPost.executeQuery();
 		if (!rs.next()) {
-			System.out.println("empty");
+			System.out.println("post not found");
 			return;
 		}
 
 		// isAdmin
 		PreparedStatement getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
 		getCurrentUser.setString(1, authName);
-		rs = getCurrentUser.executeQuery();
-		if (!rs.next()) {
+		ResultSet currentUser = getCurrentUser.executeQuery();
+		if (!currentUser.next()) {
 			System.out.println("user not found");
 			return;
 		}
-		long currentUserId = rs.getLong("id");
+		int currentUserId = currentUser.getInt("id");
 
 		PreparedStatement getUserRoles = connect.prepareStatement(getUserRolesSQL);
-		getUserRoles.setLong(1, currentUserId);
-		rs = getUserRoles.executeQuery();
+		getUserRoles.setInt(1, currentUserId);
+		ResultSet userRoles = getUserRoles.executeQuery();
 		int isAdmin = 0;
-		while (rs.next()) {
-			long roleId = rs.getLong("roleId");
+		while (userRoles.next()) {
+			int roleId = userRoles.getInt("roleId");
 
 			PreparedStatement getRoleName = connect.prepareStatement(getRoleNameSQL);
-			getRoleName.setLong(1, roleId);
+			getRoleName.setInt(1, roleId);
 			ResultSet roleName = getRoleName.executeQuery();
 			if (!roleName.next()) {
 				System.out.println("role not found");
@@ -787,16 +759,12 @@ public class java_spring_mvc_blog {
 
 		getCurrentUser = connect.prepareStatement(getCurrentUserSQL);
 		getCurrentUser.setString(1, authName);
-		rs = getCurrentUser.executeQuery();
-		if (!rs.next()) {
-			System.out.println("no current user");
-			return;
-		}
-		currentUserId = rs.getLong("id");
+		ResultSet currentUser2 = getCurrentUser.executeQuery();
+		currentUser2.next();
 	}
 
-	public void createPost(long postId, String title, String fullPostText, int cutInd,
-			long currentTime, String[] tags) throws SQLException {
+	public void createPost(int postId, String title, String fullPostText, int cutInd,
+			int currentTime, String[] tags) throws SQLException {
 		String insertPostSQL = 
 				"INSERT INTO " + "POSTS" +
 				" (id, title, shortTextPart, fullPostText, originalDateTime, hide) " +
@@ -816,11 +784,11 @@ public class java_spring_mvc_blog {
 		else shortPostPart = "";
 
 		PreparedStatement insertPost = connect.prepareStatement(insertPostSQL);
-		insertPost.setLong(1, postId);
+		insertPost.setInt(1, postId);
 		insertPost.setString(2, title);
 		insertPost.setString(3, shortPostPart);
 		insertPost.setString(4, fullPostText);
-		insertPost.setLong(5, currentTime);
+		insertPost.setInt(5, currentTime);
 		insertPost.setInt(6, 0);
 		insertPost.executeUpdate();
 
@@ -828,19 +796,17 @@ public class java_spring_mvc_blog {
 			PreparedStatement getTag = connect.prepareStatement(getTagSQL);
 			getTag.setString(1, tagName);
 			ResultSet rs = getTag.executeQuery();
-			if (!rs.next()) {
-				System.out.println("empty");
-			}
-			long tagId = rs.getLong("id");
+			rs.next();
+			int tagId = rs.getInt("id");
 
 			PreparedStatement insertPostTag = connect.prepareStatement(insertPostTagSQL);
-			insertPostTag.setLong(1, postId);
-			insertPostTag.setLong(2, tagId);
+			insertPostTag.setInt(1, postId);
+			insertPostTag.setInt(2, tagId);
 			insertPostTag.executeUpdate();
 		}
 	}
 
-	public void showEditPostForm(long postId) throws SQLException {
+	public void showEditPostForm(int postId) throws SQLException {
 		String getPostSQL = 
 				"SELECT * FROM " + "POSTS"+
 				" WHERE id = ?";
@@ -850,25 +816,20 @@ public class java_spring_mvc_blog {
 				" WHERE postId = ?";
 
 		PreparedStatement getPost = connect.prepareStatement(getPostSQL);
-		getPost.setLong(1, postId);
+		getPost.setInt(1, postId);
 		ResultSet rs = getPost.executeQuery();
-		if (!rs.next()) {
-			System.out.println("empty");
-			return;
-		}
-		long editPostId = rs.getLong("id");
+		rs.next();
+		int editPostId = rs.getInt("id");
 		String text = rs.getString("fullPostText");
 		String title = rs.getString("title");
 		
 		PreparedStatement getPostTags = connect.prepareStatement(getPostTagsSQL);
-		getPostTags.setLong(1, postId);
-		rs = getPostTags.executeQuery();
-		if (!rs.next()) {
-			System.out.println("empty");
-		}
+		getPostTags.setInt(1, postId);
+		ResultSet postTag = getPostTags.executeQuery();
+		postTag.next();
 	}
 
-	public void updatePost(long postId, String title, String fullPostText, int cutInd,
+	public void updatePost(int postId, String title, String fullPostText, int cutInd,
 			String[] newTags) throws SQLException {
 		String getPostSQL = 
 				"SELECT * FROM " + "POSTS"+
@@ -895,7 +856,7 @@ public class java_spring_mvc_blog {
 				" VALUES ( ?, ? )";
 
 		PreparedStatement getPost = connect.prepareStatement(getPostSQL);
-		getPost.setLong(1, postId);
+		getPost.setInt(1, postId);
 		ResultSet rs = getPost.executeQuery();
 		if (!rs.next()) {
 			System.out.println("empty");
@@ -903,7 +864,7 @@ public class java_spring_mvc_blog {
 		}
 
 		PreparedStatement deletePostTags = connect.prepareStatement(deletePostTagsSQL);
-		deletePostTags.setLong(1, postId);
+		deletePostTags.setInt(1, postId);
 		deletePostTags.executeUpdate();
 
 		String shortPostPart;
@@ -914,26 +875,24 @@ public class java_spring_mvc_blog {
 		updatePost.setString(1, title);
 		updatePost.setString(2, shortPostPart);
 		updatePost.setString(3, fullPostText);
-		updatePost.setLong(4, postId);
+		updatePost.setInt(4, postId);
 		updatePost.executeUpdate();
 
 		for (String tagName : newTags) {
 			PreparedStatement getTag = connect.prepareStatement(getTagSQL);
 			getTag.setString(1, tagName);
-			rs = getTag.executeQuery();
-			if (!rs.next()) {
-				System.out.println("empty");
-			}
-			long tagId = rs.getLong("id");
+			ResultSet tag = getTag.executeQuery();
+			tag.next();
+			int tagId = tag.getInt("id");
 
 			PreparedStatement insertPostTag = connect.prepareStatement(insertPostTagSQL);
-			insertPostTag.setLong(1, postId);
-			insertPostTag.setLong(2, tagId);
+			insertPostTag.setInt(1, postId);
+			insertPostTag.setInt(2, tagId);
 			insertPostTag.executeUpdate();
 		}
 	}
 
-	public void hidePost(long postId) throws SQLException {
+	public void hidePost(int postId) throws SQLException {
 		String getPostSQL = 
 				"SELECT * FROM " + "POSTS"+
 				" WHERE id = ?";
@@ -944,20 +903,17 @@ public class java_spring_mvc_blog {
 				" WHERE id = ? ";
 
 		PreparedStatement getPost = connect.prepareStatement(getPostSQL);
-		getPost.setLong(1, postId);
+		getPost.setInt(1, postId);
 		ResultSet rs = getPost.executeQuery();
-		if (!rs.next()) {
-			System.out.println("empty");
-			return;
-		}
+		rs.next();
 		
 		PreparedStatement setPostVisibility = connect.prepareStatement(setPostVisibilitySQL);
 		setPostVisibility.setInt(1, 1);
-		setPostVisibility.setLong(2, postId);
+		setPostVisibility.setInt(2, postId);
 		setPostVisibility.executeUpdate();
 	}
 
-	public void unhidePost(long postId) throws SQLException {
+	public void unhidePost(int postId) throws SQLException {
 		String getPostSQL = 
 				"SELECT * FROM " + "POSTS"+
 				" WHERE id = ?";
@@ -968,20 +924,17 @@ public class java_spring_mvc_blog {
 				" WHERE id = ? ";
 
 		PreparedStatement getPost = connect.prepareStatement(getPostSQL);
-		getPost.setLong(1, postId);
+		getPost.setInt(1, postId);
 		ResultSet rs = getPost.executeQuery();
-		if (!rs.next()) {
-			System.out.println("empty");
-			return;
-		}
+		rs.next();
 		
 		PreparedStatement setPostVisibility = connect.prepareStatement(setPostVisibilitySQL);
 		setPostVisibility.setInt(1, 0);
-		setPostVisibility.setLong(2, postId);
+		setPostVisibility.setInt(2, postId);
 		setPostVisibility.executeUpdate();
 	}
 
-	public void deletePost(long postId) throws SQLException {
+	public void deletePost(int postId) throws SQLException {
 		String getPostSQL = 
 				"SELECT * FROM " + "POSTS"+
 				" WHERE id = ?";
@@ -995,7 +948,7 @@ public class java_spring_mvc_blog {
 				" WHERE postId = ?";
 
 		PreparedStatement getPost = connect.prepareStatement(getPostSQL);
-		getPost.setLong(1, postId);
+		getPost.setInt(1, postId);
 		ResultSet rs = getPost.executeQuery();
 		if (!rs.next()) {
 			System.out.println("empty");
@@ -1003,15 +956,15 @@ public class java_spring_mvc_blog {
 		}
 
 		PreparedStatement deletePost = connect.prepareStatement(deletePostSQL);
-		deletePost.setLong(1, postId);
+		deletePost.setInt(1, postId);
 		deletePost.executeUpdate();
 		
 		PreparedStatement deletePostTags = connect.prepareStatement(deletePostTagsSQL);
-		deletePostTags.setLong(1, postId);
+		deletePostTags.setInt(1, postId);
 		deletePostTags.executeUpdate();
 	}
 
-	public void postLike(long postId, String authName, long ratingId) throws SQLException {
+	public void postLike(int postId, String authName, int ratingId) throws SQLException {
 		String getUserByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
@@ -1036,34 +989,34 @@ public class java_spring_mvc_blog {
 			System.out.println("comment not found");
 			return;
 		}
-		long currentUserId = rs.getLong("id");
+		int currentUserId = rs.getInt("id");
 
 		PreparedStatement getPost = connect.prepareStatement(getPostSQL);
-		getPost.setLong(1, postId);
-		rs = getPost.executeQuery();
-		if (!rs.next()) {
+		getPost.setInt(1, postId);
+		ResultSet post = getPost.executeQuery();
+		if (!post.next()) {
 			System.out.println("post not found");
 			return;
 		}
 
 		PreparedStatement getPostRating = connect.prepareStatement(getPostRatingSQL);
-		getPostRating.setLong(1, currentUserId);
-		getPostRating.setLong(2, postId);
-		rs = getPostRating.executeQuery();
-		if (rs.next()) {
+		getPostRating.setInt(1, currentUserId);
+		getPostRating.setInt(2, postId);
+		ResultSet postRating = getPostRating.executeQuery();
+		if (postRating.next()) {
 			System.out.println("already voted");
 			return;
 		}
 
 		PreparedStatement insertPostRating = connect.prepareStatement(insertPostRatingSQL);
-		insertPostRating.setLong(1, ratingId);
-		insertPostRating.setLong(2, currentUserId);
+		insertPostRating.setInt(1, ratingId);
+		insertPostRating.setInt(2, currentUserId);
 		insertPostRating.setInt(3, 1);
-		insertPostRating.setLong(4, postId);
+		insertPostRating.setInt(4, postId);
 		insertPostRating.executeUpdate();
 	}
 
-	public void postDislike(long postId, String authName, long ratingId) throws SQLException {
+	public void postDislike(int postId, String authName, int ratingId) throws SQLException {
 		String getUserByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
@@ -1088,36 +1041,36 @@ public class java_spring_mvc_blog {
 			System.out.println("comment not found");
 			return;
 		}
-		long currentUserId = rs.getLong("id");
+		int currentUserId = rs.getInt("id");
 
 		PreparedStatement getPost = connect.prepareStatement(getPostSQL);
-		getPost.setLong(1, postId);
-		rs = getPost.executeQuery();
-		if (!rs.next()) {
+		getPost.setInt(1, postId);
+		ResultSet post = getPost.executeQuery();
+		if (!post.next()) {
 			System.out.println("post not found");
 			return;
 		}
 
 		PreparedStatement getPostRating = connect.prepareStatement(getPostRatingSQL);
-		getPostRating.setLong(1, currentUserId);
-		getPostRating.setLong(2, postId);
-		rs = getPostRating.executeQuery();
-		if (rs.next()) {
+		getPostRating.setInt(1, currentUserId);
+		getPostRating.setInt(2, postId);
+		ResultSet postRating = getPostRating.executeQuery();
+		if (postRating.next()) {
 			System.out.println("already voted");
 			return;
 		}
 
 		PreparedStatement insertPostRating = connect.prepareStatement(insertPostRatingSQL);
-		insertPostRating.setLong(1, ratingId);
-		insertPostRating.setLong(2, currentUserId);
+		insertPostRating.setInt(1, ratingId);
+		insertPostRating.setInt(2, currentUserId);
 		insertPostRating.setInt(3, -1);
-		insertPostRating.setLong(4, postId);
+		insertPostRating.setInt(4, postId);
 		insertPostRating.executeUpdate();
 	}
 
 	// UsersController
-	public void registerUser(long userId, String username, String email, String password,
-		long currentTime) throws SQLException {
+	public void registerUser(int userId, String username, String email, String password,
+		int currentTime) throws SQLException {
 		String getUserByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
@@ -1158,19 +1111,19 @@ public class java_spring_mvc_blog {
 
 		PreparedStatement getUserByEmail = connect.prepareStatement(getUserByEmailSQL);
 		getUserByEmail.setString(1, email);
-		rs = getUserByEmail.executeQuery();
-		if (rs.next()) {
+		ResultSet userByEmail = getUserByEmail.executeQuery();
+		if (userByEmail.next()) {
 			System.out.println("email already exists");
 			return;
 		}
 
 		PreparedStatement insertUser = connect.prepareStatement(insertUserSQL);
-		insertUser.setLong(1, userId);
+		insertUser.setInt(1, userId);
 		insertUser.setString(2, username);
 		insertUser.setString(3, email);
 		insertUser.setString(4, password);
 		insertUser.setInt(5, 1);
-		insertUser.setLong(6, currentTime);
+		insertUser.setInt(6, currentTime);
 		insertUser.setString(7, "");
 		insertUser.setString(8, "");
 		insertUser.setString(9, "");
@@ -1179,40 +1132,37 @@ public class java_spring_mvc_blog {
 
 		PreparedStatement getRoleByName = connect.prepareStatement(getRoleByNameSQL);
 		getRoleByName.setString(1, "ROLE_USER");
-		rs = getRoleByName.executeQuery();
-		if (!rs.next()) {
+		ResultSet role = getRoleByName.executeQuery();
+		if (!role.next()) {
 			System.out.println("empty");
 			return;
 		}
-		long roleId = rs.getLong("id");
+		int roleId = role.getInt("id");
 
 		PreparedStatement insertUsersRoles = connect.prepareStatement(insertUsersRolesSQL);
-		insertUsersRoles.setLong(1, userId);
-		insertUsersRoles.setLong(2, roleId);
+		insertUsersRoles.setInt(1, userId);
+		insertUsersRoles.setInt(2, roleId);
 		insertUsersRoles.executeUpdate();
 		
 		getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
 		getUserByUsername.setString(1, username);
-		rs = getUserByUsername.executeQuery();
-		if (!rs.next()) {
+		ResultSet userByUsername = getUserByUsername.executeQuery();
+		if (!userByUsername.next()) {
 			System.out.println("empty");
 			return;
 		}
-		long registeredUserId = rs.getLong("id");
+		int registeredUserId = userByUsername.getInt("id");
 
 		PreparedStatement getUserRoles = connect.prepareStatement(getUserRolesSQL);
-		getUserRoles.setLong(1, registeredUserId);
-		rs = getUserRoles.executeQuery();
-		while (rs.next()) {
-			long roleUserId = rs.getLong("roleId");
+		getUserRoles.setInt(1, registeredUserId);
+		ResultSet userRoles = getUserRoles.executeQuery();
+		while (userRoles.next()) {
+			int roleUserId = userRoles.getInt("roleId");
 
 			PreparedStatement getRoleById = connect.prepareStatement(getRoleByIdSQL);
-			getRoleById.setLong(1, roleUserId);
-			ResultSet role = getRoleById.executeQuery();
-			if (!role.next()) {
-				System.out.println("empty");
-				return;
-			}
+			getRoleById.setInt(1, roleUserId);
+			ResultSet role2 = getRoleById.executeQuery();
+			role2.next();
 		}		
 	}
 
@@ -1224,10 +1174,7 @@ public class java_spring_mvc_blog {
 		PreparedStatement getUserByEmail = connect.prepareStatement(getUserByEmailSQL);
 		getUserByEmail.setString(1, email);
 		ResultSet rs = getUserByEmail.executeQuery();
-		if (rs.next()) {
-			System.out.println("email exists");
-			return;
-		}		
+		rs.next();
 	}
 
 	public void checkUsername(String username) throws SQLException {
@@ -1238,10 +1185,7 @@ public class java_spring_mvc_blog {
 		PreparedStatement getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
 		getUserByUsername.setString(1, username);
 		ResultSet rs = getUserByUsername.executeQuery();
-		if (rs.next()) {
-			System.out.println("username exists");
-			return;
-		}	
+		rs.next();
 	}
 
 	public void showEditSettingsPage(String authName) throws SQLException {
@@ -1252,14 +1196,11 @@ public class java_spring_mvc_blog {
 		PreparedStatement getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
 		getUserByUsername.setString(1, authName);
 		ResultSet rs = getUserByUsername.executeQuery();
-		if (!rs.next()) {
-			System.out.println("empty");
-			return;
-		}
+		rs.next();
 	}
 
 	public void changeEmail(String username, String newEmail, String currentPassword,
-			String authName, long userId) throws SQLException {
+			String authName, int userId) throws SQLException {
 		String getUserByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
@@ -1283,20 +1224,20 @@ public class java_spring_mvc_blog {
 
 		PreparedStatement getUserByEmail = connect.prepareStatement(getUserByEmailSQL);
 		getUserByEmail.setString(1, newEmail);
-		rs = getUserByEmail.executeQuery();
-		if (rs.next()) {
+		ResultSet userByEmail = getUserByEmail.executeQuery();
+		if (userByEmail.next()) {
 			System.out.println("email already exists");
 			return;
 		}
 
 		getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
 		getUserByUsername.setString(1, authName);
-		rs = getUserByUsername.executeQuery();
-		if (!rs.next()) {
+		ResultSet userByUsername = getUserByUsername.executeQuery();
+		if (!userByUsername.next()) {
 			System.out.println("empty");
 			return;
 		}
-		String registeredPassword = rs.getString("password");
+		String registeredPassword = userByUsername.getString("password");
 
 		if (!currentPassword.equals(registeredPassword)) {
 			System.out.println("wrong password");
@@ -1305,12 +1246,12 @@ public class java_spring_mvc_blog {
 
 		PreparedStatement updateEmail = connect.prepareStatement(updateEmailSQL);
 		updateEmail.setString(1, newEmail);
-		updateEmail.setLong(2, userId);
+		updateEmail.setInt(2, userId);
 		updateEmail.executeUpdate();
 	}
 
 	public void changePassword(String newPassword, String currentPassword,
-			String authName, long userId) throws SQLException {
+			String authName, int userId) throws SQLException {
 		String getUserByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
@@ -1329,7 +1270,7 @@ public class java_spring_mvc_blog {
 		getUserByUsername.setString(1, authName);
 		ResultSet rs = getUserByUsername.executeQuery();
 		if (!rs.next()) {
-			System.out.println("empty");
+			System.out.println("user not found");
 			return;
 		}
 		String registeredPassword = rs.getString("password");
@@ -1342,12 +1283,12 @@ public class java_spring_mvc_blog {
 
 		PreparedStatement updatePassword = connect.prepareStatement(updatePasswordSQL);
 		updatePassword.setString(1, newPassword);
-		updatePassword.setLong(2, userId);
+		updatePassword.setInt(2, userId);
 		updatePassword.executeUpdate();
 
 		PreparedStatement updateEmail = connect.prepareStatement(updateEmailSQL);
 		updateEmail.setString(1, registeredEmail);
-		updateEmail.setLong(2, userId);
+		updateEmail.setInt(2, userId);
 		updateEmail.executeUpdate();
 	}
 
@@ -1359,13 +1300,10 @@ public class java_spring_mvc_blog {
 		PreparedStatement getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
 		getUserByUsername.setString(1, authName);
 		ResultSet rs = getUserByUsername.executeQuery();
-		if (!rs.next()) {
-			System.out.println("empty");
-			return;
-		}
+		rs.next();
 	}
 
-	public void editProfile(int hasError, String authName, long userId,
+	public void editProfile(int hasError, String authName, int userId,
 			String aboutText, String websiteLink) throws SQLException {
 		String getUserByUsernameSQL = 
 				"SELECT * FROM " + "USERS"+
@@ -1386,31 +1324,25 @@ public class java_spring_mvc_blog {
 			PreparedStatement getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
 			getUserByUsername.setString(1, authName);
 			ResultSet rs = getUserByUsername.executeQuery();
-			if (!rs.next()) {
-				System.out.println("empty");
-				return;
-			}
+			rs.next();
 			String currentBigAvatarLink = rs.getString("bigAvatarLink");
 
 			PreparedStatement updateBigAvatarLink = connect.prepareStatement(updateBigAvatarLinkSQL);
 			updateBigAvatarLink.setString(1, currentBigAvatarLink);
-			updateBigAvatarLink.setLong(2, userId);
+			updateBigAvatarLink.setInt(2, userId);
 			updateBigAvatarLink.executeUpdate();
 			return;
 		}
 
 		PreparedStatement getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
 		getUserByUsername.setString(1, authName);
-		ResultSet rs = getUserByUsername.executeQuery();
-		if (!rs.next()) {
-			System.out.println("empty");
-			return;
-		}
+		ResultSet userByUsername = getUserByUsername.executeQuery();
+		userByUsername.next();
 
 		PreparedStatement updateUserProfile = connect.prepareStatement(updateUserProfileSQL);
 		updateUserProfile.setString(1, aboutText);
 		updateUserProfile.setString(2, websiteLink);
-		updateUserProfile.setLong(3, userId);
+		updateUserProfile.setInt(3, userId);
 		updateUserProfile.executeUpdate();
 	}
 
@@ -1430,15 +1362,15 @@ public class java_spring_mvc_blog {
 		getUserByUsername.setString(1, authName);
 		ResultSet rs = getUserByUsername.executeQuery();
 		if (!rs.next()) {
-			System.out.println("empty");
+			System.out.println("user not found");
 			return;
 		}
-		long userId = rs.getLong("id");
+		int userId = rs.getInt("id");
 		
 		PreparedStatement updateUserAvatars = connect.prepareStatement(updateUserAvatarsSQL);
 		updateUserAvatars.setString(1, newBigAvatarLink);
 		updateUserAvatars.setString(2, newSmallAvatarLink);
-		updateUserAvatars.setLong(3, userId);
+		updateUserAvatars.setInt(3, userId);
 		updateUserAvatars.executeUpdate();
 	}
 	
@@ -1457,15 +1389,15 @@ public class java_spring_mvc_blog {
 		getUserByUsername.setString(1, authName);
 		ResultSet rs = getUserByUsername.executeQuery();
 		if (!rs.next()) {
-			System.out.println("empty");
+			System.out.println("user not found");
 			return;
 		}
-		long userId = rs.getLong("id");
+		int userId = rs.getInt("id");
 		
 		PreparedStatement updateUserAvatars = connect.prepareStatement(updateUserAvatarsSQL);
 		updateUserAvatars.setString(1, "");
 		updateUserAvatars.setString(2, "");
-		updateUserAvatars.setLong(3, userId);
+		updateUserAvatars.setInt(3, userId);
 		updateUserAvatars.executeUpdate();
 	}
 
@@ -1477,10 +1409,6 @@ public class java_spring_mvc_blog {
 		PreparedStatement getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
 		getUserByUsername.setString(1, username);
 		ResultSet rs = getUserByUsername.executeQuery();
-		if (!rs.next()) {
-			System.out.println("empty");
-			return;
-		}
-		long userId = rs.getLong("id");
+		rs.next();
 	}
 }

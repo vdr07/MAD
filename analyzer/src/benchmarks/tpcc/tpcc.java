@@ -127,12 +127,8 @@ public class tpcc {
 		delivGetOrderId.setInt(1, d_id);
 		delivGetOrderId.setInt(2, w_id);
 		ResultSet rs = delivGetOrderId.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
+		rs.next();
 		int no_o_id = rs.getInt("NO_O_ID");
-		rs.close();
-		rs = null;
 
 		delivDeleteNewOrder.setInt(1, no_o_id);
 		delivDeleteNewOrder.setInt(2, d_id);
@@ -142,13 +138,9 @@ public class tpcc {
 		delivGetCustId.setInt(1, no_o_id);
 		delivGetCustId.setInt(2, d_id);
 		delivGetCustId.setInt(3, w_id);
-		rs = delivGetCustId.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
-		int c_id = rs.getInt("O_C_ID");
-		rs.close();
-		rs = null;
+		ResultSet customer = delivGetCustId.executeQuery();
+		customer.next();
+		int c_id = customer.getInt("O_C_ID");
 		
 		int o_carrier_id = r.nextInt(10) + 1; // 1-10
 		delivUpdateCarrierId.setInt(1, o_carrier_id);
@@ -166,25 +158,20 @@ public class tpcc {
 		delivSumOrderAmount.setInt(1, no_o_id);
 		delivSumOrderAmount.setInt(2, d_id);
 		delivSumOrderAmount.setInt(3, w_id);
-		rs = delivSumOrderAmount.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
-		double ol_total = rs.getDouble("OL_AMOUNT");
-		while(rs.next()) {
-			ol_total += rs.getDouble("OL_AMOUNT");
+		ResultSet orderAmount = delivSumOrderAmount.executeQuery();
+		orderAmount.next();
+		double ol_total = orderAmount.getDouble("OL_AMOUNT");
+		while(orderAmount.next()) {
+			ol_total += orderAmount.getDouble("OL_AMOUNT");
 		}	
 		
 		delivGetCustBalDelivCnt.setInt(1, w_id);
 		delivGetCustBalDelivCnt.setInt(2, d_id);
 		delivGetCustBalDelivCnt.setInt(3, c_id);
-		rs = delivGetCustBalDelivCnt.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty");
-		}
-		double c_balance = rs.getDouble("C_BALANCE");
-		int c_delivery_cnt = rs.getInt("C_DELIVERY_CNT");
-		rs.close();
+		ResultSet custBalDelivCnt = delivGetCustBalDelivCnt.executeQuery();
+		custBalDelivCnt.next();
+		double c_balance = custBalDelivCnt.getDouble("C_BALANCE");
+		int c_delivery_cnt = custBalDelivCnt.getInt("C_DELIVERY_CNT");
 
 		delivUpdateCustBalDelivCnt.setDouble(1, c_balance + ol_total);
 		delivUpdateCustBalDelivCnt.setInt(2, c_delivery_cnt + 1);
@@ -254,8 +241,8 @@ public class tpcc {
 
 		String stmtInsertOrderLineSQL = 
 				"INSERT INTO " + "ORDER_LINE" + 
-				" (OL_O_ID, OL_D_ID, OL_W_ID, OL_NUMBER, OL_I_ID, OL_SUPPLY_W_ID, OL_QUANTITY, OL_AMOUNT, OL_DIST_INFO) " +
-				" VALUES (?,?,?,?,?,?,?,?,?)";
+				" (OL_W_ID, OL_D_ID, OL_O_ID, OL_NUMBER, OL_I_ID, OL_DELIVERY_DM, OL_AMOUNT, OL_SUPPLY_W_ID, OL_QUANTITY, OL_DIST_INFO) " +
+				" VALUES (?,?,?,?,?,?,?,?,?,?)";
 
 		PreparedStatement stmtGetCust = connect.prepareStatement(stmtGetCustSQL);
 		PreparedStatement stmtGetWhse = connect.prepareStatement(stmtGetWhseSQL);
@@ -295,7 +282,7 @@ public class tpcc {
 		int d_next_o_id, o_id = -1, s_quantity;
 		String c_last = null, c_credit = null, i_name, i_data, s_data;
 		String s_dist_01, s_dist_02, s_dist_03, s_dist_04, s_dist_05;
-		String s_dist_06, s_dist_07, s_dist_08, s_dist_09, s_dist_10, ol_dist_info = null;
+		String s_dist_06, s_dist_07, s_dist_08, s_dist_09, s_dist_10, ol_dist_info;
 		double[] itemPrices = new double[o_ol_cnt];
 		double[] orderLineAmounts = new double[o_ol_cnt];
 		String[] itemNames = new String[o_ol_cnt];
@@ -311,32 +298,22 @@ public class tpcc {
 		stmtGetCust.setInt(2, d_id);
 		stmtGetCust.setInt(3, c_id);
 		ResultSet rs = stmtGetCust.executeQuery();
-		if (!rs.next())
-			System.out.println("Empty!");
+		rs.next();
 		c_discount = rs.getDouble("C_DISCOUNT");
 		c_last = rs.getString("C_LAST");
 		c_credit = rs.getString("C_CREDIT");
-		rs.close();
-		rs = null;
 
 		stmtGetWhse.setInt(1, w_id);
-		rs = stmtGetWhse.executeQuery();
-		if (!rs.next())
-			System.out.println("Empty!");
-		w_tax = rs.getDouble("W_TAX");
-		rs.close();
-		rs = null;
+		ResultSet whse = stmtGetWhse.executeQuery();
+		whse.next();
+		w_tax = whse.getDouble("W_TAX");
 
 		stmtGetDist.setInt(1, w_id);
 		stmtGetDist.setInt(2, d_id);
-		rs = stmtGetDist.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Empty!");
-		}
-		d_next_o_id = rs.getInt("D_NEXT_O_ID");
-		d_tax = rs.getDouble("D_TAX");
-		rs.close();
-		rs = null;
+		ResultSet dist = stmtGetDist.executeQuery();
+		dist.next();
+		d_next_o_id = dist.getInt("D_NEXT_O_ID");
+		d_tax = dist.getDouble("D_TAX");
 
 		stmtUpdateDist.setInt(1, d_next_o_id + 1);
 		stmtUpdateDist.setInt(2, w_id);
@@ -364,20 +341,17 @@ public class tpcc {
 			ol_i_id = itemIDs[ol_number - 1];
 			ol_quantity = orderQuantities[ol_number - 1];
 			stmtGetItem.setInt(1, ol_i_id);
-			rs = stmtGetItem.executeQuery();
-			if (!rs.next()) {
+			ResultSet item = stmtGetItem.executeQuery();
+			if (!item.next()) {
 				// This is (hopefully) an expected error: this is an
 				// expected new order rollback
 				assert ol_number == o_ol_cnt;
 				assert ol_i_id == -12345;
-				rs.close();
 			}
 
-			i_price = rs.getDouble("I_PRICE");
-			i_name = rs.getString("I_NAME");
-			i_data = rs.getString("I_DATA");
-			rs.close();
-			rs = null;
+			i_price = item.getDouble("I_PRICE");
+			i_name = item.getString("I_NAME");
+			i_data = item.getString("I_DATA");
 
 			itemPrices[ol_number - 1] = i_price;
 			itemNames[ol_number - 1] = i_name;
@@ -385,26 +359,23 @@ public class tpcc {
 
 			stmtGetStock.setInt(1, ol_i_id);
 			stmtGetStock.setInt(2, ol_supply_w_id);
-			rs = stmtGetStock.executeQuery();
-			if (!rs.next())
-				System.out.println("Empty!");
-			s_quantity = rs.getInt("S_QUANTITY");
-			s_ytd = rs.getDouble("S_YTD");
-			s_order_cnt = rs.getInt("S_ORDER_CNT");
-			s_remote_cnt = rs.getInt("S_REMOTE_CNT");
-			s_data = rs.getString("S_DATA");
-			s_dist_01 = rs.getString("S_DIST_01");
-			s_dist_02 = rs.getString("S_DIST_02");
-			s_dist_03 = rs.getString("S_DIST_03");
-			s_dist_04 = rs.getString("S_DIST_04");
-			s_dist_05 = rs.getString("S_DIST_05");
-			s_dist_06 = rs.getString("S_DIST_06");
-			s_dist_07 = rs.getString("S_DIST_07");
-			s_dist_08 = rs.getString("S_DIST_08");
-			s_dist_09 = rs.getString("S_DIST_09");
-			s_dist_10 = rs.getString("S_DIST_10");
-			rs.close();
-			rs = null;
+			ResultSet stock = stmtGetStock.executeQuery();
+			stock.next();
+			s_quantity = stock.getInt("S_QUANTITY");
+			s_ytd = stock.getDouble("S_YTD");
+			s_order_cnt = stock.getInt("S_ORDER_CNT");
+			s_remote_cnt = stock.getInt("S_REMOTE_CNT");
+			s_data = stock.getString("S_DATA");
+			s_dist_01 = stock.getString("S_DIST_01");
+			s_dist_02 = stock.getString("S_DIST_02");
+			s_dist_03 = stock.getString("S_DIST_03");
+			s_dist_04 = stock.getString("S_DIST_04");
+			s_dist_05 = stock.getString("S_DIST_05");
+			s_dist_06 = stock.getString("S_DIST_06");
+			s_dist_07 = stock.getString("S_DIST_07");
+			s_dist_08 = stock.getString("S_DIST_08");
+			s_dist_09 = stock.getString("S_DIST_09");
+			s_dist_10 = stock.getString("S_DIST_10");
 
 			stockQuantities[ol_number - 1] = s_quantity;
 
@@ -426,7 +397,7 @@ public class tpcc {
 			stmtUpdateStock.setInt(4, s_remote_cnt + s_remote_cnt_increment);
 			stmtUpdateStock.setInt(5, ol_i_id);
 			stmtUpdateStock.setInt(6, ol_supply_w_id);
-			stmtUpdateStock.addBatch();
+			stmtUpdateStock.executeUpdate();
 
 			ol_amount = ol_quantity * i_price;
 			orderLineAmounts[ol_number - 1] = ol_amount;
@@ -459,30 +430,25 @@ public class tpcc {
 				ol_dist_info = s_dist_09;
 			else if(d_id == 10)
 				ol_dist_info = s_dist_10;
+			else
+				ol_dist_info = "";
 			
 
-			stmtInsertOrderLine.setInt(1, o_id);
+			stmtInsertOrderLine.setInt(1, w_id);
 			stmtInsertOrderLine.setInt(2, d_id);
-			stmtInsertOrderLine.setInt(3, w_id);
+			stmtInsertOrderLine.setInt(3, o_id);
 			stmtInsertOrderLine.setInt(4, ol_number);
 			stmtInsertOrderLine.setInt(5, ol_i_id);
-			stmtInsertOrderLine.setInt(6, ol_supply_w_id);
-			stmtInsertOrderLine.setInt(7, ol_quantity);
-			stmtInsertOrderLine.setDouble(8, ol_amount);
-			stmtInsertOrderLine.setString(9, ol_dist_info);
-			stmtInsertOrderLine.addBatch();
+			stmtInsertOrderLine.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
+			stmtInsertOrderLine.setDouble(7, ol_amount);
+			stmtInsertOrderLine.setInt(8, ol_supply_w_id);
+			stmtInsertOrderLine.setInt(9, ol_quantity);
+			stmtInsertOrderLine.setString(10, ol_dist_info);
+			stmtInsertOrderLine.executeUpdate();
 
 		} // end-for
 
-		stmtInsertOrderLine.executeBatch();
-		stmtUpdateStock.executeBatch();
-
 		total_amount *= (1 + w_tax + d_tax) * (1 - c_discount);
-
-		if (stmtInsertOrderLine != null)
-			stmtInsertOrderLine.clearBatch();
-		if (stmtUpdateStock != null)
-			stmtUpdateStock.clearBatch();
 	}
 
 	public void orderStatus(int w_id, int terminalDistrictLowerID,
@@ -577,7 +543,6 @@ public class tpcc {
 				c.c_last = c_last;
 				customers.add(c);
 			}
-			rs.close();
 
 			if (customers.size() == 0) {
 				System.out.println("No customers!");
@@ -596,9 +561,7 @@ public class tpcc {
 			payGetCust.setInt(2, d_id);
 			payGetCust.setInt(3, c_id);
 			ResultSet rs = payGetCust.executeQuery();
-			if (!rs.next()) {
-				System.out.println("Empty!");
-			}
+			rs.next();
 
 			c = new Customer();
 			c.c_first = rs.getString("c_first");
@@ -619,48 +582,42 @@ public class tpcc {
 
 			c.c_id = c_id;
 			c.c_last = rs.getString("C_LAST");
-			rs.close();
         }
 
         ordStatGetNewestOrd.setInt(1, w_id);
         ordStatGetNewestOrd.setInt(2, d_id);
         ordStatGetNewestOrd.setInt(3, c_id);
-        ResultSet rs = ordStatGetNewestOrd.executeQuery();
-        if (!rs.next()) {
-			System.out.println("Empty!");
-        }
-        o_id = rs.getInt("O_ID");
-        o_carrier_id = rs.getInt("O_CARRIER_ID");
-        o_entry_d = rs.getTimestamp("O_ENTRY_D");
-        rs.close();
+        ResultSet newestOrder = ordStatGetNewestOrd.executeQuery();
+        newestOrder.next();
+        o_id = newestOrder.getInt("O_ID");
+        o_carrier_id = newestOrder.getInt("O_CARRIER_ID");
+        o_entry_d = newestOrder.getTimestamp("O_ENTRY_D");
 
         // retrieve the order lines for the most recent order
         ordStatGetOrderLines.setInt(1, o_id);
         ordStatGetOrderLines.setInt(2, d_id);
         ordStatGetOrderLines.setInt(3, w_id);
-        rs = ordStatGetOrderLines.executeQuery();
-        while (rs.next()) {
+        ResultSet orderLinesRS = ordStatGetOrderLines.executeQuery();
+        while (orderLinesRS.next()) {
             StringBuilder sb = new StringBuilder();
             sb.append("[");
-            sb.append(rs.getLong("OL_SUPPLY_W_ID"));
+            sb.append(orderLinesRS.getInt("OL_SUPPLY_W_ID"));
             sb.append(" - ");
-            sb.append(rs.getLong("OL_I_ID"));
+            sb.append(orderLinesRS.getInt("OL_I_ID"));
             sb.append(" - ");
-            sb.append(rs.getLong("OL_QUANTITY"));
+            sb.append(orderLinesRS.getInt("OL_QUANTITY"));
             sb.append(" - ");
-			String dS = "" + rs.getDouble("OL_AMOUNT");
+			String dS = "" + orderLinesRS.getDouble("OL_AMOUNT");
 			dS = dS.length() > 6 ? dS.substring(0, 6) : dS;
             sb.append(dS);
             sb.append(" - ");
-            if (rs.getTimestamp("OL_DELIVERY_D") != null)
-                sb.append(rs.getTimestamp("OL_DELIVERY_D"));
+            if (orderLinesRS.getTimestamp("OL_DELIVERY_D") != null)
+                sb.append(orderLinesRS.getTimestamp("OL_DELIVERY_D"));
             else
                 sb.append("99-99-9999");
             sb.append("]");
             orderLines.add(sb.toString());
         }
-        rs.close();
-        rs = null;
 	}
 
 	public void payment(int w_id, int numWarehouses,
@@ -790,18 +747,15 @@ public class tpcc {
         String d_street_1, d_street_2, d_city, d_state, d_zip, d_name;
 
 		payGetWhse.setInt(1, w_id);
-		ResultSet rs = payGetWhse.executeQuery();
-		if (!rs.next())
-            System.out.println("Empty!");
-		current_w_ytd = rs.getDouble("W_YTD");
-        w_street_1 = rs.getString("W_STREET_1");
-        w_street_2 = rs.getString("W_STREET_2");
-        w_city = rs.getString("W_CITY");
-        w_state = rs.getString("W_STATE");
-        w_zip = rs.getString("W_ZIP");
-        w_name = rs.getString("W_NAME");
-        rs.close();
-        rs = null;
+		ResultSet whse = payGetWhse.executeQuery();
+		whse.next();
+		current_w_ytd = whse.getDouble("W_YTD");
+        w_street_1 = whse.getString("W_STREET_1");
+        w_street_2 = whse.getString("W_STREET_2");
+        w_city = whse.getString("W_CITY");
+        w_state = whse.getString("W_STATE");
+        w_zip = whse.getString("W_ZIP");
+        w_name = whse.getString("W_NAME");
 
         payUpdateWhse.setDouble(1, current_w_ytd + paymentAmount);
         payUpdateWhse.setInt(2, w_id);
@@ -811,18 +765,15 @@ public class tpcc {
 		
 		payGetDist.setInt(1, w_id);
         payGetDist.setInt(2, districtID);
-        rs = payGetDist.executeQuery();
-        if (!rs.next())
-            System.out.println("Not found!");
-		current_d_ytd = rs.getDouble("D_YTD");
-		d_street_1 = rs.getString("D_STREET_1");
-        d_street_2 = rs.getString("D_STREET_2");
-        d_city = rs.getString("D_CITY");
-        d_state = rs.getString("D_STATE");
-        d_zip = rs.getString("D_ZIP");
-        d_name = rs.getString("D_NAME");
-        rs.close();
-        rs = null;
+        ResultSet dist = payGetDist.executeQuery();
+        dist.next();
+		current_d_ytd = dist.getDouble("D_YTD");
+		d_street_1 = dist.getString("D_STREET_1");
+        d_street_2 = dist.getString("D_STREET_2");
+        d_city = dist.getString("D_CITY");
+        d_state = dist.getString("D_STATE");
+        d_zip = dist.getString("D_ZIP");
+        d_name = dist.getString("D_NAME");
 
         payUpdateDist.setDouble(1, current_d_ytd + paymentAmount);
         payUpdateDist.setInt(2, w_id);
@@ -837,31 +788,30 @@ public class tpcc {
 			customerByName.setInt(1, customerWarehouseID);
 			customerByName.setInt(2, customerDistrictID);
 			customerByName.setString(3, customerLastName);
-			rs = customerByName.executeQuery();
+			ResultSet customer = customerByName.executeQuery();
 
-			while (rs.next()) {
+			while (customer.next()) {
 				c = new Customer();
-				c.c_first = rs.getString("c_first");
-				c.c_middle = rs.getString("c_middle");
-				c.c_street_1 = rs.getString("c_street_1");
-				c.c_street_2 = rs.getString("c_street_2");
-				c.c_city = rs.getString("c_city");
-				c.c_state = rs.getString("c_state");
-				c.c_zip = rs.getString("c_zip");
-				c.c_phone = rs.getString("c_phone");
-				c.c_credit = rs.getString("c_credit");
-				c.c_credit_lim = rs.getDouble("c_credit_lim");
-				c.c_discount = rs.getDouble("c_discount");
-				c.c_balance = rs.getDouble("c_balance");
-				c.c_ytd_payment = rs.getDouble("c_ytd_payment");
-				c.c_payment_cnt = rs.getInt("c_payment_cnt");
-				c.c_since = rs.getTimestamp("c_since");
+				c.c_first = customer.getString("c_first");
+				c.c_middle = customer.getString("c_middle");
+				c.c_street_1 = customer.getString("c_street_1");
+				c.c_street_2 = customer.getString("c_street_2");
+				c.c_city = customer.getString("c_city");
+				c.c_state = customer.getString("c_state");
+				c.c_zip = customer.getString("c_zip");
+				c.c_phone = customer.getString("c_phone");
+				c.c_credit = customer.getString("c_credit");
+				c.c_credit_lim = customer.getDouble("c_credit_lim");
+				c.c_discount = customer.getDouble("c_discount");
+				c.c_balance = customer.getDouble("c_balance");
+				c.c_ytd_payment = customer.getDouble("c_ytd_payment");
+				c.c_payment_cnt = customer.getInt("c_payment_cnt");
+				c.c_since = customer.getTimestamp("c_since");
 
-				c.c_id = rs.getInt("C_ID");
+				c.c_id = customer.getInt("C_ID");
 				c.c_last = customerLastName;
 				customers.add(c);
 			}
-			rs.close();
 
 			if (customers.size() == 0)
 				System.out.println("No customers!");
@@ -878,30 +828,28 @@ public class tpcc {
 			payGetCust.setInt(1, customerWarehouseID);
 			payGetCust.setInt(2, customerDistrictID);
 			payGetCust.setInt(3, customerID);
-			rs = payGetCust.executeQuery();
-			if (!rs.next())
-				System.out.println("Not found!");
+			ResultSet payCustomer = payGetCust.executeQuery();
+			payCustomer.next();
 
 			c = new Customer();
-			c.c_first = rs.getString("c_first");
-			c.c_middle = rs.getString("c_middle");
-			c.c_street_1 = rs.getString("c_street_1");
-			c.c_street_2 = rs.getString("c_street_2");
-			c.c_city = rs.getString("c_city");
-			c.c_state = rs.getString("c_state");
-			c.c_zip = rs.getString("c_zip");
-			c.c_phone = rs.getString("c_phone");
-			c.c_credit = rs.getString("c_credit");
-			c.c_credit_lim = rs.getDouble("c_credit_lim");
-			c.c_discount = rs.getDouble("c_discount");
-			c.c_balance = rs.getDouble("c_balance");
-			c.c_ytd_payment = rs.getDouble("c_ytd_payment");
-			c.c_payment_cnt = rs.getInt("c_payment_cnt");
-			c.c_since = rs.getTimestamp("c_since");
+			c.c_first = payCustomer.getString("c_first");
+			c.c_middle = payCustomer.getString("c_middle");
+			c.c_street_1 = payCustomer.getString("c_street_1");
+			c.c_street_2 = payCustomer.getString("c_street_2");
+			c.c_city = payCustomer.getString("c_city");
+			c.c_state = payCustomer.getString("c_state");
+			c.c_zip = payCustomer.getString("c_zip");
+			c.c_phone = payCustomer.getString("c_phone");
+			c.c_credit = payCustomer.getString("c_credit");
+			c.c_credit_lim = payCustomer.getDouble("c_credit_lim");
+			c.c_discount = payCustomer.getDouble("c_discount");
+			c.c_balance = payCustomer.getDouble("c_balance");
+			c.c_ytd_payment = payCustomer.getDouble("c_ytd_payment");
+			c.c_payment_cnt = payCustomer.getInt("c_payment_cnt");
+			c.c_since = payCustomer.getTimestamp("c_since");
 
 			c.c_id = customerID;
-			c.c_last = rs.getString("C_LAST");
-			rs.close();
+			c.c_last = payCustomer.getString("C_LAST");
         }
 
         c.c_balance -= paymentAmount;
@@ -912,12 +860,9 @@ public class tpcc {
             payGetCustCdata.setInt(1, customerWarehouseID);
             payGetCustCdata.setInt(2, customerDistrictID);
             payGetCustCdata.setInt(3, c.c_id);
-            rs = payGetCustCdata.executeQuery();
-            if (!rs.next())
-                System.out.println("Not found!");
-            c_data = rs.getString("C_DATA");
-            rs.close();
-            rs = null;
+            ResultSet customerCdata = payGetCustCdata.executeQuery();
+            customerCdata.next();
+            c_data = customerCdata.getString("C_DATA");
 
             c_data = c.c_id + " " + customerDistrictID + " " + customerWarehouseID + " " + districtID + " " + w_id + " " + paymentAmount + " | " + c_data;
             if (c_data.length() > 500)
@@ -996,37 +941,30 @@ public class tpcc {
 		stockGetDistOrderId.setInt(1, w_id);
 		stockGetDistOrderId.setInt(2, d_id);
 		ResultSet rs = stockGetDistOrderId.executeQuery();
-		if (!rs.next()) {
-			System.out.println("Not found!");
-		}
+		rs.next();
 		o_id = rs.getInt("D_NEXT_O_ID");
-		rs.close();
 
 		stockGetOLId.setInt(1, w_id);
 		stockGetOLId.setInt(2, d_id);
 		stockGetOLId.setInt(3, o_id);
 		stockGetOLId.setInt(4, o_id - 20);
-		rs = stockGetOLId.executeQuery();
+		ResultSet orderLine = stockGetOLId.executeQuery();
 		
 		int current_ol_i_id;
 		ArrayList<Integer> seen_s_i_ids = new ArrayList<Integer>();
 		ResultSet rs1;
-		while(rs.next()) {
-			current_ol_i_id = rs.getInt("OL_I_ID");
+		while(orderLine.next()) {
+			current_ol_i_id = orderLine.getInt("OL_I_ID");
 			stockGetCountStock.setInt(1, w_id);
 			stockGetCountStock.setInt(2, current_ol_i_id);
 			stockGetCountStock.setInt(3, threshold);
 			rs1 = stockGetCountStock.executeQuery();
-			if (!rs1.next()) {
-				System.out.println("Failed to get stock level!");
-			}
+			rs1.next();
 			int current_s_i_id = rs1.getInt("S_I_ID");
 			if(!seen_s_i_ids.contains(current_s_i_id)) {
 				seen_s_i_ids.add(current_s_i_id);
 				stock_count += 1;
 			}
-			rs1.close();
 		}
-		rs.close();		 
 	}
 }

@@ -220,6 +220,7 @@ public class Z3Driver {
 		addAssertion("irreflx_ar", staticAssrtions.mk_irreflx_ar());
 		addAssertion("otime_props", staticAssrtions.mk_otime_props());
 		addAssertion("opart_props", staticAssrtions.mk_opart_props());
+		addAssertion("pars_then_ots", staticAssrtions.mk_pars_then_ots());
 
 		/* ________ MY ASSERTIONS _______________ */
 		//addAssertion("causal_vis", staticAssrtions.mk_causal_vis());
@@ -688,6 +689,7 @@ public class Z3Driver {
 					excludeAnomalyFromStructure(strc, iter530++);
 
 				HeaderZ3("EDGES RESTRICTIONS");
+				// Iterate only through the origTxns in the combination
 				for (String origTxnName : txnsNamesComb) {
 					Map<Integer, Statement> map = app.getStmtsOrigTxnMap(origTxnName);
 					for (int i = 2; i < map.size()+1; i++)
@@ -707,30 +709,34 @@ public class Z3Driver {
 							
 							if(!q.getTable().equals(q2.getTable()))
 								continue;
-							for (int k = 1; k < map.size()+1; k++) {
-								Statement stmt3 = map.get(k);
-								InvokeStmt is3 = (InvokeStmt) stmt3;
-								String s3Name = is3.getType().toString();
-								Query q3 = is3.getQuery();
-								
-								if((q2.getKind() == Kind.SELECT && q3.getKind() == Kind.SELECT) || (!q2.getTable().equals(q3.getTable())))
-									continue;
-								for (int l = 1; l < map.size()+1; l++) {
-									Statement stmt4 = map.get(l);
-									InvokeStmt is4 = (InvokeStmt) stmt4;
-									String s4Name = is4.getType().toString();
-									Query q4 = is4.getQuery();
-									if((q.getKind() == Kind.SELECT && q4.getKind() == Kind.SELECT) || (!q.getTable().equals(q4.getTable())))
+							// Iterate only through the origTxns in the combination
+							for (String origTxnName2 : txnsNamesComb) {
+								Map<Integer, Statement> map2 = app.getStmtsOrigTxnMap(origTxnName2);
+								for (int k = 1; k < map2.size()+1; k++) {
+									Statement stmt3 = map2.get(k);
+									InvokeStmt is3 = (InvokeStmt) stmt3;
+									String s3Name = is3.getType().toString();
+									Query q3 = is3.getQuery();
+									
+									if((q2.getKind() == Kind.SELECT && q3.getKind() == Kind.SELECT) || (!q2.getTable().equals(q3.getTable())))
 										continue;
-									// Assuming that q2 and q3 acess the same table
-									// Assuming that q and q4 acess the same table
-									// q and q3 need to acess the same table, otherwise the conflict rows will be incompatible
-									if(!q.getTable().equals(q3.getTable()))
-										continue;
-									addAssertion("incoming_edges_restrictions_" + sName + "_" + s2Name + "_" + s3Name + "_" + s4Name,
-										dynamicAssertions.edges_restrictions(sName, s2Name, s3Name, s4Name, 0));
-									addAssertion("outgoing_edges_restrictions_" + sName + "_" + s2Name + "_" + s3Name + "_" + s4Name,
-										dynamicAssertions.edges_restrictions(s2Name, sName, s4Name, s3Name, 1));
+									for (int l = 1; l < map2.size()+1; l++) {
+										Statement stmt4 = map2.get(l);
+										InvokeStmt is4 = (InvokeStmt) stmt4;
+										String s4Name = is4.getType().toString();
+										Query q4 = is4.getQuery();
+										if((q.getKind() == Kind.SELECT && q4.getKind() == Kind.SELECT) || (!q.getTable().equals(q4.getTable())))
+											continue;
+										// Assuming that q2 and q3 acess the same table
+										// Assuming that q and q4 acess the same table
+										// q and q3 need to acess the same table, otherwise the conflict rows will be incompatible
+										if(!q.getTable().equals(q3.getTable()))
+											continue;
+										addAssertion("incoming_edges_restrictions_" + sName + "_" + s2Name + "_" + s3Name + "_" + s4Name,
+											dynamicAssertions.edges_restrictions(sName, s2Name, s3Name, s4Name, 0));
+										addAssertion("outgoing_edges_restrictions_" + sName + "_" + s2Name + "_" + s3Name + "_" + s4Name,
+											dynamicAssertions.edges_restrictions(s2Name, sName, s4Name, s3Name, 1));
+									}
 								}
 							}
 						}
