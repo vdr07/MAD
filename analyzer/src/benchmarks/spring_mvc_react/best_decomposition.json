@@ -1,0 +1,12 @@
+{
+    "M1": [
+        "answers",
+        "questions",
+        "question_tag",
+        "users",
+        "votes"
+    ],
+    "M2": [
+        "tags"
+    ]
+}

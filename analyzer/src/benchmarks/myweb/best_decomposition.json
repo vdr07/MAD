@@ -1,0 +1,14 @@
+{
+    "M1": [
+        "sys_operations",
+        "sys_resources"
+    ],
+    "M2": [
+        "sys_permissions",
+        "sys_permission_operation",
+        "sys_roles",
+        "sys_role_permission",
+        "sys_users",
+        "sys_user_role"
+    ]
+}
