@@ -1331,19 +1331,18 @@ public class java_spring_mvc_blog {
 			updateBigAvatarLink.setString(1, currentBigAvatarLink);
 			updateBigAvatarLink.setInt(2, userId);
 			updateBigAvatarLink.executeUpdate();
-			return;
+		} else {
+			PreparedStatement getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
+			getUserByUsername.setString(1, authName);
+			ResultSet userByUsername = getUserByUsername.executeQuery();
+			userByUsername.next();
+
+			PreparedStatement updateUserProfile = connect.prepareStatement(updateUserProfileSQL);
+			updateUserProfile.setString(1, aboutText);
+			updateUserProfile.setString(2, websiteLink);
+			updateUserProfile.setInt(3, userId);
+			updateUserProfile.executeUpdate();
 		}
-
-		PreparedStatement getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
-		getUserByUsername.setString(1, authName);
-		ResultSet userByUsername = getUserByUsername.executeQuery();
-		userByUsername.next();
-
-		PreparedStatement updateUserProfile = connect.prepareStatement(updateUserProfileSQL);
-		updateUserProfile.setString(1, aboutText);
-		updateUserProfile.setString(2, websiteLink);
-		updateUserProfile.setInt(3, userId);
-		updateUserProfile.executeUpdate();
 	}
 
 	public void uploadAvatar(String authName, String newBigAvatarLink,
