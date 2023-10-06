@@ -732,8 +732,8 @@ public class Z3Driver {
 										// q and q3 need to acess the same table, otherwise the conflict rows will be incompatible
 										if(!q.getTable().equals(q3.getTable()))
 											continue;
-										addAssertion("outgoing_edges_restrictions_" + sName + "_" + s2Name + "_" + s3Name + "_" + s4Name,
-											dynamicAssertions.edges_restrictions(s2Name, sName, s4Name, s3Name));
+										//addAssertion("outgoing_edges_restrictions_" + sName + "_" + s2Name + "_" + s3Name + "_" + s4Name,
+										//	dynamicAssertions.edges_restrictions(s2Name, sName, s4Name, s3Name));
 									}
 								}
 							}
