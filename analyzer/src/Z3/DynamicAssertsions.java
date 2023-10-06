@@ -148,14 +148,13 @@ public class DynamicAssertsions {
 		return x;
 	}
 
-	public BoolExpr edges_restrictions(String stmt, String stmt2, String stmt3, String stmt4, int direction) {
+	public BoolExpr edges_restrictions(String stmt, String stmt2, String stmt3, String stmt4) {
 		FuncDecl otype = objs.getfuncs("otype");
 		String relatedO2O3 = stmt2 + "_" + stmt3;
 		FuncDecl funcConf = objs.getfuncs(relatedO2O3 + "_conflict_rows");
 		String relatedO4O1 = stmt4 + "_" + stmt;
 		FuncDecl funcConf2 = objs.getfuncs(relatedO4O1 + "_conflict_rows");
 		FuncDecl originalTransaction = objs.getfuncs("original_transaction");
-		FuncDecl parent = objs.getfuncs("parent");
 		FuncDecl vis = objs.getfuncs("vis");
 		BoolExpr lhs1 = ctx.mkEq(ctx.mkApp(otype, o1), ctx.mkApp(objs.getConstructor("OType", stmt)));
 		BoolExpr lhs2 = ctx.mkEq(ctx.mkApp(otype, o2), ctx.mkApp(objs.getConstructor("OType", stmt2)));
@@ -164,19 +163,10 @@ public class DynamicAssertsions {
 		Expr confRowExpr = ctx.mkApp(funcConf, o2, o3);
 		Expr confRowExpr2 = ctx.mkApp(funcConf2, o4, o1);
 		BoolExpr lhs5 = ctx.mkEq(confRowExpr, confRowExpr2);
-		// 0 == restricting incoming edges; 1 == restricting outgoing edges; 
-		BoolExpr lhs6, lhs7, lhs8, lhs9;
-		if (direction == 0) {
-			lhs6 = ctx.mkEq(ctx.mkApp(parent, o1), ctx.mkApp(parent, o2));
-			lhs7 = ctx.mkNot(ctx.mkEq(ctx.mkApp(parent, o2), ctx.mkApp(parent, o3)));
-			lhs8 = ctx.mkNot(ctx.mkEq(ctx.mkApp(parent, o1), ctx.mkApp(parent, o4)));
-			lhs9 = ctx.mkNot(ctx.mkEq(ctx.mkApp(parent, o3), ctx.mkApp(parent, o4)));
-		} else {
-			lhs6 = ctx.mkOr(ctx.mkEq(ctx.mkApp(originalTransaction, o1), ctx.mkApp(originalTransaction, o2)), ctx.mkEq(ctx.mkApp(parent, o1), ctx.mkApp(parent, o2)));
-			lhs7 = ctx.mkNot(ctx.mkEq(ctx.mkApp(originalTransaction, o2), ctx.mkApp(originalTransaction, o3)));
-			lhs8 = ctx.mkNot(ctx.mkEq(ctx.mkApp(originalTransaction, o1), ctx.mkApp(originalTransaction, o4)));
-			lhs9 = ctx.mkNot(ctx.mkEq(ctx.mkApp(originalTransaction, o3), ctx.mkApp(originalTransaction, o4)));
-		}
+		BoolExpr lhs6 = ctx.mkOr(ctx.mkEq(ctx.mkApp(originalTransaction, o1), ctx.mkApp(originalTransaction, o2)));
+		BoolExpr lhs7 = ctx.mkNot(ctx.mkEq(ctx.mkApp(originalTransaction, o2), ctx.mkApp(originalTransaction, o3)));
+		BoolExpr lhs8 = ctx.mkNot(ctx.mkEq(ctx.mkApp(originalTransaction, o1), ctx.mkApp(originalTransaction, o4)));
+		BoolExpr lhs9 = ctx.mkNot(ctx.mkEq(ctx.mkApp(originalTransaction, o3), ctx.mkApp(originalTransaction, o4)));
 		BoolExpr lhs10, rhs;
 		if (stmt.contains("-select#") || stmt2.contains("-select#")) {
 			lhs10 = (BoolExpr) ctx.mkApp(vis, o4, o1);
