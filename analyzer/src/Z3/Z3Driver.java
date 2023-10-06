@@ -688,58 +688,6 @@ public class Z3Driver {
 				for (List<Tuple<String, Tuple<String, String>>> strc : seenStructures)
 					excludeAnomalyFromStructure(strc, iter530++);
 
-				HeaderZ3("EDGES RESTRICTIONS");
-				// Iterate only through the origTxns in the combination
-				for (String origTxnName : txnsNamesComb) {
-					Map<Integer, Statement> map = app.getStmtsOrigTxnMap(origTxnName);
-					for (int i = 2; i < map.size()+1; i++)
-						for (int j = 1; j < map.size()+1; j++) {
-							if (i == j)
-								break;
-							
-							Statement stmt = map.get(i);
-							InvokeStmt is = (InvokeStmt) stmt;
-							String sName = is.getType().toString();
-							Query q = is.getQuery();
-							
-							Statement stmt2 = map.get(j);
-							InvokeStmt is2 = (InvokeStmt) stmt2;
-							String s2Name = is2.getType().toString();
-							Query q2 = is2.getQuery();
-							
-							if(!q.getTable().equals(q2.getTable()))
-								continue;
-							// Iterate only through the origTxns in the combination
-							for (String origTxnName2 : txnsNamesComb) {
-								Map<Integer, Statement> map2 = app.getStmtsOrigTxnMap(origTxnName2);
-								for (int k = 1; k < map2.size()+1; k++) {
-									Statement stmt3 = map2.get(k);
-									InvokeStmt is3 = (InvokeStmt) stmt3;
-									String s3Name = is3.getType().toString();
-									Query q3 = is3.getQuery();
-									
-									if((q2.getKind() == Kind.SELECT && q3.getKind() == Kind.SELECT) || (!q2.getTable().equals(q3.getTable())))
-										continue;
-									for (int l = 1; l < map2.size()+1; l++) {
-										Statement stmt4 = map2.get(l);
-										InvokeStmt is4 = (InvokeStmt) stmt4;
-										String s4Name = is4.getType().toString();
-										Query q4 = is4.getQuery();
-										if((q.getKind() == Kind.SELECT && q4.getKind() == Kind.SELECT) || (!q.getTable().equals(q4.getTable())))
-											continue;
-										// Assuming that q2 and q3 acess the same table
-										// Assuming that q and q4 acess the same table
-										// q and q3 need to acess the same table, otherwise the conflict rows will be incompatible
-										if(!q.getTable().equals(q3.getTable()))
-											continue;
-										//addAssertion("outgoing_edges_restrictions_" + sName + "_" + s2Name + "_" + s3Name + "_" + s4Name,
-										//	dynamicAssertions.edges_restrictions(s2Name, sName, s4Name, s3Name));
-									}
-								}
-							}
-						}
-				}
-
 				try {
 					// rules
 					slv.push();
