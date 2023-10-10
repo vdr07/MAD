@@ -92,18 +92,18 @@ mv analyzer/src/benchmarks/spring_mvc_react/mono_decomposition.json analyzer/src
 cat results/spring_mvc_react_mono | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -e "Buildfile" -e "analyzing" -e "structure1" -e "structure3" > results/spring_mvc_react_mono_short
 rm results/spring_mvc_react_mono
 mv analyzer/src/benchmarks/spring_mvc_react/decomposition.json analyzer/src/benchmarks/spring_mvc_react/mono_decomposition.json
-echo "react Best"
-mv analyzer/src/benchmarks/spring_mvc_react/best_decomposition.json analyzer/src/benchmarks/spring_mvc_react/decomposition.json
-./clotho.sh --analyze spring_mvc_react > results/spring_mvc_react_best
-cat results/spring_mvc_react_best | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -e "Buildfile" -e "analyzing" -e "structure1" -e "structure3" > results/spring_mvc_react_best_short
-rm results/spring_mvc_react_best
-mv analyzer/src/benchmarks/spring_mvc_react/decomposition.json analyzer/src/benchmarks/spring_mvc_react/best_decomposition.json
-echo "react Full"
-mv analyzer/src/benchmarks/spring_mvc_react/full_decomposition.json analyzer/src/benchmarks/spring_mvc_react/decomposition.json
-./clotho.sh --analyze spring_mvc_react > results/spring_mvc_react_full
-cat results/spring_mvc_react_full | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -e "Buildfile" -e "analyzing" -e "structure1" -e "structure3" > results/spring_mvc_react_full_short
-rm results/spring_mvc_react_full
-mv analyzer/src/benchmarks/spring_mvc_react/decomposition.json analyzer/src/benchmarks/spring_mvc_react/full_decomposition.json
+#echo "react Best"
+#mv analyzer/src/benchmarks/spring_mvc_react/best_decomposition.json analyzer/src/benchmarks/spring_mvc_react/decomposition.json
+#./clotho.sh --analyze spring_mvc_react > results/spring_mvc_react_best
+#cat results/spring_mvc_react_best | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -e "Buildfile" -e "analyzing" -e "structure1" -e "structure3" > results/spring_mvc_react_best_short
+#rm results/spring_mvc_react_best
+#mv analyzer/src/benchmarks/spring_mvc_react/decomposition.json analyzer/src/benchmarks/spring_mvc_react/best_decomposition.json
+#echo "react Full"
+#mv analyzer/src/benchmarks/spring_mvc_react/full_decomposition.json analyzer/src/benchmarks/spring_mvc_react/decomposition.json
+#./clotho.sh --analyze spring_mvc_react > results/spring_mvc_react_full
+#cat results/spring_mvc_react_full | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -e "Buildfile" -e "analyzing" -e "structure1" -e "structure3" > results/spring_mvc_react_full_short
+#rm results/spring_mvc_react_full
+#mv analyzer/src/benchmarks/spring_mvc_react/decomposition.json analyzer/src/benchmarks/spring_mvc_react/full_decomposition.json
 
 
 

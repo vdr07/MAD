@@ -151,7 +151,7 @@ public class Z3Driver {
 	}
 
 	@SuppressWarnings("unused")
-	private void ctxInitialize(Anomaly unVersionedAnml, List<String> txnsNamesComb) {
+	private void ctxInitialize(Anomaly unVersionedAnml) {
 
 		LogZ3(";data types");
 		objs.addDataType("TType", mkDataType("TType", app.getAllTxnNames()));
@@ -272,20 +272,19 @@ public class Z3Driver {
 			mapTxnToMicroTxn.put(name, microName);
 		}
 
-		for (String origTxnName : txnsNamesComb)
-			for (Transaction txn : app.getTxnsByOrigTxnName(origTxnName)) {
-				Map<Integer, String> map = txn.getStmtNamesMap();
-				for (int j = 1; j < map.size(); j++)
-					for (int i = j; i <= map.size(); i++) {
-						if (map.get(i + 1) != null) {
-							addAssertion("not_step_siblings_" + map.get(j) + "_" + map.get(i+1),
-									dynamicAssertions.mk_not_step_siblings(map.get(j), map.get(i + 1)));
-						}
+		for (Transaction txn : app.getTxns()) {
+			Map<Integer, String> map = txn.getStmtNamesMap();
+			for (int j = 1; j < map.size(); j++)
+				for (int i = j; i <= map.size(); i++) {
+					if (map.get(i + 1) != null) {
+						addAssertion("not_step_siblings_" + map.get(j) + "_" + map.get(i+1),
+								dynamicAssertions.mk_not_step_siblings(map.get(j), map.get(i + 1)));
 					}
-			}
+				}
+		}
 		
 		// make sure the otime assignment follows the program order
-		for (String origTxnName : txnsNamesComb) {
+		for (String origTxnName : app.getAllOrigTxnNames()) {
 			Map<Integer, String> map = app.getStmtNamesOrigTxnMap(origTxnName);
 			for (int j = 1; j < map.size(); j++)
 				for (int i = j; i <= map.size(); i++) {
@@ -298,11 +297,11 @@ public class Z3Driver {
 
 		// =====================================================================================================================================================
 		HeaderZ3("CONFLICTING ROWS");
-		for (String origTxnName1 : txnsNamesComb) {
+		for (Transaction txn1 : app.getTxns()) {
 			Sort oSort = objs.getSort("O");
-			for (String origTxnName2 : txnsNamesComb) {
-				for (Statement o1 : app.getOrigTxnByName(origTxnName1).getStmts())
-					for (Statement o2 : app.getOrigTxnByName(origTxnName2).getStmts()) {
+			for (Transaction txn2 : app.getTxns()) {
+				for (Statement o1 : txn1.getStmts())
+					for (Statement o2 : txn2.getStmts()) {
 						InvokeStmt io1 = (InvokeStmt) o1;
 						InvokeStmt io2 = (InvokeStmt) o2;
 						String tableName = io1.getQuery().getTable().getName();
@@ -367,8 +366,7 @@ public class Z3Driver {
 
 		// =====================================================================================================================================================
 
-		for (String origTxnName : txnsNamesComb) {
-			OriginalTransaction origTxn = app.getOrigTxnByName(origTxnName);
+		for (OriginalTransaction origTxn : app.getOrigTxns()) {
 			HeaderZ3("ORIG_TXN: " + origTxn.getName().toUpperCase());
 			// declare functions for txn's input parameters
 			SubHeaderZ3("parameters");
@@ -532,14 +530,10 @@ public class Z3Driver {
 	// ---------------------------------------------------------------------------
 	// functions adding assertions for every pair of operations that 'potentially'
 	// create the edge
-	private void RWthen(Set<Table> includedTables, List<String> txnsNamesComb) throws UnexoectedOrUnhandledConditionalExpression {
+	private void RWthen(Set<Table> includedTables) throws UnexoectedOrUnhandledConditionalExpression {
 		Map<String, FuncDecl> Ts = objs.getAllTTypes();
 		for (FuncDecl t1 : Ts.values()) {
-			if (!txnsNamesComb.contains(mapTxnToOrigTxn.get(t1.getName().toString())))
-				continue;
 			for (FuncDecl t2 : Ts.values()) {
-				if (!txnsNamesComb.contains(mapTxnToOrigTxn.get(t2.getName().toString())))
-					continue;
 				List<BoolExpr> conditions = ruleGenerator.return_conditions_rw_then(t1, t2, vo1, vo2, vt1, vt2, vot1, vot2,
 						includedTables);
 				conditions.add(ctx.mkFalse());
@@ -573,14 +567,10 @@ public class Z3Driver {
 		}
 	}
 
-	private void WRthen(Set<Table> includedTables, List<String> txnsNamesComb) throws UnexoectedOrUnhandledConditionalExpression {
+	private void WRthen(Set<Table> includedTables) throws UnexoectedOrUnhandledConditionalExpression {
 		Map<String, FuncDecl> Ts = objs.getAllTTypes();
 		for (FuncDecl t1 : Ts.values()) {
-			if (!txnsNamesComb.contains(mapTxnToOrigTxn.get(t1.getName().toString())))
-				continue;
 			for (FuncDecl t2 : Ts.values()) {
-				if (!txnsNamesComb.contains(mapTxnToOrigTxn.get(t2.getName().toString())))
-					continue;
 				List<BoolExpr> conditions = ruleGenerator.return_conditions_wr_then(t1, t2, vo1, vo2, vt1, vt2, vot1, vot2,
 						includedTables);
 				conditions.add(ctx.mkFalse());
@@ -614,14 +604,10 @@ public class Z3Driver {
 		}
 	}
 
-	private void WWthen(Set<Table> includedTables, List<String> txnsNamesComb) throws UnexoectedOrUnhandledConditionalExpression {
+	private void WWthen(Set<Table> includedTables) throws UnexoectedOrUnhandledConditionalExpression {
 		Map<String, FuncDecl> Ts = objs.getAllTTypes();
 		for (FuncDecl t1 : Ts.values()) {
-			if (!txnsNamesComb.contains(mapTxnToOrigTxn.get(t1.getName().toString())))
-				continue;
 			for (FuncDecl t2 : Ts.values()) {
-				if (!txnsNamesComb.contains(mapTxnToOrigTxn.get(t2.getName().toString())))
-					continue;
 				List<BoolExpr> conditions = ruleGenerator.return_conditions_ww_then(t1, t2, vo1, vo2, vt1, vt2, vot1, vot2,
 						includedTables);
 				conditions.add(ctx.mkFalse());
@@ -669,15 +655,14 @@ public class Z3Driver {
 	 * public function called from main
 	 */
 	public Anomaly analyze(int round, List<List<Tuple<String, Tuple<String, String>>>> seenStructures,
-						   List<Anomaly> seenAnmls, Set<Table> includedTables, Anomaly unVersionedAnml,
-						   List<String> txnsNamesComb) {
+						   List<Anomaly> seenAnmls, Set<Table> includedTables, Anomaly unVersionedAnml) {
 		// this function is called twice at each iteration: once for unannotated
 		// solution and once for the annotated (second call). In the second call certain
 		// constraints (e.g. rule constraints) must be popped and be replaced with
 		// annotated versions.
 		switch (round) {
 			case 1:
-				ctxInitialize(unVersionedAnml, txnsNamesComb);
+				ctxInitialize(unVersionedAnml);
 				int iter530 = 0;
 				// Valentim: Commenting this cycle since the structures one is more relevant
 				// for (Anomaly anml : seenAnmls)
@@ -696,11 +681,11 @@ public class Z3Driver {
 					HeaderZ3(" ->WR ");
 					thenWR(includedTables);
 					HeaderZ3(" WW-> ");
-					WWthen(includedTables, txnsNamesComb);
+					WWthen(includedTables);
 					HeaderZ3(" WR-> ");
-					WRthen(includedTables, txnsNamesComb);
+					WRthen(includedTables);
 					HeaderZ3(" RW-> ");
-					RWthen(includedTables, txnsNamesComb);
+					RWthen(includedTables);
 				} catch (UnexoectedOrUnhandledConditionalExpression e) {
 					e.printStackTrace();
 				}
@@ -711,7 +696,7 @@ public class Z3Driver {
 				// addAssertion("gen_dep_props", staticAssrtions.mk_gen_dep_props());
 				addAssertion("gen_depx", staticAssrtions.mk_gen_depx());
 				// addAssertion("gen_depx_props", staticAssrtions.mk_gen_depx_props());
-				addAssertion("base_cycle_enforcement", dynamicAssertions.mk_cycle(findCore, null, txnsNamesComb));
+				addAssertion("base_cycle_enforcement", dynamicAssertions.mk_cycle(findCore, null));
 				HeaderZ3("EOF");
 				break;
 
@@ -728,11 +713,11 @@ public class Z3Driver {
 					HeaderZ3(" ->WR ");
 					thenWR(includedTables);
 					HeaderZ3(" WW-> ");
-					WWthen(includedTables, txnsNamesComb);
+					WWthen(includedTables);
 					HeaderZ3(" WR-> ");
-					WRthen(includedTables, txnsNamesComb);
+					WRthen(includedTables);
 					HeaderZ3(" RW-> ");
-					RWthen(includedTables, txnsNamesComb);
+					RWthen(includedTables);
 				} catch (UnexoectedOrUnhandledConditionalExpression e) {
 					e.printStackTrace();
 				}
@@ -746,14 +731,14 @@ public class Z3Driver {
 				addAssertion("gen_depx", staticAssrtions.mk_gen_depx());
 				// addAssertion("gen_depx_props", staticAssrtions.mk_gen_depx_props());
 				slv.push();
-				addAssertion("exact_cycle_enforcement", dynamicAssertions.mk_cycle(findCore, unVersionedAnml, txnsNamesComb));
+				addAssertion("exact_cycle_enforcement", dynamicAssertions.mk_cycle(findCore, unVersionedAnml));
 				HeaderZ3("EOF");
 				break;
 			case 3:
 				slv.pop();
 				HeaderZ3("ROUND 3: newly pushed");
 				List<Tuple<String, Tuple<String, String>>> structure3 = unVersionedAnml.getCycleStructure();
-				addAssertion("loose_cycle_constraint", dynamicAssertions.mk_loose_cycle(findCore, structure3, txnsNamesComb));
+				addAssertion("loose_cycle_constraint", dynamicAssertions.mk_loose_cycle(findCore, structure3));
 				excludeAnomaly(unVersionedAnml, seenAnmls.size() + 1);
 				break;
 

@@ -140,7 +140,7 @@ public class Transformer extends BodyTransformer {
 			}
 		}
 
-		Set<List<String>> txnsNamesCombsSet = new HashSet<>();
+		/*Set<List<String>> txnsNamesCombsSet = new HashSet<>();
 		// Assuming that the cycle max length is 4, so max combinations size is 3 original transactions
 		for (int i = 0; i < app.getOrigTxns().size(); i++)
 			for (int j = i; j < app.getOrigTxns().size(); j++)
@@ -155,7 +155,7 @@ public class Transformer extends BodyTransformer {
 			txnsNamesCombs.removeIf(l -> l.size() < 2);
 		Collections.sort(txnsNamesCombs, (txnsNamesComb1, txnsNamesComb2) -> Integer.compare(txnsNamesComb1.size(), txnsNamesComb2.size()));
 		
-		int txnsNamesCombIdx = 0;
+		int txnsNamesCombIdx = 0;*/
 		long analysis_begin_time = System.currentTimeMillis();
 		List<Anomaly> seenAnmls = new ArrayList<>();
 		List<Anomaly> seenVersAnmls = new ArrayList<>();
@@ -184,12 +184,12 @@ public class Transformer extends BodyTransformer {
 					ConstantArgs._Current_Cycle_Length = ConstantArgs._Minimum_Cycle_Length;
 					// Iterate over different anomaly lengths
 					do {
-						if (txnsNamesCombIdx == txnsNamesCombs.size())
-							txnsNamesCombIdx--;
+						//if (txnsNamesCombIdx == txnsNamesCombs.size())
+						//	txnsNamesCombIdx--;
 						LOG.info("New round of analysis for an anomaly of length: "
 								+ ConstantArgs._Current_Cycle_Length);
-						LOG.info("Analysis for transactions: "
-														+ txnsNamesCombs.get(txnsNamesCombIdx));
+						//LOG.info("Analysis for transactions: "
+						//								+ txnsNamesCombs.get(txnsNamesCombIdx));
 						try {
 							seenStructures.save();
 							LOG.info("All models saved in file");
@@ -201,7 +201,7 @@ public class Transformer extends BodyTransformer {
 						zdr = new Z3Driver(app, tables, false);
 						LOG.info("New Z3Driver created");
 						ConstantArgs._current_version_enforcement = false;
-						anml1 = zdr.analyze(1, seenStructures.getStructures(), seenAnmls, includedTables, null, txnsNamesCombs.get(txnsNamesCombIdx));
+						anml1 = zdr.analyze(1, seenStructures.getStructures(), seenAnmls, includedTables, null);
 						if (anml1 != null) {
 							LOG.info("Unversioned anomaly generated: " + anml1);
 							anml1.generateCycleStructure();
@@ -211,7 +211,7 @@ public class Transformer extends BodyTransformer {
 							seenStructures.writeToCSV(seenStructures.size(), iter - 1, anml1);
 							// Versioned analysis
 							ConstantArgs._current_version_enforcement = true;
-							anml2 = zdr.analyze(2, null, seenAnmls, includedTables, anml1, txnsNamesCombs.get(txnsNamesCombIdx));
+							anml2 = zdr.analyze(2, null, seenAnmls, includedTables, anml1);
 							if (anml2 != null) {
 
 								anml2.generateCycleStructure();
@@ -231,7 +231,7 @@ public class Transformer extends BodyTransformer {
 								// inner loop for finding structurally similar anomalies
 								if (ConstantArgs._ENFORCE_OPTIMIZED_ALGORITHM) {
 									LOG.info("Entering the inner loop for finding structurally similar anomalies");
-									Anomaly anml3 = zdr.analyze(3, null, seenAnmls, includedTables, anml2, txnsNamesCombs.get(txnsNamesCombIdx));
+									Anomaly anml3 = zdr.analyze(3, null, seenAnmls, includedTables, anml2);
 									if (anml3 == null)
 										LOG.info("No structurally similar anomaly exists");
 									while (anml3 != null) {
@@ -248,7 +248,7 @@ public class Transformer extends BodyTransformer {
 										anml3.announce(false, seenVersAnmls.size());
 										
 										// repeat
-										anml3 = zdr.analyze(4, null, seenAnmls, includedTables, anml3, null);
+										anml3 = zdr.analyze(4, null, seenAnmls, includedTables, anml3);
 									}
 								}
 							} else
@@ -260,10 +260,10 @@ public class Transformer extends BodyTransformer {
 							LOG.info("No anomaly was found");
 						}
 						// No more anomalies using that set of transactions
-						if (anml1 == null)
-							txnsNamesCombIdx++;
+						//if (anml1 == null)
+						//	txnsNamesCombIdx++;
 						// update global variables for the next round
-						if (/*anml2 == null || */anml1 == null && (txnsNamesCombIdx == txnsNamesCombs.size() || txnsNamesCombs.get(txnsNamesCombIdx).size() == ConstantArgs._Current_Cycle_Length)) {
+						if (/*anml2 == null || */anml1 == null) {
 							LOG.info("Search completed for anomalies of length: " + ConstantArgs._Current_Cycle_Length);
 							ConstantArgs._Current_Cycle_Length++;
 						}
