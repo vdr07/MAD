@@ -38,7 +38,7 @@ public class ConstantArgs {
 			ConstantArgs._current_partition_size = 1;
 			ConstantArgs._ENFORCE_VERSIONING = true;
 			ConstantArgs._current_version_enforcement = true;
-			ConstantArgs._DEP_ONLY_ON_READ_WRITES = true; // XXX
+			ConstantArgs._DEP_ONLY_ON_READ_WRITES = false; // XXX
 			input = new FileInputStream("config.properties");
 			prop.load(input);
 			ConstantArgs._BENCHMARK_NAME = prop.getProperty("_BENCHMARK_NAME");
