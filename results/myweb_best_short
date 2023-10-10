@@ -1,0 +1,262 @@
+
+     [java] 
+     [java] 
+     [java] 
+     [java] 
+     [java] 
+     [java] 
+     [java] 
+     [java] 
+     [java] 
+     [java] 
+     [java] 
+     [java] 
+     [java] 
+     [java] 
+     [java] 
+     [java] 
+     [java] 
+     [java] ------------------------------------------------------
+     [java]  			     Schema
+     [java] ------------------------------------------------------
+     [java] ##sys_operations## <<id:INT>> <name:STRING> <operation:STRING> <description:STRING>
+     [java] ##sys_permissions## <<id:INT>> <resource_id:INT> <name:STRING> <description:STRING>
+     [java] ##sys_permission_operation## <<permission_id:INT>> <<operation_id:INT>>
+     [java] ##sys_resources## <<id:INT>> <name:STRING> <identity:STRING> <url:STRING>
+     [java] ##sys_roles## <<id:INT>> <name:STRING> <role:STRING> <description:STRING>
+     [java] ##sys_role_permission## <<role_id:INT>> <<permission_id:INT>>
+     [java] ##sys_users## <<id:INT>> <username:STRING> <password:STRING> <salt:STRING> <locked:INT> <email:STRING> <createDate:STRING>
+     [java] ##sys_user_role## <<user_id:INT>> <<role_id:INT>>
+     [java] 
+     [java] 
+     [java] 
+     [java] ------------------------------------------------------
+     [java]  			Compiled Application
+     [java] ------------------------------------------------------
+     [java] 
+     [java] TXN_index_0
+     [java]  ++ index_0-select#1#1 (SELECT[sys_user_role:[user_id, role_id]]  <<(EQ sys_user_role.user_id,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ index_0-select#2#2 (SELECT[sys_roles:[id, name, role, description]]  <<(EQ sys_roles.id,(ROW:sys_user_role-r6-loopVar1).role_id)>>)
+     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: sys_user_role WHERE: (EQ sys_user_role.user_id,i0_param)],0))),(NOT (EQ NULL[null],0)))]
+     [java]  ++ index_0-select#3#3 (SELECT[sys_role_permission:[role_id, permission_id]]  <<(EQ sys_role_permission.role_id,(ROW:sys_user_role-r6-loopVar1).role_id)>>)
+     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: sys_user_role WHERE: (EQ sys_user_role.user_id,i0_param)],0))),(NOT (EQ NULL[null],0)))]
+     [java]  ++ index_0-select#4#4 (SELECT[sys_permissions:[id, resource_id, name, description]]  <<(EQ sys_permissions.id,(ROW:sys_role_permission-r10-loopVar1).permission_id)>>)
+     [java]     [PATH CONDITION: (AND (AND (AND (AND true,(NOT (EQ NULL[ROW SET: sys_user_role WHERE: (EQ sys_user_role.user_id,i0_param)],0))),(NOT (EQ NULL[ROW SET: sys_role_permission WHERE: (EQ sys_role_permission.role_id,(ROW:sys_user_role-r6-loopVar1).role_id)],0))),(NOT (EQ NULL[null],0))),(NOT (EQ NULL[null],0)))]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: index
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_operationGetAll_0
+     [java]  ++ operationGetAll_0-select#1#1 (SELECT[sys_operations:[id, name, operation, description]]  <<(EQ 1,1)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: operationGetAll
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_operationGetOne_0
+     [java]  ++ operationGetOne_0-select#1#1 (SELECT[sys_operations:[id, name, operation, description]]  <<(EQ sys_operations.id,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: operationGetOne
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_operationSave_0
+     [java]  ++ operationSave_0-insert#1#1 (INSERT[sys_operations] [i0_param, r1_param, r2_param, r3_param])
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: operationSave
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_operationGetOperation_0
+     [java]  ++ operationGetOperation_0-select#1#1 (SELECT[sys_operations:[id, name, operation, description]]  <<(EQ sys_operations.id,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ operationGetOperation_0-update#1#2 (UPDATE[sys_operations] {operation=r2_param, description=r3_param, name=r1_param} <<(EQ sys_operations.id,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: operationGetOperation
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_operationDelete_0
+     [java]  ++ operationDelete_0-delete#1#1 (DELETE[sys_operations] <<(EQ sys_operations.id,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: operationDelete
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_resourceGetAll_0
+     [java]  ++ resourceGetAll_0-select#1#1 (SELECT[sys_resources:[id, name, identity, url]]  <<(EQ 1,1)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: resourceGetAll
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_resourceGetOne_0
+     [java]  ++ resourceGetOne_0-select#1#1 (SELECT[sys_resources:[id, name, identity, url]]  <<(EQ sys_resources.id,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: resourceGetOne
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_resourceSave_0
+     [java]  ++ resourceSave_0-insert#1#1 (INSERT[sys_resources] [i0_param, r1_param, r2_param, r3_param])
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: resourceSave
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_resourceGetResource_0
+     [java]  ++ resourceGetResource_0-select#1#1 (SELECT[sys_resources:[id, name, identity, url]]  <<(EQ sys_resources.id,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ resourceGetResource_0-update#1#2 (UPDATE[sys_resources] {name=r1_param, identity=r2_param} <<(EQ sys_resources.id,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: resourceGetResource
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_resourceDelete_0
+     [java]  ++ resourceDelete_0-delete#1#1 (DELETE[sys_resources] <<(EQ sys_resources.id,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: resourceDelete
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_roleGetAll_0
+     [java]  ++ roleGetAll_0-select#1#1 (SELECT[sys_roles:[id, name, role, description]]  <<(EQ 1,1)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: roleGetAll
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_roleDelete_0
+     [java]  ++ roleDelete_0-delete#1#1 (DELETE[sys_roles] <<(EQ sys_roles.id,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: roleDelete
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_roleSave_0
+     [java]  ++ roleSave_0-insert#1#1 (INSERT[sys_roles] [i0_param, r1_param, r2_param, r3_param])
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: roleSave
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_roleAuthorise_0
+     [java]  ++ roleAuthorise_0-select#1#1 (SELECT[sys_roles:[id, name, role, description]]  <<(EQ sys_roles.id,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: roleAuthorise
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_roleAuthorise_1
+     [java]  ++ roleAuthorise_1-select#1#1 (SELECT[sys_resources:[id, name, identity, url]]  <<(EQ sys_resources.id,i1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ roleAuthorise_1-select#2#2 (SELECT[sys_operations:[id, name, operation, description]]  <<(EQ sys_operations.id,Abs-INT#0)>>)
+     [java]     [PATH CONDITION: (AND true,(NOT (GEQ 0,Abs-REAL#4)))]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: roleAuthorise
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_roleAuthorise_2
+     [java]  ++ roleAuthorise_2-select#1#1 (SELECT[sys_role_permission:[permission_id]]  <<(EQ sys_role_permission.role_id,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ roleAuthorise_2-select#2#2 (SELECT[sys_permissions:[id, resource_id, name, description]]  <<(EQ sys_permissions.id,Abs-INT#1)>>)
+     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: sys_role_permission WHERE: (EQ sys_role_permission.role_id,i0_param)],0))),(NOT (EQ NULL[null],0)))]
+     [java]  ++ roleAuthorise_2-update#1#3 (UPDATE[sys_permissions] {resource_id=i1_param} <<(EQ sys_permissions.id,i2_param)>>)
+     [java]     [PATH CONDITION: (AND true,(NOT (NOT (EQ -1,-1))))]
+     [java]  ++ roleAuthorise_2-insert#1#4 (INSERT[sys_permission_operation] [i2_param, Abs-INT#2])
+     [java]     [PATH CONDITION: (AND (AND true,(NOT (NOT (EQ -1,-1)))),(NOT (GEQ 0,Abs-REAL#5)))]
+     [java]  ++ roleAuthorise_2-insert#2#5 (INSERT[sys_role_permission] [i0_param, i2_param])
+     [java]     [PATH CONDITION: (AND true,(NOT (NOT (EQ -1,-1))))]
+     [java]  ++ roleAuthorise_2-insert#3#6 (INSERT[sys_permission_operation] [-1, Abs-INT#3])
+     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ -1,-1))),(NOT (GEQ 0,Abs-REAL#6)))]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: roleAuthorise
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_userDelete_0
+     [java]  ++ userDelete_0-delete#1#1 (DELETE[sys_users] <<(EQ sys_users.id,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: userDelete
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_userSaveUser_0
+     [java]  ++ userSaveUser_0-insert#1#1 (INSERT[sys_users] [i0_param, r1_param, r2_param, r3_param, 0, r4_param, r5_param])
+     [java]     [PATH CONDITION: true]
+     [java]  ++ userSaveUser_0-select#1#2 (SELECT[sys_roles:[id, name, role, description]]  <<(EQ sys_roles.id,Abs-INT#0)>>)
+     [java]     [PATH CONDITION: (AND true,(NOT (GEQ 0,Abs-REAL#2)))]
+     [java]  ++ userSaveUser_0-insert#2#3 (INSERT[sys_user_role] [i0_param, Abs-INT#1])
+     [java]     [PATH CONDITION: (AND true,(NOT (GEQ 0,Abs-REAL#2)))]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: userSaveUser
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_userUpdate_0
+     [java]  ++ userUpdate_0-select#1#1 (SELECT[sys_users:[id, username, password, salt, locked, email, createDate]]  <<(EQ sys_users.id,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ userUpdate_0-select#2#2 (SELECT[sys_roles:[id, name, role, description]]  <<(EQ sys_roles.id,Abs-INT#0)>>)
+     [java]     [PATH CONDITION: (AND true,(NOT (GEQ 0,Abs-REAL#2)))]
+     [java]  ++ userUpdate_0-select#3#3 (SELECT[sys_user_role:[role_id]]  <<(EQ sys_user_role.user_id,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ userUpdate_0-insert#1#4 (INSERT[sys_user_role] [i0_param, Abs-INT#1])
+     [java]     [PATH CONDITION: (AND (AND true,(NOT (GEQ 0,Abs-REAL#3))),(NOT (NOT (EQ 0,0))))]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: userUpdate
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_userGetAll_0
+     [java]  ++ userGetAll_0-select#1#1 (SELECT[sys_users:[id, username, password, salt, locked, email, createDate]]  <<(EQ 1,1)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: userGetAll
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_userRegister_0
+     [java]  ++ userRegister_0-insert#1#1 (INSERT[sys_users] [i0_param, r1_param, r2_param, r3_param, 0, r4_param, r5_param])
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: userRegister
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] 
+     [java] 
+     [java] 
+     [java] ===========================================
+     [java] === AR compile time:	210ms
+     [java] -------------------------------------------
+     [java] +++ Dirty Reads found:		0
+     [java] +++ Dirty Writes found:		0
+     [java] +++ Lost Updates found:		0
+     [java] +++ Lost Updates/Write Skews found:	0
+     [java] +++ Read Skews found:		0
+     [java] +++ Others found:			0
+     [java] -------------------------------------------
+     [java] === Total anomalies found:	0
+     [java] === Analysis time:		262531 ms
+
+BUILD SUCCESSFUL
+Total time: 4 minutes 25 seconds

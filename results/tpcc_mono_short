@@ -1,0 +1,138 @@
+     [java] 
+     [java] ------------------------------------------------------
+     [java]  			     Schema
+     [java] ------------------------------------------------------
+     [java] ##order_line## <<ol_w_id:INT>> <<ol_d_id:INT>> <<ol_o_id:INT>> <<ol_number:INT>> <ol_i_id:INT> <ol_delivery_d:INT> <ol_amount:REAL> <ol_supply_w_id:INT> <ol_quantity:INT> <ol_dist_info:STRING>
+     [java] ##new_order## <<no_w_id:INT>> <<no_d_id:INT>> <<no_o_id:INT>>
+     [java] ##stock## <<s_w_id:INT>> <<s_i_id:INT>> <s_quantity:REAL> <s_ytd:REAL> <s_order_cnt:INT> <s_remote_cnt:INT> <s_data:STRING> <s_dist_01:STRING> <s_dist_02:STRING> <s_dist_03:STRING> <s_dist_04:STRING> <s_dist_05:STRING> <s_dist_06:STRING> <s_dist_07:STRING> <s_dist_08:STRING> <s_dist_09:STRING> <s_dist_10:STRING>
+     [java] ##oorder## <<o_w_id:INT>> <<o_d_id:INT>> <<o_id:INT>> <o_c_id:INT> <o_carrier_id:INT> <o_ol_cnt:REAL> <o_all_local:REAL> <o_entry_d:INT>
+     [java] ##history## <<h_c_id:INT>> <<h_c_d_id:INT>> <<h_c_w_id:INT>> <<h_d_id:INT>> <<h_w_id:INT>> <h_date:INT> <h_amount:REAL> <h_data:STRING>
+     [java] ##customer## <<c_w_id:INT>> <<c_d_id:INT>> <<c_id:INT>> <c_discount:REAL> <c_credit:STRING> <c_last:STRING> <c_first:STRING> <c_credit_lim:REAL> <c_balance:REAL> <c_ytd_payment:REAL> <c_payment_cnt:INT> <c_delivery_cnt:INT> <c_street_1:STRING> <c_street_2:STRING> <c_city:STRING> <c_state:STRING> <c_zip:STRING> <c_phone:STRING> <c_since:INT> <c_middle:STRING> <c_data:STRING>
+     [java] ##district## <<d_w_id:INT>> <<d_id:INT>> <d_ytd:REAL> <d_tax:REAL> <d_next_o_id:INT> <d_name:STRING> <d_street_1:STRING> <d_street_2:STRING> <d_city:STRING> <d_state:STRING> <d_zip:STRING>
+     [java] ##item## <<i_id:INT>> <i_name:STRING> <i_price:REAL> <i_data:STRING> <i_im_id:INT>
+     [java] ##warehouse## <<w_id:INT>> <w_ytd:REAL> <w_tax:REAL> <w_name:STRING> <w_street_1:STRING> <w_street_2:STRING> <w_city:STRING> <w_state:STRING> <w_zip:STRING>
+     [java] 
+     [java] 
+     [java] 
+     [java] ------------------------------------------------------
+     [java]  			Compiled Application
+     [java] ------------------------------------------------------
+     [java] 
+     [java] TXN_delivery_0
+     [java]  ++ delivery_0-select#1#1 (SELECT[new_order:[]]  <<(AND (EQ new_order.no_d_id,i0_param),(EQ new_order.no_w_id,i1_param))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ delivery_0-delete#1#2 (DELETE[new_order] <<(AND (AND (EQ new_order.no_o_id,(ROW:new_order-r17-next1).no_o_id),(EQ new_order.no_d_id,i0_param)),(EQ new_order.no_w_id,i1_param))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ delivery_0-select#2#3 (SELECT[oorder:[]]  <<(AND (AND (EQ oorder.o_id,(ROW:new_order-r17-next1).no_o_id),(EQ oorder.o_d_id,i0_param)),(EQ oorder.o_w_id,i1_param))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ delivery_0-update#1#4 (UPDATE[oorder] {o_carrier_id=(PLUS Abs-INT#0,1)} <<(AND (AND (EQ oorder.o_id,(ROW:new_order-r17-next1).no_o_id),(EQ oorder.o_d_id,i0_param)),(EQ oorder.o_w_id,i1_param))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ delivery_0-update#2#5 (UPDATE[order_line] {ol_delivery_d=?} <<(AND (AND (EQ order_line.ol_o_id,(ROW:new_order-r17-next1).no_o_id),(EQ order_line.ol_d_id,i0_param)),(EQ order_line.ol_w_id,i1_param))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ delivery_0-select#3#6 (SELECT[order_line:[]]  <<(AND (AND (EQ order_line.ol_o_id,(ROW:new_order-r17-next1).no_o_id),(EQ order_line.ol_d_id,i0_param)),(EQ order_line.ol_w_id,i1_param))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ delivery_0-select#4#7 (SELECT[customer:[]]  <<(AND (AND (EQ customer.c_w_id,i1_param),(EQ customer.c_d_id,i0_param)),(EQ customer.c_id,(ROW:oorder-r18-next1).o_c_id))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ delivery_0-update#3#8 (UPDATE[customer] {c_balance=(PLUS (ROW:customer-r20-next1).c_balance,(ROW:order_line-r19-loopVar0).ol_amount), c_delivery_cnt=(PLUS (ROW:customer-r20-next1).c_delivery_cnt,1)} <<(AND (AND (EQ customer.c_w_id,i1_param),(EQ customer.c_d_id,i0_param)),(EQ customer.c_id,(ROW:oorder-r18-next1).o_c_id))>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: delivery
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_newOrder_0
+     [java]  ++ newOrder_0-select#1#1 (SELECT[customer:[]]  <<(AND (AND (EQ customer.c_w_id,i4_param),(EQ customer.c_d_id,i5_param)),(EQ customer.c_id,i6_param))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newOrder_0-select#2#2 (SELECT[warehouse:[]]  <<(EQ warehouse.w_id,i4_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newOrder_0-select#3#3 (SELECT[district:[]]  <<(AND (EQ district.d_w_id,i4_param),(EQ district.d_id,i5_param))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newOrder_0-update#1#4 (UPDATE[district] {d_next_o_id=(PLUS (ROW:district-r34-next1).d_next_o_id,1)} <<(AND (EQ district.d_w_id,i4_param),(EQ district.d_id,i5_param))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newOrder_0-insert#1#5 (INSERT[oorder] [(ROW:district-r34-next1).d_next_o_id, i5_param, i4_param, i6_param, ?, ?, i7_param, i8_param])
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newOrder_0-insert#2#6 (INSERT[new_order] [(ROW:district-r34-next1).d_next_o_id, i5_param, i4_param])
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newOrder_0-select#4#7 (SELECT[item:[]]  <<(EQ item.i_id,Abs-INT#1)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newOrder_0-select#5#8 (SELECT[stock:[]]  <<(AND (EQ stock.s_i_id,Abs-INT#2),(EQ stock.s_w_id,Abs-INT#3))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newOrder_0-update#2#9 (UPDATE[stock] {s_remote_cnt=(PLUS (ROW:stock-r36-loopVar1).s_remote_cnt,0), s_quantity=(MINUS (ROW:stock-r36-loopVar1).s_quantity,Abs-INT#4), s_ytd=(PLUS (ROW:stock-r36-loopVar1).s_ytd,Abs-REAL#5), s_order_cnt=(PLUS (ROW:stock-r36-loopVar1).s_order_cnt,1)} <<(AND (EQ stock.s_i_id,Abs-INT#6),(EQ stock.s_w_id,Abs-INT#7))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newOrder_0-insert#3#10 (INSERT[order_line] [i4_param, i5_param, (ROW:district-r34-next1).d_next_o_id, 1, Abs-INT#8, ?, (MULT Abs-REAL#9,(ROW:item-r35-loopVar1).i_price), Abs-INT#10, Abs-INT#11, (ROW:stock-r36-loopVar1).s_dist_01])
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: newOrder
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_orderStatus_0
+     [java]  ++ orderStatus_0-select#1#1 (SELECT[customer:[]]  <<(AND (AND (EQ customer.c_w_id,i0_param),(EQ customer.c_d_id,(PLUS Abs-INT#3,i1_param))),(EQ customer.c_last,Abs-STRING#4))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ orderStatus_0-select#2#2 (SELECT[customer:[]]  <<(AND (AND (EQ customer.c_w_id,i0_param),(EQ customer.c_d_id,(PLUS Abs-INT#2,i1_param))),(EQ customer.c_id,-1))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ orderStatus_0-select#3#3 (SELECT[oorder:[]]  <<(AND (AND (EQ oorder.o_w_id,i0_param),(EQ oorder.o_d_id,(PLUS Abs-INT#0,i1_param))),(EQ oorder.o_c_id,-1))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ orderStatus_0-select#4#4 (SELECT[order_line:[]]  <<(AND (AND (EQ order_line.ol_o_id,(ROW:oorder-r83-next1).o_id),(EQ order_line.ol_d_id,(PLUS Abs-INT#1,i1_param))),(EQ order_line.ol_w_id,i0_param))>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: orderStatus
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_payment_0
+     [java]  ++ payment_0-select#1#1 (SELECT[warehouse:[]]  <<(EQ warehouse.w_id,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ payment_0-update#1#2 (UPDATE[warehouse] {w_ytd=(PLUS (ROW:warehouse-r11-next1).w_ytd,Abs-REAL#0)} <<(EQ warehouse.w_id,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ payment_0-select#2#3 (SELECT[district:[]]  <<(AND (EQ district.d_w_id,i0_param),(EQ district.d_id,(PLUS Abs-INT#3,i2_param)))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ payment_0-update#2#4 (UPDATE[district] {d_ytd=(PLUS (ROW:district-r12-next1).d_ytd,Abs-REAL#1)} <<(AND (EQ district.d_w_id,i0_param),(EQ district.d_id,(PLUS Abs-INT#2,i2_param)))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ payment_0-select#3#5 (SELECT[customer:[]]  <<(AND (AND (EQ customer.c_w_id,i0_param),(EQ customer.c_d_id,(PLUS Abs-INT#23,i2_param))),(EQ customer.c_last,Abs-STRING#24))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ payment_0-select#4#6 (SELECT[customer:[]]  <<(AND (AND (EQ customer.c_w_id,i0_param),(EQ customer.c_d_id,(PLUS Abs-INT#4,i2_param))),(EQ customer.c_id,-1))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ payment_0-select#5#7 (SELECT[customer:[]]  <<(AND (AND (EQ customer.c_w_id,i0_param),(EQ customer.c_d_id,(PLUS Abs-INT#5,i2_param))),(EQ customer.c_id,Abs-INT#6))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ payment_0-update#3#8 (UPDATE[customer] {c_data=Abs-STRING#10, c_payment_cnt=Abs-INT#9, c_balance=Abs-REAL#7, c_ytd_payment=Abs-REAL#8} <<(AND (AND (EQ customer.c_w_id,i0_param),(EQ customer.c_d_id,(PLUS Abs-INT#11,i2_param))),(EQ customer.c_id,Abs-INT#12))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ payment_0-update#4#9 (UPDATE[customer] {c_payment_cnt=Abs-INT#15, c_balance=Abs-REAL#13, c_ytd_payment=Abs-REAL#14} <<(AND (AND (EQ customer.c_w_id,i0_param),(EQ customer.c_d_id,(PLUS Abs-INT#16,i2_param))),(EQ customer.c_id,Abs-INT#17))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ payment_0-insert#1#10 (INSERT[history] [(PLUS Abs-INT#18,i2_param), i0_param, Abs-INT#19, (PLUS Abs-INT#20,i2_param), i0_param, ?, Abs-REAL#21, Abs-STRING#22])
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: payment
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_stockLevel_0
+     [java]  ++ stockLevel_0-select#1#1 (SELECT[district:[]]  <<(AND (EQ district.d_w_id,i0_param),(EQ district.d_id,(PLUS Abs-INT#0,i1_param)))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ stockLevel_0-select#2#2 (SELECT[order_line:[]]  <<(AND (AND (AND (EQ order_line.ol_w_id,i0_param),(EQ order_line.ol_d_id,(PLUS Abs-INT#1,i1_param))),(LT order_line.ol_o_id,(ROW:district-r7-next1).d_next_o_id)),(GEQ order_line.ol_o_id,(MINUS (ROW:district-r7-next1).d_next_o_id,20)))>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ stockLevel_0-select#3#3 (SELECT[stock:[]]  <<(AND (AND (EQ stock.s_w_id,i0_param),(EQ stock.s_i_id,(ROW:order_line-r8-loopVar0).ol_i_id)),(LT stock.s_quantity,(PLUS Abs-INT#2,10)))>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: stockLevel
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] 
+     [java] 
+     [java] 
+     [java] ===========================================
+     [java] === AR compile time:	252ms
+     [java] -------------------------------------------
+     [java] +++ Dirty Reads found:		0
+     [java] +++ Dirty Writes found:		0
+     [java] +++ Lost Updates found:		0
+     [java] +++ Lost Updates/Write Skews found:	0
+     [java] +++ Read Skews found:		0
+     [java] +++ Others found:			0
+     [java] -------------------------------------------
+     [java] === Total anomalies found:	0
+     [java] === Analysis time:		10447 ms
+
+BUILD SUCCESSFUL
+Total time: 13 seconds

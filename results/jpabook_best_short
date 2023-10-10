@@ -1,0 +1,208 @@
+     [java] [orderCreateForm_0, order_0, order_2, updateItem_0]: 2/70
+     [java] [orderCreateForm_0, order_0, order_2, processCancelBuy_1]: 1/70
+     [java] [itemList_0, order_0, order_2, processCancelBuy_1]: 1/70
+     [java] [itemList_0, order_0, order_2, updateItem_0]: 2/70
+     [java] [order_0, order_2, updateItemForm_0]: 1/70
+     [java] [itemCreate_0, itemList_0, order_0, order_2]: 1/70
+     [java] [itemList_0, order_0, order_2]: 1/70
+     [java] [order_1, order_3, processCancelBuy_0]: 2/70
+     [java] [orderCreateForm_0, order_0, order_2]: 1/70
+     [java] [itemCreate_0, orderCreateForm_0, order_0, order_2]: 1/70
+     [java] [order_0, order_2, processCancelBuy_1, updateItemForm_0]: 1/70
+     [java] [order_0, order_2, processCancelBuy_1, updateItem_0]: 5/70
+     [java] [order_1, order_2, processCancelBuy_0, processCancelBuy_1]: 8/70
+     [java] [processCancelBuy_0, processCancelBuy_1]: 6/70
+     [java] [itemCreate_0, order_0, order_2, updateItemForm_0]: 1/70
+     [java] [itemCreate_0, order_0, order_2, updateItem_0]: 1/70
+     [java] [order_0, order_2, processCancelBuy_1]: 7/70
+     [java] [order_0, order_2, updateItemForm_0, updateItem_0]: 2/70
+     [java] [itemCreate_0, order_0, order_2, processCancelBuy_1]: 2/70
+     [java] [order_0, order_2, updateItem_0]: 9/70
+     [java] [order_0, order_3, processCancelBuy_0, processCancelBuy_1]: 2/70
+     [java] [order_0, order_2]: 4/70
+     [java] [order_2, order_3, processCancelBuy_0, processCancelBuy_1]: 4/70
+     [java] [itemCreate_0, order_0, order_2]: 3/70
+     [java] [order_0, order_1, processCancelBuy_0, processCancelBuy_1]: 2/70
+     [java] itemCreate (itemCreate_0): 9/70
+     [java] itemList (itemList_0): 5/70
+     [java] orderCreateForm (orderCreateForm_0): 5/70
+     [java] order (order_0): 50/70
+     [java] order (order_1): 12/70
+     [java] order (order_2): 58/70
+     [java] order (order_3): 8/70
+     [java] processCancelBuy (processCancelBuy_0): 24/70
+     [java] processCancelBuy (processCancelBuy_1): 39/70
+     [java] updateItemForm (updateItemForm_0): 5/70
+     [java] updateItem (updateItem_0): 21/70
+     [java] 
+     [java] ------------------------------------------------------
+     [java]  			     Schema
+     [java] ------------------------------------------------------
+     [java] ##items## <<id:INT>> <name:STRING> <price:INT> <stockQuantity:INT>
+     [java] ##delivery## <<id:INT>> <orderId:INT> <city:STRING> <street:STRING> <zipcode:STRING> <status:STRING>
+     [java] ##member## <<id:INT>> <name:STRING> <city:STRING> <street:STRING> <zipcode:STRING>
+     [java] ##orders## <<id:INT>> <memberId:INT> <deliveryId:INT> <orderDate:STRING> <status:STRING>
+     [java] ##order_item## <<id:INT>> <itemId:INT> <orderId:INT> <deliveryId:INT> <price:INT> <count:INT>
+     [java] 
+     [java] 
+     [java] 
+     [java] ------------------------------------------------------
+     [java]  			Compiled Application
+     [java] ------------------------------------------------------
+     [java] 
+     [java] TXN_memberCreate_0
+     [java]  ++ memberCreate_0-select#1#1 (SELECT[member:[id, name, city, street, zipcode]]  <<(EQ member.name,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ memberCreate_0-insert#1#2 (INSERT[member] [i0_param, r1_param, r2_param, r3_param, r4_param])
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: memberCreate
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_memberList_0
+     [java]  ++ memberList_0-select#1#1 (SELECT[member:[id, name, city, street, zipcode]]  <<(EQ 1,1)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: memberList
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_itemCreate_0
+     [java]  ++ itemCreate_0-insert#1#1 (INSERT[items] [i0_param, r1_param, i1_param, i2_param])
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: itemCreate
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_updateItemForm_0
+     [java]  ++ updateItemForm_0-select#1#1 (SELECT[items:[id, name, price, stockQuantity]]  <<(EQ items.id,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: updateItemForm
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_updateItem_0
+     [java]  ++ updateItem_0-update#1#1 (UPDATE[items] {price=i1_param, name=r1_param, stockQuantity=i2_param} <<(EQ items.id,i0_param)>>)
+     [java]     [PATH CONDITION: (AND true,(NOT (NOT (EQ i3_param,0))))]
+     [java]  ++ updateItem_0-insert#1#2 (INSERT[items] [i0_param, r1_param, i1_param, i2_param])
+     [java]     [PATH CONDITION: (AND true,(NOT (EQ i3_param,0)))]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: updateItem
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_itemList_0
+     [java]  ++ itemList_0-select#1#1 (SELECT[items:[id, name, price, stockQuantity]]  <<(EQ 1,1)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: itemList
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_orderCreateForm_0
+     [java]  ++ orderCreateForm_0-select#1#1 (SELECT[member:[id, name, city, street, zipcode]]  <<(EQ 1,1)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ orderCreateForm_0-select#2#2 (SELECT[items:[id, name, price, stockQuantity]]  <<(EQ 1,1)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: orderCreateForm
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_order_0
+     [java]  ++ order_0-select#1#1 (SELECT[member:[id, name, city, street, zipcode]]  <<(EQ member.id,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ order_0-select#2#2 (SELECT[items:[id, name, price, stockQuantity]]  <<(EQ items.id,i1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: order
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_order_1
+     [java]  ++ order_1-insert#1#1 (INSERT[delivery] [i4_param, i3_param, (ROW:member-r24-next1).city, (ROW:member-r24-next1).street, (ROW:member-r24-next1).zipcode, Ready])
+     [java]     [PATH CONDITION: true]
+     [java]  ++ order_1-insert#2#2 (INSERT[order_item] [i5_param, i1_param, i3_param, i4_param, (ROW:items-r25-next1).price, i2_param])
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: order
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_order_2
+     [java]  ++ order_2-update#1#1 (UPDATE[items] {stockQuantity=(MINUS (ROW:items-r25-next1).stockQuantity,i2_param)} <<(EQ items.id,i1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: order
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_order_3
+     [java]  ++ order_3-insert#1#1 (INSERT[orders] [i3_param, i0_param, i4_param, r1_param, Order])
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: order
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_orderList_0
+     [java]  ++ orderList_0-select#1#1 (SELECT[member:[id, name, city, street, zipcode]]  <<(EQ member.name,r2_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: orderList
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_orderList_1
+     [java]  ++ orderList_1-select#1#1 (SELECT[orders:[id, memberId, deliveryId, orderDate, status]]  <<(AND (EQ orders.status,r1_param),(EQ orders.memberId,(ROW:member-r9-next1).id))>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: orderList
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_processCancelBuy_0
+     [java]  ++ processCancelBuy_0-select#1#1 (SELECT[orders:[id, memberId, deliveryId, orderDate, status]]  <<(EQ orders.id,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ processCancelBuy_0-select#2#2 (SELECT[delivery:[status]]  <<(EQ delivery.id,(ROW:orders-r22-next1).deliveryId)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ processCancelBuy_0-update#1#3 (UPDATE[orders] {status=Cancel} <<(EQ orders.id,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ processCancelBuy_0-select#3#4 (SELECT[order_item:[itemId, count]]  <<(EQ order_item.orderId,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: processCancelBuy
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] TXN_processCancelBuy_1
+     [java]  ++ processCancelBuy_1-select#1#1 (SELECT[items:[stockQuantity]]  <<(EQ items.id,(ROW:order_item-r24-loopVar0).itemId)>>)
+     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: order_item WHERE: (EQ order_item.orderId,i0_param)],0))),(NOT (EQ NULL[null],0)))]
+     [java]  ++ processCancelBuy_1-update#1#2 (UPDATE[items] {stockQuantity=(PLUS (ROW:items-r13-loopVar0).stockQuantity,(ROW:order_item-r24-loopVar0).count)} <<(EQ items.id,(ROW:order_item-r24-loopVar0).itemId)>>)
+     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: order_item WHERE: (EQ order_item.orderId,i0_param)],0))),(NOT (EQ NULL[null],0)))]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: processCancelBuy
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] 
+     [java] 
+     [java] 
+     [java] 
+     [java] ===========================================
+     [java] === AR compile time:	192ms
+     [java] -------------------------------------------
+     [java] +++ Dirty Reads found:		0
+     [java] +++ Dirty Writes found:		0
+     [java] +++ Lost Updates found:		3
+     [java] +++ Lost Updates/Write Skews found:	6
+     [java] +++ Read Skews found:		10
+     [java] +++ Others found:			51
+     [java] -------------------------------------------
+     [java] === Total anomalies found:	70
+     [java] === Analysis time:		354219 ms
+
+BUILD SUCCESSFUL
+Total time: 5 minutes 56 seconds
