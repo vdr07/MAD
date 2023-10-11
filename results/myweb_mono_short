@@ -1,21 +1,4 @@
 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
      [java] ------------------------------------------------------
      [java]  			     Schema
      [java] ------------------------------------------------------
@@ -27,13 +10,9 @@
      [java] ##sys_role_permission## <<role_id:INT>> <<permission_id:INT>>
      [java] ##sys_users## <<id:INT>> <username:STRING> <password:STRING> <salt:STRING> <locked:INT> <email:STRING> <createDate:STRING>
      [java] ##sys_user_role## <<user_id:INT>> <<role_id:INT>>
-     [java] 
-     [java] 
-     [java] 
      [java] ------------------------------------------------------
      [java]  			Compiled Application
      [java] ------------------------------------------------------
-     [java] 
      [java] TXN_index_0
      [java]  ++ index_0-select#1#1 (SELECT[sys_user_role:[user_id, role_id]]  <<(EQ sys_user_role.user_id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -47,7 +26,6 @@
      [java] Original Transaction: index
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_operationGetAll_0
      [java]  ++ operationGetAll_0-select#1#1 (SELECT[sys_operations:[id, name, operation, description]]  <<(EQ 1,1)>>)
      [java]     [PATH CONDITION: true]
@@ -55,7 +33,6 @@
      [java] Original Transaction: operationGetAll
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_operationGetOne_0
      [java]  ++ operationGetOne_0-select#1#1 (SELECT[sys_operations:[id, name, operation, description]]  <<(EQ sys_operations.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -63,7 +40,6 @@
      [java] Original Transaction: operationGetOne
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_operationSave_0
      [java]  ++ operationSave_0-insert#1#1 (INSERT[sys_operations] [i0_param, r1_param, r2_param, r3_param])
      [java]     [PATH CONDITION: true]
@@ -71,7 +47,6 @@
      [java] Original Transaction: operationSave
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_operationGetOperation_0
      [java]  ++ operationGetOperation_0-select#1#1 (SELECT[sys_operations:[id, name, operation, description]]  <<(EQ sys_operations.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -81,7 +56,6 @@
      [java] Original Transaction: operationGetOperation
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_operationDelete_0
      [java]  ++ operationDelete_0-delete#1#1 (DELETE[sys_operations] <<(EQ sys_operations.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -89,7 +63,6 @@
      [java] Original Transaction: operationDelete
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_resourceGetAll_0
      [java]  ++ resourceGetAll_0-select#1#1 (SELECT[sys_resources:[id, name, identity, url]]  <<(EQ 1,1)>>)
      [java]     [PATH CONDITION: true]
@@ -97,7 +70,6 @@
      [java] Original Transaction: resourceGetAll
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_resourceGetOne_0
      [java]  ++ resourceGetOne_0-select#1#1 (SELECT[sys_resources:[id, name, identity, url]]  <<(EQ sys_resources.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -105,7 +77,6 @@
      [java] Original Transaction: resourceGetOne
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_resourceSave_0
      [java]  ++ resourceSave_0-insert#1#1 (INSERT[sys_resources] [i0_param, r1_param, r2_param, r3_param])
      [java]     [PATH CONDITION: true]
@@ -113,7 +84,6 @@
      [java] Original Transaction: resourceSave
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_resourceGetResource_0
      [java]  ++ resourceGetResource_0-select#1#1 (SELECT[sys_resources:[id, name, identity, url]]  <<(EQ sys_resources.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -123,7 +93,6 @@
      [java] Original Transaction: resourceGetResource
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_resourceDelete_0
      [java]  ++ resourceDelete_0-delete#1#1 (DELETE[sys_resources] <<(EQ sys_resources.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -131,7 +100,6 @@
      [java] Original Transaction: resourceDelete
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_roleGetAll_0
      [java]  ++ roleGetAll_0-select#1#1 (SELECT[sys_roles:[id, name, role, description]]  <<(EQ 1,1)>>)
      [java]     [PATH CONDITION: true]
@@ -139,7 +107,6 @@
      [java] Original Transaction: roleGetAll
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_roleDelete_0
      [java]  ++ roleDelete_0-delete#1#1 (DELETE[sys_roles] <<(EQ sys_roles.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -147,7 +114,6 @@
      [java] Original Transaction: roleDelete
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_roleSave_0
      [java]  ++ roleSave_0-insert#1#1 (INSERT[sys_roles] [i0_param, r1_param, r2_param, r3_param])
      [java]     [PATH CONDITION: true]
@@ -155,7 +121,6 @@
      [java] Original Transaction: roleSave
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_roleAuthorise_0
      [java]  ++ roleAuthorise_0-select#1#1 (SELECT[sys_roles:[id, name, role, description]]  <<(EQ sys_roles.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -179,7 +144,6 @@
      [java] Original Transaction: roleAuthorise
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_userDelete_0
      [java]  ++ userDelete_0-delete#1#1 (DELETE[sys_users] <<(EQ sys_users.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -187,7 +151,6 @@
      [java] Original Transaction: userDelete
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_userSaveUser_0
      [java]  ++ userSaveUser_0-insert#1#1 (INSERT[sys_users] [i0_param, r1_param, r2_param, r3_param, 0, r4_param, r5_param])
      [java]     [PATH CONDITION: true]
@@ -199,7 +162,6 @@
      [java] Original Transaction: userSaveUser
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_userUpdate_0
      [java]  ++ userUpdate_0-select#1#1 (SELECT[sys_users:[id, username, password, salt, locked, email, createDate]]  <<(EQ sys_users.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -213,7 +175,6 @@
      [java] Original Transaction: userUpdate
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_userGetAll_0
      [java]  ++ userGetAll_0-select#1#1 (SELECT[sys_users:[id, username, password, salt, locked, email, createDate]]  <<(EQ 1,1)>>)
      [java]     [PATH CONDITION: true]
@@ -221,7 +182,6 @@
      [java] Original Transaction: userGetAll
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_userRegister_0
      [java]  ++ userRegister_0-insert#1#1 (INSERT[sys_users] [i0_param, r1_param, r2_param, r3_param, 0, r4_param, r5_param])
      [java]     [PATH CONDITION: true]
@@ -229,12 +189,8 @@
      [java] Original Transaction: userRegister
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
-     [java] 
-     [java] 
-     [java] 
      [java] ===========================================
-     [java] === AR compile time:	246ms
+     [java] === AR compile time:	280ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
@@ -244,7 +200,7 @@
      [java] +++ Others found:			0
      [java] -------------------------------------------
      [java] === Total anomalies found:	0
-     [java] === Analysis time:		256651 ms
+     [java] === Analysis time:		8326 ms
 
 BUILD SUCCESSFUL
-Total time: 4 minutes 19 seconds
+Total time: 11 seconds

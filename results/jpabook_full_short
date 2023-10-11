@@ -1,3 +1,4 @@
+
      [java] [itemList_0, order_1, order_4, updateItem_0]: 2/79
      [java] [itemList_0, order_1, order_4, processCancelBuy_4]: 1/79
      [java] [order_1, order_4, updateItemForm_0]: 1/79
@@ -17,9 +18,9 @@
      [java] [processCancelBuy_0, processCancelBuy_2]: 1/79
      [java] [itemList_0, order_1, order_4]: 1/79
      [java] [processCancelBuy_0, processCancelBuy_2, processCancelBuy_4]: 6/79
+     [java] [itemCreate_0, order_1, order_4, processCancelBuy_4]: 2/79
      [java] [itemCreate_0, itemList_0, order_1, order_4]: 1/79
      [java] [order_1, order_4, updateItemForm_0, updateItem_0]: 2/79
-     [java] [itemCreate_0, order_1, order_4, processCancelBuy_4]: 2/79
      [java] [order_1, order_4, processCancelBuy_4]: 7/79
      [java] [itemCreate_0, order_1, order_4, updateItemForm_0]: 1/79
      [java] [itemCreate_0, orderCreateForm_1, order_1, order_4]: 1/79
@@ -50,7 +51,6 @@
      [java] processCancelBuy (processCancelBuy_4): 39/79
      [java] updateItemForm (updateItemForm_0): 5/79
      [java] updateItem (updateItem_0): 21/79
-     [java] 
      [java] ------------------------------------------------------
      [java]  			     Schema
      [java] ------------------------------------------------------
@@ -59,13 +59,9 @@
      [java] ##member## <<id:INT>> <name:STRING> <city:STRING> <street:STRING> <zipcode:STRING>
      [java] ##orders## <<id:INT>> <memberId:INT> <deliveryId:INT> <orderDate:STRING> <status:STRING>
      [java] ##order_item## <<id:INT>> <itemId:INT> <orderId:INT> <deliveryId:INT> <price:INT> <count:INT>
-     [java] 
-     [java] 
-     [java] 
      [java] ------------------------------------------------------
      [java]  			Compiled Application
      [java] ------------------------------------------------------
-     [java] 
      [java] TXN_memberCreate_0
      [java]  ++ memberCreate_0-select#1#1 (SELECT[member:[id, name, city, street, zipcode]]  <<(EQ member.name,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -75,7 +71,6 @@
      [java] Original Transaction: memberCreate
      [java] Microservice: M3
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_memberList_0
      [java]  ++ memberList_0-select#1#1 (SELECT[member:[id, name, city, street, zipcode]]  <<(EQ 1,1)>>)
      [java]     [PATH CONDITION: true]
@@ -83,7 +78,6 @@
      [java] Original Transaction: memberList
      [java] Microservice: M3
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_itemCreate_0
      [java]  ++ itemCreate_0-insert#1#1 (INSERT[items] [i0_param, r1_param, i1_param, i2_param])
      [java]     [PATH CONDITION: true]
@@ -91,7 +85,6 @@
      [java] Original Transaction: itemCreate
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_updateItemForm_0
      [java]  ++ updateItemForm_0-select#1#1 (SELECT[items:[id, name, price, stockQuantity]]  <<(EQ items.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -99,7 +92,6 @@
      [java] Original Transaction: updateItemForm
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_updateItem_0
      [java]  ++ updateItem_0-update#1#1 (UPDATE[items] {price=i1_param, name=r1_param, stockQuantity=i2_param} <<(EQ items.id,i0_param)>>)
      [java]     [PATH CONDITION: (AND true,(NOT (NOT (EQ i3_param,0))))]
@@ -109,7 +101,6 @@
      [java] Original Transaction: updateItem
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_itemList_0
      [java]  ++ itemList_0-select#1#1 (SELECT[items:[id, name, price, stockQuantity]]  <<(EQ 1,1)>>)
      [java]     [PATH CONDITION: true]
@@ -117,7 +108,6 @@
      [java] Original Transaction: itemList
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_orderCreateForm_0
      [java]  ++ orderCreateForm_0-select#1#1 (SELECT[member:[id, name, city, street, zipcode]]  <<(EQ 1,1)>>)
      [java]     [PATH CONDITION: true]
@@ -125,7 +115,6 @@
      [java] Original Transaction: orderCreateForm
      [java] Microservice: M3
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_orderCreateForm_1
      [java]  ++ orderCreateForm_1-select#1#1 (SELECT[items:[id, name, price, stockQuantity]]  <<(EQ 1,1)>>)
      [java]     [PATH CONDITION: true]
@@ -133,7 +122,6 @@
      [java] Original Transaction: orderCreateForm
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_order_0
      [java]  ++ order_0-select#1#1 (SELECT[member:[id, name, city, street, zipcode]]  <<(EQ member.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -141,7 +129,6 @@
      [java] Original Transaction: order
      [java] Microservice: M3
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_order_1
      [java]  ++ order_1-select#1#1 (SELECT[items:[id, name, price, stockQuantity]]  <<(EQ items.id,i1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -149,7 +136,6 @@
      [java] Original Transaction: order
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_order_2
      [java]  ++ order_2-insert#1#1 (INSERT[delivery] [i4_param, i3_param, (ROW:member-r24-next1).city, (ROW:member-r24-next1).street, (ROW:member-r24-next1).zipcode, Ready])
      [java]     [PATH CONDITION: true]
@@ -157,7 +143,6 @@
      [java] Original Transaction: order
      [java] Microservice: M2
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_order_3
      [java]  ++ order_3-insert#1#1 (INSERT[order_item] [i5_param, i1_param, i3_param, i4_param, (ROW:items-r25-next1).price, i2_param])
      [java]     [PATH CONDITION: true]
@@ -165,7 +150,6 @@
      [java] Original Transaction: order
      [java] Microservice: M5
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_order_4
      [java]  ++ order_4-update#1#1 (UPDATE[items] {stockQuantity=(MINUS (ROW:items-r25-next1).stockQuantity,i2_param)} <<(EQ items.id,i1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -173,7 +157,6 @@
      [java] Original Transaction: order
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_order_5
      [java]  ++ order_5-insert#1#1 (INSERT[orders] [i3_param, i0_param, i4_param, r1_param, Order])
      [java]     [PATH CONDITION: true]
@@ -181,7 +164,6 @@
      [java] Original Transaction: order
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_orderList_0
      [java]  ++ orderList_0-select#1#1 (SELECT[member:[id, name, city, street, zipcode]]  <<(EQ member.name,r2_param)>>)
      [java]     [PATH CONDITION: true]
@@ -189,7 +171,6 @@
      [java] Original Transaction: orderList
      [java] Microservice: M3
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_orderList_1
      [java]  ++ orderList_1-select#1#1 (SELECT[orders:[id, memberId, deliveryId, orderDate, status]]  <<(AND (EQ orders.status,r1_param),(EQ orders.memberId,(ROW:member-r9-next1).id))>>)
      [java]     [PATH CONDITION: true]
@@ -197,7 +178,6 @@
      [java] Original Transaction: orderList
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_processCancelBuy_0
      [java]  ++ processCancelBuy_0-select#1#1 (SELECT[orders:[id, memberId, deliveryId, orderDate, status]]  <<(EQ orders.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -205,7 +185,6 @@
      [java] Original Transaction: processCancelBuy
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_processCancelBuy_1
      [java]  ++ processCancelBuy_1-select#1#1 (SELECT[delivery:[status]]  <<(EQ delivery.id,(ROW:orders-r22-next1).deliveryId)>>)
      [java]     [PATH CONDITION: true]
@@ -213,7 +192,6 @@
      [java] Original Transaction: processCancelBuy
      [java] Microservice: M2
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_processCancelBuy_2
      [java]  ++ processCancelBuy_2-update#1#1 (UPDATE[orders] {status=Cancel} <<(EQ orders.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -221,7 +199,6 @@
      [java] Original Transaction: processCancelBuy
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_processCancelBuy_3
      [java]  ++ processCancelBuy_3-select#1#1 (SELECT[order_item:[itemId, count]]  <<(EQ order_item.orderId,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -229,7 +206,6 @@
      [java] Original Transaction: processCancelBuy
      [java] Microservice: M5
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_processCancelBuy_4
      [java]  ++ processCancelBuy_4-select#1#1 (SELECT[items:[stockQuantity]]  <<(EQ items.id,(ROW:order_item-r24-loopVar0).itemId)>>)
      [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: order_item WHERE: (EQ order_item.orderId,i0_param)],0))),(NOT (EQ NULL[null],0)))]
@@ -239,12 +215,8 @@
      [java] Original Transaction: processCancelBuy
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
-     [java] 
-     [java] 
-     [java] 
      [java] ===========================================
-     [java] === AR compile time:	180ms
+     [java] === AR compile time:	181ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
@@ -254,7 +226,7 @@
      [java] +++ Others found:			54
      [java] -------------------------------------------
      [java] === Total anomalies found:	79
-     [java] === Analysis time:		462525 ms
+     [java] === Analysis time:		7131046 ms
 
 BUILD SUCCESSFUL
-Total time: 7 minutes 45 seconds
+Total time: 118 minutes 53 seconds

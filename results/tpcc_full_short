@@ -1,3 +1,4 @@
+
      [java] [newOrder_3, newOrder_7, orderStatus_1, orderStatus_2]: 2/98
      [java] [delivery_0, delivery_2, newOrder_4, newOrder_7]: 8/98
      [java] [delivery_1, delivery_2, newOrder_3, newOrder_7]: 8/98
@@ -5,12 +6,12 @@
      [java] [newOrder_6, newOrder_7, stockLevel_1, stockLevel_2]: 1/98
      [java] [newOrder_2, newOrder_7, stockLevel_0, stockLevel_1]: 1/98
      [java] [newOrder_1, newOrder_2, payment_0, payment_1]: 2/98
-     [java] [payment_0, payment_1]: 4/98
      [java] [payment_1, payment_2]: 20/98
+     [java] [payment_0, payment_1]: 4/98
      [java] [payment_0, payment_2]: 20/98
      [java] [delivery_0, delivery_3]: 4/98
-     [java] [delivery_1, delivery_3]: 4/98
      [java] [delivery_0, delivery_2]: 4/98
+     [java] [delivery_1, delivery_3]: 4/98
      [java] [delivery_0, delivery_1]: 4/98
      [java] [delivery_1, delivery_2]: 4/98
      [java] [delivery_2, delivery_3]: 4/98
@@ -33,7 +34,6 @@
      [java] stockLevel (stockLevel_0): 1/98
      [java] stockLevel (stockLevel_1): 2/98
      [java] stockLevel (stockLevel_2): 1/98
-     [java] 
      [java] ------------------------------------------------------
      [java]  			     Schema
      [java] ------------------------------------------------------
@@ -46,13 +46,9 @@
      [java] ##district## <<d_w_id:INT>> <<d_id:INT>> <d_ytd:REAL> <d_tax:REAL> <d_next_o_id:INT> <d_name:STRING> <d_street_1:STRING> <d_street_2:STRING> <d_city:STRING> <d_state:STRING> <d_zip:STRING>
      [java] ##item## <<i_id:INT>> <i_name:STRING> <i_price:REAL> <i_data:STRING> <i_im_id:INT>
      [java] ##warehouse## <<w_id:INT>> <w_ytd:REAL> <w_tax:REAL> <w_name:STRING> <w_street_1:STRING> <w_street_2:STRING> <w_city:STRING> <w_state:STRING> <w_zip:STRING>
-     [java] 
-     [java] 
-     [java] 
      [java] ------------------------------------------------------
      [java]  			Compiled Application
      [java] ------------------------------------------------------
-     [java] 
      [java] TXN_delivery_0
      [java]  ++ delivery_0-select#1#1 (SELECT[new_order:[]]  <<(AND (EQ new_order.no_d_id,i0_param),(EQ new_order.no_w_id,i1_param))>>)
      [java]     [PATH CONDITION: true]
@@ -62,7 +58,6 @@
      [java] Original Transaction: delivery
      [java] Microservice: M5
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_delivery_1
      [java]  ++ delivery_1-select#1#1 (SELECT[oorder:[]]  <<(AND (AND (EQ oorder.o_id,(ROW:new_order-r17-next1).no_o_id),(EQ oorder.o_d_id,i0_param)),(EQ oorder.o_w_id,i1_param))>>)
      [java]     [PATH CONDITION: true]
@@ -72,7 +67,6 @@
      [java] Original Transaction: delivery
      [java] Microservice: M6
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_delivery_2
      [java]  ++ delivery_2-update#1#1 (UPDATE[order_line] {ol_delivery_d=?} <<(AND (AND (EQ order_line.ol_o_id,(ROW:new_order-r17-next1).no_o_id),(EQ order_line.ol_d_id,i0_param)),(EQ order_line.ol_w_id,i1_param))>>)
      [java]     [PATH CONDITION: true]
@@ -82,7 +76,6 @@
      [java] Original Transaction: delivery
      [java] Microservice: M7
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_delivery_3
      [java]  ++ delivery_3-select#1#1 (SELECT[customer:[]]  <<(AND (AND (EQ customer.c_w_id,i1_param),(EQ customer.c_d_id,i0_param)),(EQ customer.c_id,(ROW:oorder-r18-next1).o_c_id))>>)
      [java]     [PATH CONDITION: true]
@@ -92,7 +85,6 @@
      [java] Original Transaction: delivery
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_newOrder_0
      [java]  ++ newOrder_0-select#1#1 (SELECT[customer:[]]  <<(AND (AND (EQ customer.c_w_id,i4_param),(EQ customer.c_d_id,i5_param)),(EQ customer.c_id,i6_param))>>)
      [java]     [PATH CONDITION: true]
@@ -100,7 +92,6 @@
      [java] Original Transaction: newOrder
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_newOrder_1
      [java]  ++ newOrder_1-select#1#1 (SELECT[warehouse:[]]  <<(EQ warehouse.w_id,i4_param)>>)
      [java]     [PATH CONDITION: true]
@@ -108,7 +99,6 @@
      [java] Original Transaction: newOrder
      [java] Microservice: M9
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_newOrder_2
      [java]  ++ newOrder_2-select#1#1 (SELECT[district:[]]  <<(AND (EQ district.d_w_id,i4_param),(EQ district.d_id,i5_param))>>)
      [java]     [PATH CONDITION: true]
@@ -118,7 +108,6 @@
      [java] Original Transaction: newOrder
      [java] Microservice: M2
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_newOrder_3
      [java]  ++ newOrder_3-insert#1#1 (INSERT[oorder] [(ROW:district-r34-next1).d_next_o_id, i5_param, i4_param, i6_param, ?, ?, i7_param, i8_param])
      [java]     [PATH CONDITION: true]
@@ -126,7 +115,6 @@
      [java] Original Transaction: newOrder
      [java] Microservice: M6
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_newOrder_4
      [java]  ++ newOrder_4-insert#1#1 (INSERT[new_order] [(ROW:district-r34-next1).d_next_o_id, i5_param, i4_param])
      [java]     [PATH CONDITION: true]
@@ -134,7 +122,6 @@
      [java] Original Transaction: newOrder
      [java] Microservice: M5
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_newOrder_5
      [java]  ++ newOrder_5-select#1#1 (SELECT[item:[]]  <<(EQ item.i_id,Abs-INT#1)>>)
      [java]     [PATH CONDITION: true]
@@ -142,7 +129,6 @@
      [java] Original Transaction: newOrder
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_newOrder_6
      [java]  ++ newOrder_6-select#1#1 (SELECT[stock:[]]  <<(AND (EQ stock.s_i_id,Abs-INT#2),(EQ stock.s_w_id,Abs-INT#3))>>)
      [java]     [PATH CONDITION: true]
@@ -152,7 +138,6 @@
      [java] Original Transaction: newOrder
      [java] Microservice: M8
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_newOrder_7
      [java]  ++ newOrder_7-insert#1#1 (INSERT[order_line] [i4_param, i5_param, (ROW:district-r34-next1).d_next_o_id, 1, Abs-INT#8, ?, (MULT Abs-REAL#9,(ROW:item-r35-loopVar1).i_price), Abs-INT#10, Abs-INT#11, (ROW:stock-r36-loopVar1).s_dist_01])
      [java]     [PATH CONDITION: true]
@@ -160,7 +145,6 @@
      [java] Original Transaction: newOrder
      [java] Microservice: M7
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_orderStatus_0
      [java]  ++ orderStatus_0-select#1#1 (SELECT[customer:[]]  <<(AND (AND (EQ customer.c_w_id,i0_param),(EQ customer.c_d_id,(PLUS Abs-INT#3,i1_param))),(EQ customer.c_last,Abs-STRING#4))>>)
      [java]     [PATH CONDITION: true]
@@ -170,7 +154,6 @@
      [java] Original Transaction: orderStatus
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_orderStatus_1
      [java]  ++ orderStatus_1-select#1#1 (SELECT[oorder:[]]  <<(AND (AND (EQ oorder.o_w_id,i0_param),(EQ oorder.o_d_id,(PLUS Abs-INT#0,i1_param))),(EQ oorder.o_c_id,-1))>>)
      [java]     [PATH CONDITION: true]
@@ -178,7 +161,6 @@
      [java] Original Transaction: orderStatus
      [java] Microservice: M6
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_orderStatus_2
      [java]  ++ orderStatus_2-select#1#1 (SELECT[order_line:[]]  <<(AND (AND (EQ order_line.ol_o_id,(ROW:oorder-r83-next1).o_id),(EQ order_line.ol_d_id,(PLUS Abs-INT#1,i1_param))),(EQ order_line.ol_w_id,i0_param))>>)
      [java]     [PATH CONDITION: true]
@@ -186,7 +168,6 @@
      [java] Original Transaction: orderStatus
      [java] Microservice: M7
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_payment_0
      [java]  ++ payment_0-select#1#1 (SELECT[warehouse:[]]  <<(EQ warehouse.w_id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -196,7 +177,6 @@
      [java] Original Transaction: payment
      [java] Microservice: M9
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_payment_1
      [java]  ++ payment_1-select#1#1 (SELECT[district:[]]  <<(AND (EQ district.d_w_id,i0_param),(EQ district.d_id,(PLUS Abs-INT#3,i2_param)))>>)
      [java]     [PATH CONDITION: true]
@@ -206,7 +186,6 @@
      [java] Original Transaction: payment
      [java] Microservice: M2
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_payment_2
      [java]  ++ payment_2-select#1#1 (SELECT[customer:[]]  <<(AND (AND (EQ customer.c_w_id,i0_param),(EQ customer.c_d_id,(PLUS Abs-INT#23,i2_param))),(EQ customer.c_last,Abs-STRING#24))>>)
      [java]     [PATH CONDITION: true]
@@ -222,7 +201,6 @@
      [java] Original Transaction: payment
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_payment_3
      [java]  ++ payment_3-insert#1#1 (INSERT[history] [(PLUS Abs-INT#18,i2_param), i0_param, Abs-INT#19, (PLUS Abs-INT#20,i2_param), i0_param, ?, Abs-REAL#21, Abs-STRING#22])
      [java]     [PATH CONDITION: true]
@@ -230,7 +208,6 @@
      [java] Original Transaction: payment
      [java] Microservice: M3
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_stockLevel_0
      [java]  ++ stockLevel_0-select#1#1 (SELECT[district:[]]  <<(AND (EQ district.d_w_id,i0_param),(EQ district.d_id,(PLUS Abs-INT#0,i1_param)))>>)
      [java]     [PATH CONDITION: true]
@@ -238,7 +215,6 @@
      [java] Original Transaction: stockLevel
      [java] Microservice: M2
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_stockLevel_1
      [java]  ++ stockLevel_1-select#1#1 (SELECT[order_line:[]]  <<(AND (AND (AND (EQ order_line.ol_w_id,i0_param),(EQ order_line.ol_d_id,(PLUS Abs-INT#1,i1_param))),(LT order_line.ol_o_id,(ROW:district-r7-next1).d_next_o_id)),(GEQ order_line.ol_o_id,(MINUS (ROW:district-r7-next1).d_next_o_id,20)))>>)
      [java]     [PATH CONDITION: true]
@@ -246,7 +222,6 @@
      [java] Original Transaction: stockLevel
      [java] Microservice: M7
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_stockLevel_2
      [java]  ++ stockLevel_2-select#1#1 (SELECT[stock:[]]  <<(AND (AND (EQ stock.s_w_id,i0_param),(EQ stock.s_i_id,(ROW:order_line-r8-loopVar0).ol_i_id)),(LT stock.s_quantity,(PLUS Abs-INT#2,10)))>>)
      [java]     [PATH CONDITION: true]
@@ -254,12 +229,8 @@
      [java] Original Transaction: stockLevel
      [java] Microservice: M8
      [java] ----------------------------------------------------------------
-     [java] 
-     [java] 
-     [java] 
-     [java] 
      [java] ===========================================
-     [java] === AR compile time:	262ms
+     [java] === AR compile time:	266ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		13
@@ -269,7 +240,7 @@
      [java] +++ Others found:			58
      [java] -------------------------------------------
      [java] === Total anomalies found:	98
-     [java] === Analysis time:		992206 ms
+     [java] === Analysis time:		2764339 ms
 
 BUILD SUCCESSFUL
-Total time: 16 minutes 34 seconds
+Total time: 46 minutes 7 seconds

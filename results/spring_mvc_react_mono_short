@@ -1,23 +1,4 @@
 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
      [java] ------------------------------------------------------
      [java]  			     Schema
      [java] ------------------------------------------------------
@@ -27,13 +8,9 @@
      [java] ##tags## <<id:INT>> <name:STRING> <description:STRING> <popular:INT> <createdAt:STRING> <userId:INT>
      [java] ##users## <<id:INT>> <username:STRING> <password:STRING> <createdAt:STRING> <status:STRING> <popular:INT>
      [java] ##votes## <<id:INT>> <module:STRING> <questionId:INT> <answerId:INT> <userId:INT> <mark:STRING>
-     [java] 
-     [java] 
-     [java] 
      [java] ------------------------------------------------------
      [java]  			Compiled Application
      [java] ------------------------------------------------------
-     [java] 
      [java] TXN_answerListAllAnswers_0
      [java]  ++ answerListAllAnswers_0-select#1#1 (SELECT[answers:[id, comment, createdAt, updatedAt, userId, questionId]]  <<(EQ 1,1)>>)
      [java]     [PATH CONDITION: true]
@@ -41,7 +18,6 @@
      [java] Original Transaction: answerListAllAnswers
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_answerGetAnswer_0
      [java]  ++ answerGetAnswer_0-select#1#1 (SELECT[answers:[id, comment, createdAt, updatedAt, userId, questionId]]  <<(EQ answers.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -49,7 +25,6 @@
      [java] Original Transaction: answerGetAnswer
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_answerGetAnswersByUser_0
      [java]  ++ answerGetAnswersByUser_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -59,7 +34,6 @@
      [java] Original Transaction: answerGetAnswersByUser
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_answerCreateQuestion_0
      [java]  ++ answerCreateQuestion_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -73,7 +47,6 @@
      [java] Original Transaction: answerCreateQuestion
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_authorizationLogin_0
      [java]  ++ authorizationLogin_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -81,7 +54,6 @@
      [java] Original Transaction: authorizationLogin
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_authorizationRegister_0
      [java]  ++ authorizationRegister_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -91,7 +63,6 @@
      [java] Original Transaction: authorizationRegister
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_questionListAllQuestions_0
      [java]  ++ questionListAllQuestions_0-select#1#1 (SELECT[questions:[id, title, ago, comment, userId, createdAt, updatedAt]]  <<(EQ 1,1)>>)
      [java]     [PATH CONDITION: true]
@@ -99,7 +70,6 @@
      [java] Original Transaction: questionListAllQuestions
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_questionGetQuestion_0
      [java]  ++ questionGetQuestion_0-select#1#1 (SELECT[questions:[id, title, ago, comment, userId, createdAt, updatedAt]]  <<(EQ questions.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -107,7 +77,6 @@
      [java] Original Transaction: questionGetQuestion
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_questionGetQuestionsByUser_0
      [java]  ++ questionGetQuestionsByUser_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -117,7 +86,6 @@
      [java] Original Transaction: questionGetQuestionsByUser
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_questionGetQuestionsByTag_0
      [java]  ++ questionGetQuestionsByTag_0-select#1#1 (SELECT[tags:[id, name, description, popular, createdAt, userId]]  <<(EQ tags.name,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -129,7 +97,6 @@
      [java] Original Transaction: questionGetQuestionsByTag
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_questionCreateQuestion_0
      [java]  ++ questionCreateQuestion_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -149,7 +116,6 @@
      [java] Original Transaction: questionCreateQuestion
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_tagListAllTags_0
      [java]  ++ tagListAllTags_0-select#1#1 (SELECT[tags:[id, name, description, popular, createdAt, userId]]  <<(EQ 1,1)>>)
      [java]     [PATH CONDITION: true]
@@ -157,7 +123,6 @@
      [java] Original Transaction: tagListAllTags
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_tagGetTag_0
      [java]  ++ tagGetTag_0-select#1#1 (SELECT[tags:[id, name, description, popular, createdAt, userId]]  <<(EQ tags.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -165,7 +130,6 @@
      [java] Original Transaction: tagGetTag
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_tagGetTagsByTerm_0
      [java]  ++ tagGetTagsByTerm_0-select#1#1 (SELECT[tags:[id, name, description, popular, createdAt, userId]]  <<(EQ tags.name,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -173,7 +137,6 @@
      [java] Original Transaction: tagGetTagsByTerm
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_userListAllUsers_0
      [java]  ++ userListAllUsers_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ 1,1)>>)
      [java]     [PATH CONDITION: true]
@@ -181,7 +144,6 @@
      [java] Original Transaction: userListAllUsers
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_userGetUserByName_0
      [java]  ++ userGetUserByName_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -189,7 +151,6 @@
      [java] Original Transaction: userGetUserByName
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_userGetUser_0
      [java]  ++ userGetUser_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -197,7 +158,6 @@
      [java] Original Transaction: userGetUser
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_userCreateUser_0
      [java]  ++ userCreateUser_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -207,7 +167,6 @@
      [java] Original Transaction: userCreateUser
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_userCreateQuestion_0
      [java]  ++ userCreateQuestion_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -217,7 +176,6 @@
      [java] Original Transaction: userCreateQuestion
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_userUpdateUser_0
      [java]  ++ userUpdateUser_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -227,7 +185,6 @@
      [java] Original Transaction: userUpdateUser
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_userDeleteUser_0
      [java]  ++ userDeleteUser_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -237,7 +194,6 @@
      [java] Original Transaction: userDeleteUser
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_voteCreateQuestion_0
      [java]  ++ voteCreateQuestion_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -259,7 +215,6 @@
      [java] Original Transaction: voteCreateQuestion
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_ajaxGetSearchResultViaAjax_0
      [java]  ++ ajaxGetSearchResultViaAjax_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(AND (EQ users.username,r1_param),(EQ users.username,r2_param))>>)
      [java]     [PATH CONDITION: (AND (AND true,(NOT (NOT (EQ Abs-REAL#0,0)))),(NOT (NOT (EQ Abs-REAL#1,0))))]
@@ -271,12 +226,8 @@
      [java] Original Transaction: ajaxGetSearchResultViaAjax
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
-     [java] 
-     [java] 
-     [java] 
      [java] ===========================================
-     [java] === AR compile time:	294ms
+     [java] === AR compile time:	254ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
@@ -286,7 +237,7 @@
      [java] +++ Others found:			0
      [java] -------------------------------------------
      [java] === Total anomalies found:	0
-     [java] === Analysis time:		569003 ms
+     [java] === Analysis time:		111777 ms
 
 BUILD SUCCESSFUL
-Total time: 9 minutes 31 seconds
+Total time: 1 minute 54 seconds
