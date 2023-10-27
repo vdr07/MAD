@@ -390,7 +390,7 @@ public class Transformer extends BodyTransformer {
 			else if(!anmlName.equals("Others"))
 				System.out.println("+++ " + anmlName + " found:		" + anmlsCounters.get(anmlName));
 		}
-		System.out.println("+++ Others found:			" + anmlsCounters.get("Others"));
+		System.out.println("+++ Unclassified found:		" + anmlsCounters.get("Others"));
 		System.out.println("-------------------------------------------");
 		
 		System.out.println("=== Total anomalies found:	" + anmlCount);
