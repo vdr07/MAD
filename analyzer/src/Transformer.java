@@ -194,14 +194,8 @@ public class Transformer extends BodyTransformer {
 						final Application app2 = app;
 						final int finalTxnsNamesCombIdx = txnsNamesCombIdx;
 						threads[txnsNamesCombIdx] = new Thread(() -> {
-							// ConstantArgs._Current_Cycle_Length tem de se ir alterando ao longo do tempo
-							// Se calhar é melhor enviar como argumento
 							int current_cycle_length = ConstantArgs._Current_Cycle_Length;
 							do {
-								if (txnsNamesCombs.get(finalTxnsNamesCombIdx).size() != current_cycle_length-1 && finalTxnsNamesCombIdx != txnsNamesCombs.size()-1) {
-									current_cycle_length++;
-									continue;
-								}
 
 								LOG.info("New round of analysis for an anomaly of length: "
 										+ current_cycle_length);
