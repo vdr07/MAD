@@ -568,12 +568,11 @@ public class DynamicAssertsions {
 	// 1. when a basic cycle is generated
 	// 2. when a cycle with additional operations is generated
 	public BoolExpr mk_cycle(boolean findCore, Anomaly unVersionedAnml,
-			List<String> txnsNamesComb) {
+			List<String> txnsNamesComb, int length) {
 		List<Tuple<String, Tuple<String, String>>> structure = null;
 		Map<Tuple<String, String>, Set<String>> completeStructure = null;
 		List<Tuple<String, String>> cycleTxns = null;
 		boolean isStepTwo = false;
-		int length = ConstantArgs._Current_Cycle_Length;
 		Expr[] Os = new Expr[length];
 		if (unVersionedAnml != null) {
 			structure = unVersionedAnml.getCycleStructure();
@@ -894,9 +893,8 @@ public class DynamicAssertsions {
 
 	// LOOSE CYCLE ENFORCEMENT (4)
 	public BoolExpr mk_loose_cycle(boolean findCore, List<Tuple<String, Tuple<String, String>>> structure,
-			List<String> txnsNamesComb) {
+			List<String> txnsNamesComb, int length) {
 
-		int length = ConstantArgs._Current_Cycle_Length;
 		Expr[] Os = new Expr[length];
 		for (int i = 0; i < length; i++)
 			Os[i] = ctx.mkFreshConst("o", objs.getSort("O"));

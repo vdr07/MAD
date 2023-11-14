@@ -99,7 +99,7 @@ public class Transformer extends BodyTransformer {
 
 	public static void main(String[] args) {
 		Application app = null;
-		Anomaly anml1 = null, anml2 = null;
+		// Anomaly anml1 = null, anml2 = null;
 		int iter = 1;
 		new ConstantArgs();
 		LOG.info("Beginnign of the main method");
@@ -130,7 +130,7 @@ public class Transformer extends BodyTransformer {
 		/*
 		 * Begin AR analysis
 		 */
-		Z3Driver zdr;
+		// Z3Driver zdr;
 		AnomalyStructure seenStructures = new AnomalyStructure();
 		if (ConstantArgs._CONTINUED_ANALYSIS) {
 			try {
@@ -155,10 +155,10 @@ public class Transformer extends BodyTransformer {
 			txnsNamesCombs.removeIf(l -> l.size() < 2);
 		Collections.sort(txnsNamesCombs, (txnsNamesComb1, txnsNamesComb2) -> Integer.compare(txnsNamesComb1.size(), txnsNamesComb2.size()));
 		
-		int txnsNamesCombIdx = 0;
 		long analysis_begin_time = System.currentTimeMillis();
-		List<Anomaly> seenAnmls = new ArrayList<>();
-		List<Anomaly> seenVersAnmls = new ArrayList<>();
+		List<Anomaly> seenAnmls = Collections.synchronizedList(new ArrayList<>());
+		List<Anomaly> seenVersAnmls = Collections.synchronizedList(new ArrayList<>());
+		Thread[] threads = new Thread[txnsNamesCombs.size()];
 		// Outermost loop to iterate over different partition sizes
 		while (ConstantArgs._current_partition_size <= ConstantArgs._MAX_NUM_PARTS) {
 			LOG.info("Begin partition size " + ConstantArgs._current_partition_size + "");
@@ -182,98 +182,118 @@ public class Transformer extends BodyTransformer {
 					LOG.info("Begin analysis for tables: "
 							+ includedTables.stream().map(t -> t.getName()).collect(Collectors.toSet()));
 					ConstantArgs._Current_Cycle_Length = ConstantArgs._Minimum_Cycle_Length;
-					// Iterate over different anomaly lengths
-					do {
-						if (txnsNamesCombIdx == txnsNamesCombs.size())
-							txnsNamesCombIdx--;
-						LOG.info("New round of analysis for an anomaly of length: "
-								+ ConstantArgs._Current_Cycle_Length);
-						LOG.info("Analysis for transactions: "
-														+ txnsNamesCombs.get(txnsNamesCombIdx));
-						try {
-							seenStructures.save();
-							LOG.info("All models saved in file");
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						long anml2_begin_time = System.currentTimeMillis();
-						anml2 = null;
-						zdr = new Z3Driver(app, tables, false);
-						LOG.info("New Z3Driver created");
-						ConstantArgs._current_version_enforcement = false;
-						anml1 = zdr.analyze(1, seenStructures.getStructures(), seenAnmls, includedTables, null, txnsNamesCombs.get(txnsNamesCombIdx));
-						if (anml1 != null) {
-							LOG.info("Unversioned anomaly generated: " + anml1);
-							anml1.generateCycleStructure();
-							System.out.println("structure1: "+anml1.getCycleStructure());
-							seenAnmls.add(anml1);
-							seenStructures.addStructure(anml1.getCycleStructure());
-							seenStructures.writeToCSV(seenStructures.size(), iter - 1, anml1);
-							// Versioned analysis
-							ConstantArgs._current_version_enforcement = true;
-							anml2 = zdr.analyze(2, null, seenAnmls, includedTables, anml1, txnsNamesCombs.get(txnsNamesCombIdx));
-							if (anml2 != null) {
+					
+					for (int txnsNamesCombIdx = 0; txnsNamesCombIdx < txnsNamesCombs.size(); txnsNamesCombIdx++) {
+						// Iterate over different anomaly lengths
+						final Application app2 = app;
+						final int finalTxnsNamesCombIdx = txnsNamesCombIdx;
+						threads[txnsNamesCombIdx] = new Thread(() -> {
+							// ConstantArgs._Current_Cycle_Length tem de se ir alterando ao longo do tempo
+							// Se calhar é melhor enviar como argumento
+							int currenct_cycle_length = ConstantArgs._Current_Cycle_Length;
+							do {
+								if (txnsNamesCombs.get(finalTxnsNamesCombIdx).size() != currenct_cycle_length-1 && finalTxnsNamesCombIdx != txnsNamesCombs.size()-1)
+									continue;
 
-								anml2.generateCycleStructure();
-								System.out.println("structure3: "+anml2.getCycleStructure());
-								seenVersAnmls.add(anml2);
-								// seenStructures.addStructure(anml2.getCycleStructure());
-								// seenStructures.writeToCSV(seenStructures.size(), iter - 1, anml2);
-								long anml2_finish_time = System.currentTimeMillis();
-								anml2.setExtractionTime(-1, anml2_finish_time - anml2_begin_time);
-								// anml2.announce(false, seenStructures.size());
-								// LOG.info("Versioned anomaly generated (" + seenStructures.size() + ") -- " + anml2);
-								
-								// Commented since it is not being used and contributing to an error
-								anml2.announce(false, seenVersAnmls.size());
-								LOG.info("Versioned anomaly generated (" + seenVersAnmls.size() + ") -- " + anml2);
-
-								// inner loop for finding structurally similar anomalies
-								if (ConstantArgs._ENFORCE_OPTIMIZED_ALGORITHM) {
-									LOG.info("Entering the inner loop for finding structurally similar anomalies");
-									Anomaly anml3 = zdr.analyze(3, null, seenAnmls, includedTables, anml2, txnsNamesCombs.get(txnsNamesCombIdx));
-									if (anml3 == null)
-										LOG.info("No structurally similar anomaly exists");
-									while (anml3 != null) {
-										anml3.generateCycleStructure();
-										System.out.println("structure3: "+anml3.getCycleStructure());
-										seenAnmls.add(anml3);
-										seenVersAnmls.add(anml3);
-										seenStructures.addStructure(anml3.getCycleStructure());
-										seenStructures.writeToCSV(seenStructures.size(), iter - 1, anml3);
-										LOG.info("A structurally similar anomaly generated (" + seenVersAnmls.size()
-												+ ") -- " + anml3);
-										
-										// Commented since it is not being used and contributing to an error
-										anml3.announce(false, seenVersAnmls.size());
-										
-										// repeat
-										anml3 = zdr.analyze(4, null, seenAnmls, includedTables, anml3, null);
-									}
+								LOG.info("New round of analysis for an anomaly of length: "
+										+ currenct_cycle_length);
+								LOG.info("Analysis for transactions: "
+																+ txnsNamesCombs.get(finalTxnsNamesCombIdx));
+								try {
+									seenStructures.save();
+									LOG.info("All models saved in file");
+								} catch (IOException e) {
+									e.printStackTrace();
 								}
-							} else
-								LOG.info("No versioning exists for: " + anml1);
-							anml1.closeCtx();
+								long anml2_begin_time = System.currentTimeMillis();
+								Z3Driver zdr = new Z3Driver(app2, tables, false);
+								// anml2 = null;
+								LOG.info("New Z3Driver created");
+								ConstantArgs._current_version_enforcement = false;
+									Anomaly anml1 = zdr.analyze(1, seenStructures.getStructures(), seenAnmls, includedTables, null, txnsNamesCombs.get(finalTxnsNamesCombIdx), currenct_cycle_length);
+									if (anml1 != null) {
+										LOG.info("Unversioned anomaly generated: " + anml1);
+										anml1.generateCycleStructure();
+										System.out.println("structure1: "+anml1.getCycleStructure());
+										seenAnmls.add(anml1);
+										seenStructures.addStructure(anml1.getCycleStructure());
+										seenStructures.writeToCSV(seenStructures.size(), /*iter - 1*/ 0, anml1);
+										// Versioned analysis
+										ConstantArgs._current_version_enforcement = true;
+										Anomaly anml2 = zdr.analyze(2, null, seenAnmls, includedTables, anml1, txnsNamesCombs.get(finalTxnsNamesCombIdx), currenct_cycle_length);
+										if (anml2 != null) {
 
-						} else {
-							zdr.closeCtx();
-							LOG.info("No anomaly was found");
-						}
-						// No more anomalies using that set of transactions
-						if (anml1 == null)
-							txnsNamesCombIdx++;
-						// update global variables for the next round
-						if (/*anml2 == null || */anml1 == null && (txnsNamesCombIdx == txnsNamesCombs.size() || txnsNamesCombs.get(txnsNamesCombIdx).size() == ConstantArgs._Current_Cycle_Length)) {
-							LOG.info("Search completed for anomalies of length: " + ConstantArgs._Current_Cycle_Length);
-							ConstantArgs._Current_Cycle_Length++;
-						}
-					} while (ConstantArgs._Current_Cycle_Length <= ConstantArgs._MAX_CYCLE_LENGTH);
+											anml2.generateCycleStructure();
+											System.out.println("structure3: "+anml2.getCycleStructure());
+											seenVersAnmls.add(anml2);
+											// seenStructures.addStructure(anml2.getCycleStructure());
+											// seenStructures.writeToCSV(seenStructures.size(), iter - 1, anml2);
+											long anml2_finish_time = System.currentTimeMillis();
+											anml2.setExtractionTime(-1, anml2_finish_time - anml2_begin_time);
+											// anml2.announce(false, seenStructures.size());
+											// LOG.info("Versioned anomaly generated (" + seenStructures.size() + ") -- " + anml2);
+											
+											anml2.announce(false, seenVersAnmls.size());
+											LOG.info("Versioned anomaly generated (" + seenVersAnmls.size() + ") -- " + anml2);
+
+											// inner loop for finding structurally similar anomalies
+											if (ConstantArgs._ENFORCE_OPTIMIZED_ALGORITHM) {
+												LOG.info("Entering the inner loop for finding structurally similar anomalies");
+												Anomaly anml3 = zdr.analyze(3, null, seenAnmls, includedTables, anml2, txnsNamesCombs.get(finalTxnsNamesCombIdx), currenct_cycle_length);
+												if (anml3 == null)
+													LOG.info("No structurally similar anomaly exists");
+												while (anml3 != null) {
+													anml3.generateCycleStructure();
+													System.out.println("structure3: "+anml3.getCycleStructure());
+													seenAnmls.add(anml3);
+													seenVersAnmls.add(anml3);
+													seenStructures.addStructure(anml3.getCycleStructure());
+													seenStructures.writeToCSV(seenStructures.size(), /*iter - 1*/ 0, anml3);
+													LOG.info("A structurally similar anomaly generated (" + seenVersAnmls.size()
+															+ ") -- " + anml3);
+													
+													anml3.announce(false, seenVersAnmls.size());
+													
+													// repeat
+													anml3 = zdr.analyze(4, null, seenAnmls, includedTables, anml3, null, 0);
+												}
+											}
+										} else
+											LOG.info("No versioning exists for: " + anml1);
+										anml1.closeCtx();
+
+									} else {
+										zdr.closeCtx();
+										LOG.info("No anomaly was found");
+									}
+
+								// No more anomalies using that set of transactions
+								//if (anml1 == null)
+									//txnsNamesCombIdx++;
+								// update global variables for the next round
+								if (/*anml2 == null || */anml1 == null) {
+									LOG.info("Search completed for anomalies of length: " + currenct_cycle_length);
+									currenct_cycle_length++;
+								}
+							} while (currenct_cycle_length <= ConstantArgs._MAX_CYCLE_LENGTH);
+						});
+						threads[txnsNamesCombIdx].start();
+					}
 				}
 				currentRowInstLimit++;
 			}
 			ConstantArgs._current_partition_size++;
 			iter++;
 		}
+
+        try {
+            for (Thread thread : threads) {
+                thread.join();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+		
 		long analysis_finish_time = System.currentTimeMillis();
 
 		Map<String, Integer> anmlsCounters = new HashMap<String, Integer>();

@@ -670,7 +670,7 @@ public class Z3Driver {
 	 */
 	public Anomaly analyze(int round, List<List<Tuple<String, Tuple<String, String>>>> seenStructures,
 						   List<Anomaly> seenAnmls, Set<Table> includedTables, Anomaly unVersionedAnml,
-						   List<String> txnsNamesComb) {
+						   List<String> txnsNamesComb, int length) {
 		// this function is called twice at each iteration: once for unannotated
 		// solution and once for the annotated (second call). In the second call certain
 		// constraints (e.g. rule constraints) must be popped and be replaced with
@@ -711,7 +711,7 @@ public class Z3Driver {
 				// addAssertion("gen_dep_props", staticAssrtions.mk_gen_dep_props());
 				addAssertion("gen_depx", staticAssrtions.mk_gen_depx());
 				// addAssertion("gen_depx_props", staticAssrtions.mk_gen_depx_props());
-				addAssertion("base_cycle_enforcement", dynamicAssertions.mk_cycle(findCore, null, txnsNamesComb));
+				addAssertion("base_cycle_enforcement", dynamicAssertions.mk_cycle(findCore, null, txnsNamesComb, length));
 				HeaderZ3("EOF");
 				break;
 
@@ -746,14 +746,14 @@ public class Z3Driver {
 				addAssertion("gen_depx", staticAssrtions.mk_gen_depx());
 				// addAssertion("gen_depx_props", staticAssrtions.mk_gen_depx_props());
 				slv.push();
-				addAssertion("exact_cycle_enforcement", dynamicAssertions.mk_cycle(findCore, unVersionedAnml, txnsNamesComb));
+				addAssertion("exact_cycle_enforcement", dynamicAssertions.mk_cycle(findCore, unVersionedAnml, txnsNamesComb, length));
 				HeaderZ3("EOF");
 				break;
 			case 3:
 				slv.pop();
 				HeaderZ3("ROUND 3: newly pushed");
 				List<Tuple<String, Tuple<String, String>>> structure3 = unVersionedAnml.getCycleStructure();
-				addAssertion("loose_cycle_constraint", dynamicAssertions.mk_loose_cycle(findCore, structure3, txnsNamesComb));
+				addAssertion("loose_cycle_constraint", dynamicAssertions.mk_loose_cycle(findCore, structure3, txnsNamesComb, length));
 				excludeAnomaly(unVersionedAnml, seenAnmls.size() + 1);
 				break;
 
