@@ -1,4 +1,4 @@
-     [java] 
+
      [java] ------------------------------------------------------
      [java]  			     Schema
      [java] ------------------------------------------------------
@@ -11,13 +11,9 @@
      [java] ##district## <<d_w_id:INT>> <<d_id:INT>> <d_ytd:REAL> <d_tax:REAL> <d_next_o_id:INT> <d_name:STRING> <d_street_1:STRING> <d_street_2:STRING> <d_city:STRING> <d_state:STRING> <d_zip:STRING>
      [java] ##item## <<i_id:INT>> <i_name:STRING> <i_price:REAL> <i_data:STRING> <i_im_id:INT>
      [java] ##warehouse## <<w_id:INT>> <w_ytd:REAL> <w_tax:REAL> <w_name:STRING> <w_street_1:STRING> <w_street_2:STRING> <w_city:STRING> <w_state:STRING> <w_zip:STRING>
-     [java] 
-     [java] 
-     [java] 
      [java] ------------------------------------------------------
      [java]  			Compiled Application
      [java] ------------------------------------------------------
-     [java] 
      [java] TXN_delivery_0
      [java]  ++ delivery_0-select#1#1 (SELECT[new_order:[]]  <<(AND (EQ new_order.no_d_id,i0_param),(EQ new_order.no_w_id,i1_param))>>)
      [java]     [PATH CONDITION: true]
@@ -39,7 +35,6 @@
      [java] Original Transaction: delivery
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_newOrder_0
      [java]  ++ newOrder_0-select#1#1 (SELECT[customer:[]]  <<(AND (AND (EQ customer.c_w_id,i4_param),(EQ customer.c_d_id,i5_param)),(EQ customer.c_id,i6_param))>>)
      [java]     [PATH CONDITION: true]
@@ -65,7 +60,6 @@
      [java] Original Transaction: newOrder
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_orderStatus_0
      [java]  ++ orderStatus_0-select#1#1 (SELECT[customer:[]]  <<(AND (AND (EQ customer.c_w_id,i0_param),(EQ customer.c_d_id,(PLUS Abs-INT#3,i1_param))),(EQ customer.c_last,Abs-STRING#4))>>)
      [java]     [PATH CONDITION: true]
@@ -79,7 +73,6 @@
      [java] Original Transaction: orderStatus
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_payment_0
      [java]  ++ payment_0-select#1#1 (SELECT[warehouse:[]]  <<(EQ warehouse.w_id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -103,7 +96,6 @@
      [java] Original Transaction: payment
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_payment_1
      [java]  ++ payment_1-insert#1#1 (INSERT[history] [(PLUS Abs-INT#18,i2_param), i0_param, Abs-INT#19, (PLUS Abs-INT#20,i2_param), i0_param, ?, Abs-REAL#21, Abs-STRING#22])
      [java]     [PATH CONDITION: true]
@@ -111,7 +103,6 @@
      [java] Original Transaction: payment
      [java] Microservice: M2
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_stockLevel_0
      [java]  ++ stockLevel_0-select#1#1 (SELECT[district:[]]  <<(AND (EQ district.d_w_id,i0_param),(EQ district.d_id,(PLUS Abs-INT#0,i1_param)))>>)
      [java]     [PATH CONDITION: true]
@@ -123,22 +114,23 @@
      [java] Original Transaction: stockLevel
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
-     [java] 
-     [java] 
-     [java] 
      [java] ===========================================
-     [java] === AR compile time:	280ms
+     [java] === AR compile time:	304ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
      [java] +++ Lost Updates found:		0
      [java] +++ Lost Updates/Write Skews found:	0
+     [java] +++ Non-Repeatable Reads found:	0
+     [java] +++ Phantom Reads found:		0
      [java] +++ Read Skews found:		0
-     [java] +++ Others found:			0
+     [java] +++ Read-Write found:		0
+     [java] +++ Write-Write found:		0
+     [java] +++ Multi anomalies found:		0
+     [java] +++ Extensions found:		0
      [java] -------------------------------------------
      [java] === Total anomalies found:	0
-     [java] === Analysis time:		10585 ms
+     [java] === Analysis time:		6738 ms
 
 BUILD SUCCESSFUL
-Total time: 13 seconds
+Total time: 9 seconds

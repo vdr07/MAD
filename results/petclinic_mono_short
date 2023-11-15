@@ -1,4 +1,4 @@
-     [java] 
+
      [java] ------------------------------------------------------
      [java]  			     Schema
      [java] ------------------------------------------------------
@@ -9,13 +9,9 @@
      [java] ##vets## <<id:INT>> <first_name:STRING> <last_name:STRING>
      [java] ##vet_specialties## <<vet_id:INT>> <<specialty_id:INT>>
      [java] ##visits## <<id:INT>> <date:STRING> <description:STRING> <pet_id:INT>
-     [java] 
-     [java] 
-     [java] 
      [java] ------------------------------------------------------
      [java]  			Compiled Application
      [java] ------------------------------------------------------
-     [java] 
      [java] TXN_ownerProcessCreationForm_0
      [java]  ++ ownerProcessCreationForm_0-insert#1#1 (INSERT[owners] [i0_param, r1_param, r2_param, r3_param, r4_param, r5_param])
      [java]     [PATH CONDITION: true]
@@ -23,7 +19,6 @@
      [java] Original Transaction: ownerProcessCreationForm
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_ownerProcessFindForm_0
      [java]  ++ ownerProcessFindForm_0-select#1#1 (SELECT[owners:[id, first_name, last_name, address, city, telephone]]  <<(EQ owners.last_name,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -37,7 +32,6 @@
      [java] Original Transaction: ownerProcessFindForm
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_ownerInitUpdateOwnerForm_0
      [java]  ++ ownerInitUpdateOwnerForm_0-select#1#1 (SELECT[owners:[id, first_name, last_name, address, city, telephone]]  <<(EQ owners.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -51,7 +45,6 @@
      [java] Original Transaction: ownerInitUpdateOwnerForm
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_ownerProcessUpdateOwnerForm_0
      [java]  ++ ownerProcessUpdateOwnerForm_0-update#1#1 (UPDATE[owners] {id=i0_param} <<(EQ owners.id,i1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -59,7 +52,6 @@
      [java] Original Transaction: ownerProcessUpdateOwnerForm
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_ownerShowOwner_0
      [java]  ++ ownerShowOwner_0-select#1#1 (SELECT[owners:[id, first_name, last_name, address, city, telephone]]  <<(EQ owners.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -73,7 +65,6 @@
      [java] Original Transaction: ownerShowOwner
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_petInitCreationForm_0
      [java]  ++ petInitCreationForm_0-insert#1#1 (INSERT[pets] [i0_param, , , -1, -1])
      [java]     [PATH CONDITION: true]
@@ -83,7 +74,6 @@
      [java] Original Transaction: petInitCreationForm
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_petProcessCreationForm_0
      [java]  ++ petProcessCreationForm_0-select#1#1 (SELECT[pets:[id]]  <<(EQ pets.name,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -95,7 +85,6 @@
      [java] Original Transaction: petProcessCreationForm
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_petInitUpdateForm_0
      [java]  ++ petInitUpdateForm_0-select#1#1 (SELECT[pets:[id, name, birth_date, type_id, owner_id]]  <<(EQ pets.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -103,7 +92,6 @@
      [java] Original Transaction: petInitUpdateForm
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_petProcessUpdateForm_0
      [java]  ++ petProcessUpdateForm_0-update#1#1 (UPDATE[pets] {owner_id=i0_param} <<(EQ pets.id,i1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -111,7 +99,6 @@
      [java] Original Transaction: petProcessUpdateForm
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_vetShowVetList_0
      [java]  ++ vetShowVetList_0-select#1#1 (SELECT[vets:[id, first_name, last_name]]  <<(EQ 1,1)>>)
      [java]     [PATH CONDITION: true]
@@ -123,7 +110,6 @@
      [java] Original Transaction: vetShowVetList
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_vetShowJsonVetList_0
      [java]  ++ vetShowJsonVetList_0-select#1#1 (SELECT[vets:[id, first_name, last_name]]  <<(EQ 1,1)>>)
      [java]     [PATH CONDITION: true]
@@ -135,7 +121,6 @@
      [java] Original Transaction: vetShowJsonVetList
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_vetShowXmlVetList_0
      [java]  ++ vetShowXmlVetList_0-select#1#1 (SELECT[vets:[id, first_name, last_name]]  <<(EQ 1,1)>>)
      [java]     [PATH CONDITION: true]
@@ -147,7 +132,6 @@
      [java] Original Transaction: vetShowXmlVetList
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_visitProcessNewVisitForm_0
      [java]  ++ visitProcessNewVisitForm_0-insert#1#1 (INSERT[visits] [i0_param, r1_param, r2_param, i1_param])
      [java]     [PATH CONDITION: true]
@@ -155,7 +139,6 @@
      [java] Original Transaction: visitProcessNewVisitForm
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_visitShowVisits_0
      [java]  ++ visitShowVisits_0-select#1#1 (SELECT[pets:[id, name, birth_date, type_id, owner_id]]  <<(EQ pets.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -165,22 +148,23 @@
      [java] Original Transaction: visitShowVisits
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
-     [java] 
-     [java] 
-     [java] 
      [java] ===========================================
-     [java] === AR compile time:	209ms
+     [java] === AR compile time:	213ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
      [java] +++ Lost Updates found:		0
      [java] +++ Lost Updates/Write Skews found:	0
+     [java] +++ Non-Repeatable Reads found:	0
+     [java] +++ Phantom Reads found:		0
      [java] +++ Read Skews found:		0
-     [java] +++ Others found:			0
+     [java] +++ Read-Write found:		0
+     [java] +++ Write-Write found:		0
+     [java] +++ Multi anomalies found:		0
+     [java] +++ Extensions found:		0
      [java] -------------------------------------------
      [java] === Total anomalies found:	0
-     [java] === Analysis time:		75576 ms
+     [java] === Analysis time:		101368 ms
 
 BUILD SUCCESSFUL
-Total time: 1 minute 17 seconds
+Total time: 1 minute 44 seconds

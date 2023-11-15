@@ -1,58 +1,40 @@
 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] 
-     [java] [questionCreateQuestion_1, questionCreateQuestion_3, tagGetTag_0]: 3/58
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateUser_0, userDeleteUser_0]: 1/58
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateUser_0, userUpdateUser_0]: 1/58
-     [java] [questionCreateQuestion_1, questionCreateQuestion_3, tagGetTagsByTerm_0]: 3/58
-     [java] [questionCreateQuestion_1, questionCreateQuestion_4, questionGetQuestionsByTag_0, questionGetQuestionsByTag_1]: 4/58
-     [java] [questionCreateQuestion_2, questionCreateQuestion_4, questionGetQuestionsByTag_1]: 1/58
-     [java] [questionCreateQuestion_1, questionCreateQuestion_3, questionGetQuestionsByTag_0]: 3/58
-     [java] [questionCreateQuestion_1, questionCreateQuestion_3]: 24/58
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateQuestion_0]: 2/58
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateUser_0]: 1/58
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, authorizationRegister_0, userCreateQuestion_0]: 1/58
-     [java] [questionCreateQuestion_1, questionCreateQuestion_2, questionGetQuestionsByTag_0, questionGetQuestionsByTag_1]: 4/58
-     [java] [questionCreateQuestion_1, questionCreateQuestion_3, tagListAllTags_0]: 3/58
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateQuestion_0, userCreateUser_0]: 1/58
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userDeleteUser_0]: 1/58
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userUpdateUser_0]: 2/58
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, authorizationRegister_0, userDeleteUser_0]: 1/58
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, authorizationRegister_0]: 1/58
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, authorizationRegister_0, userUpdateUser_0]: 1/58
-     [java] answerCreateQuestion (answerCreateQuestion_0): 13/58
-     [java] answerCreateQuestion (answerCreateQuestion_2): 13/58
-     [java] authorizationRegister (authorizationRegister_0): 4/58
-     [java] questionCreateQuestion (questionCreateQuestion_1): 44/58
-     [java] questionCreateQuestion (questionCreateQuestion_2): 5/58
-     [java] questionCreateQuestion (questionCreateQuestion_3): 36/58
-     [java] questionCreateQuestion (questionCreateQuestion_4): 5/58
-     [java] questionGetQuestionsByTag (questionGetQuestionsByTag_0): 11/58
-     [java] questionGetQuestionsByTag (questionGetQuestionsByTag_1): 9/58
-     [java] tagGetTag (tagGetTag_0): 3/58
-     [java] tagGetTagsByTerm (tagGetTagsByTerm_0): 3/58
-     [java] tagListAllTags (tagListAllTags_0): 3/58
-     [java] userCreateQuestion (userCreateQuestion_0): 4/58
-     [java] userCreateUser (userCreateUser_0): 4/58
-     [java] userDeleteUser (userDeleteUser_0): 3/58
-     [java] userUpdateUser (userUpdateUser_0): 4/58
-     [java] 
+     [java] [questionCreateQuestion_1, questionCreateQuestion_3, tagGetTag_0]: 3/59
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateUser_0, userDeleteUser_0]: 1/59
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateUser_0, userUpdateUser_0]: 1/59
+     [java] [questionCreateQuestion_1, questionCreateQuestion_3, tagGetTagsByTerm_0]: 3/59
+     [java] [questionCreateQuestion_1, questionCreateQuestion_4, questionGetQuestionsByTag_0, questionGetQuestionsByTag_1]: 4/59
+     [java] [questionCreateQuestion_2, questionCreateQuestion_4, questionGetQuestionsByTag_1]: 1/59
+     [java] [questionCreateQuestion_1, questionCreateQuestion_3, questionGetQuestionsByTag_0]: 3/59
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateQuestion_0, userUpdateUser_0]: 1/59
+     [java] [questionCreateQuestion_1, questionCreateQuestion_3]: 24/59
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateQuestion_0]: 2/59
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateUser_0]: 1/59
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, authorizationRegister_0, userCreateQuestion_0]: 1/59
+     [java] [questionCreateQuestion_1, questionCreateQuestion_2, questionGetQuestionsByTag_0, questionGetQuestionsByTag_1]: 4/59
+     [java] [questionCreateQuestion_1, questionCreateQuestion_3, tagListAllTags_0]: 3/59
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateQuestion_0, userCreateUser_0]: 1/59
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userUpdateUser_0]: 2/59
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userDeleteUser_0]: 1/59
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, authorizationRegister_0, userDeleteUser_0]: 1/59
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, authorizationRegister_0]: 1/59
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, authorizationRegister_0, userUpdateUser_0]: 1/59
+     [java] answerCreateQuestion (answerCreateQuestion_0): 14/59
+     [java] answerCreateQuestion (answerCreateQuestion_2): 14/59
+     [java] authorizationRegister (authorizationRegister_0): 4/59
+     [java] questionCreateQuestion (questionCreateQuestion_1): 44/59
+     [java] questionCreateQuestion (questionCreateQuestion_2): 5/59
+     [java] questionCreateQuestion (questionCreateQuestion_3): 36/59
+     [java] questionCreateQuestion (questionCreateQuestion_4): 5/59
+     [java] questionGetQuestionsByTag (questionGetQuestionsByTag_0): 11/59
+     [java] questionGetQuestionsByTag (questionGetQuestionsByTag_1): 9/59
+     [java] tagGetTag (tagGetTag_0): 3/59
+     [java] tagGetTagsByTerm (tagGetTagsByTerm_0): 3/59
+     [java] tagListAllTags (tagListAllTags_0): 3/59
+     [java] userCreateQuestion (userCreateQuestion_0): 5/59
+     [java] userCreateUser (userCreateUser_0): 4/59
+     [java] userDeleteUser (userDeleteUser_0): 3/59
+     [java] userUpdateUser (userUpdateUser_0): 5/59
      [java] ------------------------------------------------------
      [java]  			     Schema
      [java] ------------------------------------------------------
@@ -62,13 +44,9 @@
      [java] ##tags## <<id:INT>> <name:STRING> <description:STRING> <popular:INT> <createdAt:STRING> <userId:INT>
      [java] ##users## <<id:INT>> <username:STRING> <password:STRING> <createdAt:STRING> <status:STRING> <popular:INT>
      [java] ##votes## <<id:INT>> <module:STRING> <questionId:INT> <answerId:INT> <userId:INT> <mark:STRING>
-     [java] 
-     [java] 
-     [java] 
      [java] ------------------------------------------------------
      [java]  			Compiled Application
      [java] ------------------------------------------------------
-     [java] 
      [java] TXN_answerListAllAnswers_0
      [java]  ++ answerListAllAnswers_0-select#1#1 (SELECT[answers:[id, comment, createdAt, updatedAt, userId, questionId]]  <<(EQ 1,1)>>)
      [java]     [PATH CONDITION: true]
@@ -76,7 +54,6 @@
      [java] Original Transaction: answerListAllAnswers
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_answerGetAnswer_0
      [java]  ++ answerGetAnswer_0-select#1#1 (SELECT[answers:[id, comment, createdAt, updatedAt, userId, questionId]]  <<(EQ answers.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -84,7 +61,6 @@
      [java] Original Transaction: answerGetAnswer
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_answerGetAnswersByUser_0
      [java]  ++ answerGetAnswersByUser_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -92,7 +68,6 @@
      [java] Original Transaction: answerGetAnswersByUser
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_answerGetAnswersByUser_1
      [java]  ++ answerGetAnswersByUser_1-select#1#1 (SELECT[answers:[id, comment, createdAt, updatedAt, userId, questionId]]  <<(EQ answers.userId,(ROW:users-r5-next1).id)>>)
      [java]     [PATH CONDITION: true]
@@ -100,7 +75,6 @@
      [java] Original Transaction: answerGetAnswersByUser
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_answerCreateQuestion_0
      [java]  ++ answerCreateQuestion_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -108,7 +82,6 @@
      [java] Original Transaction: answerCreateQuestion
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_answerCreateQuestion_1
      [java]  ++ answerCreateQuestion_1-select#1#1 (SELECT[questions:[id, title, ago, comment, userId, createdAt, updatedAt]]  <<(EQ questions.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -116,7 +89,6 @@
      [java] Original Transaction: answerCreateQuestion
      [java] Microservice: M2
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_answerCreateQuestion_2
      [java]  ++ answerCreateQuestion_2-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.id,(ROW:questions-r11-next1).userId)>>)
      [java]     [PATH CONDITION: true]
@@ -124,7 +96,6 @@
      [java] Original Transaction: answerCreateQuestion
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_answerCreateQuestion_3
      [java]  ++ answerCreateQuestion_3-insert#1#1 (INSERT[answers] [i1_param, r2_param, r3_param, r3_param, (ROW:users-r9-next1).id, i0_param])
      [java]     [PATH CONDITION: true]
@@ -132,7 +103,6 @@
      [java] Original Transaction: answerCreateQuestion
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_authorizationLogin_0
      [java]  ++ authorizationLogin_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -140,7 +110,6 @@
      [java] Original Transaction: authorizationLogin
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_authorizationRegister_0
      [java]  ++ authorizationRegister_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -150,7 +119,6 @@
      [java] Original Transaction: authorizationRegister
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_questionListAllQuestions_0
      [java]  ++ questionListAllQuestions_0-select#1#1 (SELECT[questions:[id, title, ago, comment, userId, createdAt, updatedAt]]  <<(EQ 1,1)>>)
      [java]     [PATH CONDITION: true]
@@ -158,7 +126,6 @@
      [java] Original Transaction: questionListAllQuestions
      [java] Microservice: M2
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_questionGetQuestion_0
      [java]  ++ questionGetQuestion_0-select#1#1 (SELECT[questions:[id, title, ago, comment, userId, createdAt, updatedAt]]  <<(EQ questions.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -166,7 +133,6 @@
      [java] Original Transaction: questionGetQuestion
      [java] Microservice: M2
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_questionGetQuestionsByUser_0
      [java]  ++ questionGetQuestionsByUser_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -174,7 +140,6 @@
      [java] Original Transaction: questionGetQuestionsByUser
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_questionGetQuestionsByUser_1
      [java]  ++ questionGetQuestionsByUser_1-select#1#1 (SELECT[questions:[id, title, ago, comment, userId, createdAt, updatedAt]]  <<(EQ questions.userId,(ROW:users-r5-next1).id)>>)
      [java]     [PATH CONDITION: true]
@@ -182,7 +147,6 @@
      [java] Original Transaction: questionGetQuestionsByUser
      [java] Microservice: M2
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_questionGetQuestionsByTag_0
      [java]  ++ questionGetQuestionsByTag_0-select#1#1 (SELECT[tags:[id, name, description, popular, createdAt, userId]]  <<(EQ tags.name,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -190,7 +154,6 @@
      [java] Original Transaction: questionGetQuestionsByTag
      [java] Microservice: M3
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_questionGetQuestionsByTag_1
      [java]  ++ questionGetQuestionsByTag_1-select#1#1 (SELECT[question_tag:[questionId]]  <<(EQ question_tag.tagId,(ROW:tags-r6-next1).id)>>)
      [java]     [PATH CONDITION: true]
@@ -200,7 +163,6 @@
      [java] Original Transaction: questionGetQuestionsByTag
      [java] Microservice: M2
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_questionCreateQuestion_0
      [java]  ++ questionCreateQuestion_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -208,7 +170,6 @@
      [java] Original Transaction: questionCreateQuestion
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_questionCreateQuestion_1
      [java]  ++ questionCreateQuestion_1-select#1#1 (SELECT[tags:[id, name, description, popular, createdAt, userId]]  <<(EQ tags.name,Abs-STRING#0)>>)
      [java]     [PATH CONDITION: (AND true,(NOT (GEQ 0,Abs-REAL#3)))]
@@ -220,7 +181,6 @@
      [java] Original Transaction: questionCreateQuestion
      [java] Microservice: M3
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_questionCreateQuestion_2
      [java]  ++ questionCreateQuestion_2-insert#1#1 (INSERT[questions] [i0_param, r5_param, r6_param, r7_param, (ROW:users-r15-next1).id, r4_param, r4_param])
      [java]     [PATH CONDITION: true]
@@ -228,7 +188,6 @@
      [java] Original Transaction: questionCreateQuestion
      [java] Microservice: M2
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_questionCreateQuestion_3
      [java]  ++ questionCreateQuestion_3-select#1#1 (SELECT[tags:[id, name, description, popular, createdAt, userId]]  <<(EQ tags.name,Abs-STRING#2)>>)
      [java]     [PATH CONDITION: (AND true,(NOT (GEQ 0,Abs-REAL#5)))]
@@ -236,7 +195,6 @@
      [java] Original Transaction: questionCreateQuestion
      [java] Microservice: M3
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_questionCreateQuestion_4
      [java]  ++ questionCreateQuestion_4-insert#1#1 (INSERT[question_tag] [i0_param, (ROW:tags-r38-loopVar2).id])
      [java]     [PATH CONDITION: (AND true,(NOT (GEQ 0,Abs-REAL#5)))]
@@ -244,7 +202,6 @@
      [java] Original Transaction: questionCreateQuestion
      [java] Microservice: M2
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_tagListAllTags_0
      [java]  ++ tagListAllTags_0-select#1#1 (SELECT[tags:[id, name, description, popular, createdAt, userId]]  <<(EQ 1,1)>>)
      [java]     [PATH CONDITION: true]
@@ -252,7 +209,6 @@
      [java] Original Transaction: tagListAllTags
      [java] Microservice: M3
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_tagGetTag_0
      [java]  ++ tagGetTag_0-select#1#1 (SELECT[tags:[id, name, description, popular, createdAt, userId]]  <<(EQ tags.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -260,7 +216,6 @@
      [java] Original Transaction: tagGetTag
      [java] Microservice: M3
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_tagGetTagsByTerm_0
      [java]  ++ tagGetTagsByTerm_0-select#1#1 (SELECT[tags:[id, name, description, popular, createdAt, userId]]  <<(EQ tags.name,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -268,7 +223,6 @@
      [java] Original Transaction: tagGetTagsByTerm
      [java] Microservice: M3
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_userListAllUsers_0
      [java]  ++ userListAllUsers_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ 1,1)>>)
      [java]     [PATH CONDITION: true]
@@ -276,7 +230,6 @@
      [java] Original Transaction: userListAllUsers
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_userGetUserByName_0
      [java]  ++ userGetUserByName_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -284,7 +237,6 @@
      [java] Original Transaction: userGetUserByName
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_userGetUser_0
      [java]  ++ userGetUser_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -292,7 +244,6 @@
      [java] Original Transaction: userGetUser
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_userCreateUser_0
      [java]  ++ userCreateUser_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -302,7 +253,6 @@
      [java] Original Transaction: userCreateUser
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_userCreateQuestion_0
      [java]  ++ userCreateQuestion_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -312,7 +262,6 @@
      [java] Original Transaction: userCreateQuestion
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_userUpdateUser_0
      [java]  ++ userUpdateUser_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -322,7 +271,6 @@
      [java] Original Transaction: userUpdateUser
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_userDeleteUser_0
      [java]  ++ userDeleteUser_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -332,7 +280,6 @@
      [java] Original Transaction: userDeleteUser
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_voteCreateQuestion_0
      [java]  ++ voteCreateQuestion_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -340,7 +287,6 @@
      [java] Original Transaction: voteCreateQuestion
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_voteCreateQuestion_1
      [java]  ++ voteCreateQuestion_1-select#1#1 (SELECT[questions:[id, title, ago, comment, userId, createdAt, updatedAt]]  <<(EQ questions.id,i0_param)>>)
      [java]     [PATH CONDITION: true]
@@ -348,7 +294,6 @@
      [java] Original Transaction: voteCreateQuestion
      [java] Microservice: M2
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_voteCreateQuestion_2
      [java]  ++ voteCreateQuestion_2-select#1#1 (SELECT[answers:[id, comment, createdAt, updatedAt, userId, questionId]]  <<(EQ answers.id,i1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -356,7 +301,6 @@
      [java] Original Transaction: voteCreateQuestion
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_voteCreateQuestion_3
      [java]  ++ voteCreateQuestion_3-select#1#1 (SELECT[users:[username]]  <<(EQ users.id,0)>>)
      [java]     [PATH CONDITION: (AND true,(NOT (NOT (EQ 0,1))))]
@@ -364,7 +308,6 @@
      [java] Original Transaction: voteCreateQuestion
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_voteCreateQuestion_4
      [java]  ++ voteCreateQuestion_4-select#1#1 (SELECT[questions:[userId]]  <<(EQ questions.id,0)>>)
      [java]     [PATH CONDITION: (AND (AND (AND true,(NOT (EQ 0,1))),(NOT (NOT (EQ 0,1)))),(NOT (NOT (EQ 0,0))))]
@@ -372,7 +315,6 @@
      [java] Original Transaction: voteCreateQuestion
      [java] Microservice: M2
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_voteCreateQuestion_5
      [java]  ++ voteCreateQuestion_5-select#1#1 (SELECT[users:[username]]  <<(EQ users.id,(ROW:questions-r31-next1).userId)>>)
      [java]     [PATH CONDITION: (AND (AND (AND true,(NOT (EQ 0,1))),(NOT (NOT (EQ 0,1)))),(NOT (NOT (EQ 0,0))))]
@@ -382,7 +324,6 @@
      [java] Original Transaction: voteCreateQuestion
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_voteCreateQuestion_6
      [java]  ++ voteCreateQuestion_6-insert#1#1 (INSERT[votes] [i2_param, , i0_param, i1_param, (ROW:users-r13-next1).id, r2_param])
      [java]     [PATH CONDITION: true]
@@ -390,7 +331,6 @@
      [java] Original Transaction: voteCreateQuestion
      [java] Microservice: M5
      [java] ----------------------------------------------------------------
-     [java] 
      [java] TXN_ajaxGetSearchResultViaAjax_0
      [java]  ++ ajaxGetSearchResultViaAjax_0-select#1#1 (SELECT[users:[id, username, password, createdAt, status, popular]]  <<(AND (EQ users.username,r1_param),(EQ users.username,r2_param))>>)
      [java]     [PATH CONDITION: (AND (AND true,(NOT (NOT (EQ Abs-REAL#0,0)))),(NOT (NOT (EQ Abs-REAL#1,0))))]
@@ -402,22 +342,23 @@
      [java] Original Transaction: ajaxGetSearchResultViaAjax
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
-     [java] 
-     [java] 
-     [java] 
-     [java] 
      [java] ===========================================
-     [java] === AR compile time:	233ms
+     [java] === AR compile time:	218ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
      [java] +++ Lost Updates found:		0
      [java] +++ Lost Updates/Write Skews found:	0
-     [java] +++ Read Skews found:		12
-     [java] +++ Others found:			46
+     [java] +++ Non-Repeatable Reads found:	3
+     [java] +++ Phantom Reads found:		4
+     [java] +++ Read Skews found:		0
+     [java] +++ Read-Write found:		0
+     [java] +++ Write-Write found:		0
+     [java] +++ Multi anomalies found:		0
+     [java] +++ Extensions found:		52
      [java] -------------------------------------------
-     [java] === Total anomalies found:	58
-     [java] === Analysis time:		1948318 ms
+     [java] === Total anomalies found:	59
+     [java] === Analysis time:		1530907 ms
 
 BUILD SUCCESSFUL
-Total time: 32 minutes 31 seconds
+Total time: 25 minutes 34 seconds
