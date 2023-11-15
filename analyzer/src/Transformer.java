@@ -46,41 +46,6 @@ public class Transformer extends BodyTransformer {
 	private CFGIntermediateRep ir;
 	static ArrayList<Body> bodies;
 
-	//private static final List<String> choppedDirtyReadPattern = List.of("step_sibling", "WR", "RW");
-	//private static final List<String> nonRepeatableReadPattern = List.of("X", "RW", "WR");
-	//private static final List<String> choppedNonRepeatableReadPattern = List.of("step_sibling", "RW", "WR");
-	//private static final List<String> choppedDirtyWritePattern = List.of("step_sibling", "WW", "WW");
-	//private static final List<String> choppedLostUpdateWriteSkewPattern = List.of("step_sibling", "RW", "step_sibling", "RW");
-	//private static final List<String> choppedReadSkewPattern = List.of("step_sibling", "RW", "step_sibling", "WR");
-	private static final List<String> dirtyReadPattern = Arrays.asList(new String[]{"X", "WR", "RW"});
-	private static final List<String> dirtyWritePattern = Arrays.asList(new String[]{"X", "WW", "WW"});
-	private static final List<String> dirtyWritePattern2 = Arrays.asList(new String[]{"X", "WW", "X", "WW"});
-	private static final List<String> lostUpdateWriteSkewPattern = Arrays.asList(new String[]{"X", "RW", "X", "RW"});
-	private static final List<String> lostUpdatePattern2 = Arrays.asList(new String[]{"X", "RW", "WW"});
-	private static final List<String> readSkewPattern = Arrays.asList(new String[]{"X", "RW", "X", "WR"});
-	private static final List<String> readSkewPattern2 = Arrays.asList(new String[]{"X", "WR", "X", "RW"});
-	private static final List<String> UnknownPattern = Arrays.asList(new String[]{"OTHER"});
-
-	private static final Map<List<String>, String> structure2anmlName;
-    static {
-        Map<List<String>, String> auxMap = new HashMap<List<String>, String>();
-		//auxMap.put(choppedDirtyReadPattern, "Dirty Read");
-		//auxMap.put(nonRepeatableReadPattern, "Non-repeatable Read");
-		//auxMap.put(choppedNonRepeatableReadPattern, "Non-repeatable Read");
-		//auxMap.put(choppedDirtyWritePattern, "Dirty Write");
-		//auxMap.put(choppedLostUpdateWriteSkewPattern, "Lost Update/Write Skew");
-		//auxMap.put(choppedReadSkewPattern, "Read Skew");
-        auxMap.put(dirtyReadPattern, "Dirty Reads");
-		auxMap.put(dirtyWritePattern, "Dirty Writes");
-		auxMap.put(dirtyWritePattern2, "Dirty Writes");
-		auxMap.put(lostUpdateWriteSkewPattern, "Lost Updates/Write Skews");
-		auxMap.put(lostUpdatePattern2, "Lost Updates");
-		auxMap.put(readSkewPattern, "Read Skews");
-		auxMap.put(readSkewPattern2, "Read Skews");
-		auxMap.put(UnknownPattern, "Others");
-        structure2anmlName = auxMap;
-    }
-
 	@Override
 	protected void internalTransform(Body b, String phaseName, Map<String, String> options) {
 		if (bodies == null)
@@ -151,8 +116,7 @@ public class Transformer extends BodyTransformer {
 				}
 
 		List<List<String>> txnsNamesCombs = new ArrayList<>(txnsNamesCombsSet);
-		//if (app.getOrigTxns().size() >= 2)
-		//	txnsNamesCombs.removeIf(l -> l.size() < 2);
+
 		Collections.sort(txnsNamesCombs, (txnsNamesComb1, txnsNamesComb2) -> Integer.compare(txnsNamesComb1.size(), txnsNamesComb2.size()));
 		
 		Map<Integer, Integer> numCombSizesOccurrences = new HashMap<Integer, Integer>();
@@ -287,6 +251,11 @@ public class Transformer extends BodyTransformer {
 			iter++;
 		}
 		
+		// Start each thread that will fully a combination
+		// Threads are executed in the following order to avoid duplicates:
+		// 1- size 1 combs
+		// 2- size 2 combs
+		// 3- size 3 combs
 		int combIdx = 0;
 		int i;
 		for (int combSize : numCombSizesOccurrences.keySet()) {
@@ -294,7 +263,6 @@ public class Transformer extends BodyTransformer {
 			for (i = combIdx; i < occurrences + combIdx; i++) {
 				threads[i].start();
 			}
-            
 			try {
 				for (i = combIdx; i < occurrences + combIdx; i++) {
 					threads[i].join();
@@ -302,29 +270,36 @@ public class Transformer extends BodyTransformer {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-
 			combIdx = i;
         }
 		
 		long analysis_finish_time = System.currentTimeMillis();
 
-		Map<String, Integer> anmlsCounters = new HashMap<String, Integer>();
-		for(String anmlName : structure2anmlName.values())
-			anmlsCounters.put(anmlName, 0);
+		Map<List<Tuple<String, String>>, String> anmlsTypesPatterns = getAnmlTypesPatterns();
 
+		Map<String, Integer> anmlsCounters = new HashMap<String, Integer>();
+		for(String anmlName : anmlsTypesPatterns.values())
+			anmlsCounters.put(anmlName, 0);
+		
 		Integer currentCounterValue = 0;
 		Map<List<String>, Integer> txnsInteractions = new HashMap<List<String>, Integer>();
 		Map<String, Integer> txnsAppearance = new HashMap<String, Integer>();
 		String anmlName = "";
 		for (Anomaly seenVersAnml : seenVersAnmls) {
-			List<String> edges = new ArrayList<>();
 			List<String> seenTxns = new ArrayList<>();
+			List<Tuple<String, String>> edgeTypesLeftOps = new ArrayList<>(); 
 			for (Tuple<String, Tuple<String, String>> edge : seenVersAnml.getCycleStructure()) {
+				String edgeType;
 				if(edge.x.contains("sibling")) {
-					edges.add("X");
+					edgeType = "X";
 				} else {
-					edges.add(edge.x);
+					edgeType = edge.x; 
 				}
+				int leftIndex = edge.y.x.indexOf("-");
+				int rightIndex = edge.y.x.indexOf("#", leftIndex + 1);
+				String leftOpType = edge.y.x.substring(leftIndex+1, rightIndex);
+				Tuple<String, String> edgeTypeLeftOp = new Tuple<String, String>(edgeType, leftOpType);
+				edgeTypesLeftOps.add(edgeTypeLeftOp);
 
 				Tuple<String,String> relatedOps = edge.y;
 				String leftTxn = relatedOps.x.split("-")[0];
@@ -349,12 +324,12 @@ public class Transformer extends BodyTransformer {
 			}
 
 			// Unknown anomaly
-			if(!structure2anmlName.containsKey(edges)) {
-				edges.clear();
-				edges.add("OTHER");
+			if(!anmlsTypesPatterns.containsKey(edgeTypesLeftOps)) {
+				edgeTypesLeftOps.clear();
+				edgeTypesLeftOps.add(new Tuple<String, String>("X", "extension"));
 			}
 
-			anmlName = structure2anmlName.get(edges);
+			anmlName = anmlsTypesPatterns.get(edgeTypesLeftOps);
 			currentCounterValue = anmlsCounters.get(anmlName);
 			anmlsCounters.put(anmlName, ++currentCounterValue);
 		}
@@ -374,6 +349,41 @@ public class Transformer extends BodyTransformer {
 
 		printStats(app, tables, anmlsCounters, seenVersAnmls.size(), (analysis_finish_time - analysis_begin_time),
 				(analysis_finish_time - analysis_begin_time) / (iter - 1));
+	}
+
+	private static Map<List<Tuple<String, String>>, String> getAnmlTypesPatterns() {
+		Map<List<Tuple<String, String>>, String> anmlsTypesPatterns = new HashMap<List<Tuple<String, String>>, String>();
+        ArrayList<Tuple<String, String>> dirtyReadPattern_1 = new ArrayList<Tuple<String, String>>(Arrays.asList(new Tuple<>("X","update"), new Tuple<>("WR","update"), new Tuple<>("RW","select")));
+		ArrayList<Tuple<String, String>> nonRepeatableReadPattern_1 = new ArrayList<Tuple<String, String>>(Arrays.asList(new Tuple<>("X","select"), new Tuple<>("RW","select"), new Tuple<>("WR","update")));
+		ArrayList<Tuple<String, String>> phantomReadPattern_1 = new ArrayList<Tuple<String, String>>(Arrays.asList(new Tuple<>("X","select"), new Tuple<>("RW","select"), new Tuple<>("WR","insert")));
+		ArrayList<Tuple<String, String>> phantomReadPattern_2 = new ArrayList<Tuple<String, String>>(Arrays.asList(new Tuple<>("X","select"), new Tuple<>("RW","select"), new Tuple<>("WR","delete")));
+		ArrayList<Tuple<String, String>> writeWritePattern_1 = new ArrayList<Tuple<String, String>>(Arrays.asList(new Tuple<>("X","update"), new Tuple<>("WW","update"), new Tuple<>("WW","update")));
+		ArrayList<Tuple<String, String>> dirtyWritePattern_1 = new ArrayList<Tuple<String, String>>(Arrays.asList(new Tuple<>("X","update"), new Tuple<>("WW","update"), new Tuple<>("X","update"), new Tuple<>("WW","update")));
+		ArrayList<Tuple<String, String>> lostUpdateWriteSkew_1 = new ArrayList<Tuple<String, String>>(Arrays.asList(new Tuple<>("X","update"), new Tuple<>("RW","select"), new Tuple<>("X","update"), new Tuple<>("RW","select")));
+		ArrayList<Tuple<String, String>> lostUpdatePattern_1 = new ArrayList<Tuple<String, String>>(Arrays.asList(new Tuple<>("X","update"), new Tuple<>("RW","select"), new Tuple<>("WW","update")));
+        ArrayList<Tuple<String, String>> lostUpdatePattern_2 = new ArrayList<Tuple<String, String>>(Arrays.asList(new Tuple<>("X","update"), new Tuple<>("RW","update"), new Tuple<>("WW","insert")));
+        ArrayList<Tuple<String, String>> lostUpdatePattern_3 = new ArrayList<Tuple<String, String>>(Arrays.asList(new Tuple<>("X","update"), new Tuple<>("RW","update"), new Tuple<>("WW","delete")));
+		ArrayList<Tuple<String, String>> readSkewPattern_1 = new ArrayList<Tuple<String, String>>(Arrays.asList(new Tuple<>("X","update"), new Tuple<>("WR","update"), new Tuple<>("X","select"), new Tuple<>("RW","select")));
+		ArrayList<Tuple<String, String>> readWritePattern_1 = new ArrayList<Tuple<String, String>>(Arrays.asList(new Tuple<>("X","select"), new Tuple<>("RW","select"), new Tuple<>("X","update"), new Tuple<>("WR","update")));
+        ArrayList<Tuple<String, String>> multiPattern_1 = new ArrayList<Tuple<String, String>>(Arrays.asList(new Tuple<>("X","update"), new Tuple<>("WR","update"), new Tuple<>("RW","select"), new Tuple<>("WW","update")));
+        ArrayList<Tuple<String, String>> multiPattern_2 = new ArrayList<Tuple<String, String>>(Arrays.asList(new Tuple<>("X","update"), new Tuple<>("WW","update"), new Tuple<>("WR","update"), new Tuple<>("RW","select")));
+		ArrayList<Tuple<String, String>> extensionPattern = new ArrayList<Tuple<String, String>>(Arrays.asList(new Tuple<>("X","extension")));
+		anmlsTypesPatterns.put(dirtyReadPattern_1, "Dirty Reads");
+		anmlsTypesPatterns.put(nonRepeatableReadPattern_1, "Non-Repeatable Reads");
+		anmlsTypesPatterns.put(phantomReadPattern_1, "Phantom Reads");
+		anmlsTypesPatterns.put(phantomReadPattern_2, "Phantom Reads");
+		anmlsTypesPatterns.put(writeWritePattern_1, "Write-Write");
+		anmlsTypesPatterns.put(dirtyWritePattern_1, "Dirty Writes");
+		anmlsTypesPatterns.put(lostUpdateWriteSkew_1, "Lost Updates/Write Skews");
+		anmlsTypesPatterns.put(lostUpdatePattern_1, "Lost Updates");
+		anmlsTypesPatterns.put(lostUpdatePattern_2, "Lost Updates");
+		anmlsTypesPatterns.put(lostUpdatePattern_3, "Lost Updates");
+		anmlsTypesPatterns.put(readSkewPattern_1, "Read Skews");
+		anmlsTypesPatterns.put(readWritePattern_1, "Read-Write");
+		anmlsTypesPatterns.put(multiPattern_1, "Multis");
+		anmlsTypesPatterns.put(multiPattern_2, "Multis");
+		anmlsTypesPatterns.put(extensionPattern, "Extensions");
+		return anmlsTypesPatterns;
 	}
 
 	// return all subsets of all tables up the given bound r
@@ -417,12 +427,13 @@ public class Transformer extends BodyTransformer {
 		
 		System.out.println("-------------------------------------------");
 		for(String anmlName : anmlsCounters.keySet().stream().sorted().collect(Collectors.toList())) {
-			if(anmlName.equals("Lost Updates/Write Skews"))
-				System.out.println("+++ " + anmlName + " found:	" + anmlsCounters.get(anmlName));
-			else if(!anmlName.equals("Others"))
-				System.out.println("+++ " + anmlName + " found:		" + anmlsCounters.get(anmlName));
+			if(anmlName.equals("Lost Updates/Write Skews") || anmlName.equals("Non-Repeatable Reads"))
+				System.out.println("+++ " + anmlName + " found:\t" + anmlsCounters.get(anmlName));
+			else if(!anmlName.equals("Extensions") && !anmlName.equals("Multis"))
+				System.out.println("+++ " + anmlName + " found:\t\t" + anmlsCounters.get(anmlName));
 		}
-		System.out.println("+++ Unclassified found:		" + anmlsCounters.get("Others"));
+		System.out.println("+++ Multi anomalies found:\t\t" + anmlsCounters.get("Multis"));
+		System.out.println("+++ Extensions found:\t\t" + anmlsCounters.get("Extensions"));
 		System.out.println("-------------------------------------------");
 		
 		System.out.println("=== Total anomalies found:	" + anmlCount);
