@@ -1,40 +1,39 @@
 
-     [java] [questionCreateQuestion_1, questionCreateQuestion_3, tagGetTag_0]: 3/59
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateUser_0, userDeleteUser_0]: 1/59
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateUser_0, userUpdateUser_0]: 1/59
-     [java] [questionCreateQuestion_1, questionCreateQuestion_3, tagGetTagsByTerm_0]: 3/59
-     [java] [questionCreateQuestion_1, questionCreateQuestion_4, questionGetQuestionsByTag_0, questionGetQuestionsByTag_1]: 4/59
-     [java] [questionCreateQuestion_2, questionCreateQuestion_4, questionGetQuestionsByTag_1]: 1/59
-     [java] [questionCreateQuestion_1, questionCreateQuestion_3, questionGetQuestionsByTag_0]: 3/59
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateQuestion_0, userUpdateUser_0]: 1/59
-     [java] [questionCreateQuestion_1, questionCreateQuestion_3]: 24/59
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateQuestion_0]: 2/59
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateUser_0]: 1/59
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, authorizationRegister_0, userCreateQuestion_0]: 1/59
-     [java] [questionCreateQuestion_1, questionCreateQuestion_2, questionGetQuestionsByTag_0, questionGetQuestionsByTag_1]: 4/59
-     [java] [questionCreateQuestion_1, questionCreateQuestion_3, tagListAllTags_0]: 3/59
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateQuestion_0, userCreateUser_0]: 1/59
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userUpdateUser_0]: 2/59
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userDeleteUser_0]: 1/59
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, authorizationRegister_0, userDeleteUser_0]: 1/59
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, authorizationRegister_0]: 1/59
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, authorizationRegister_0, userUpdateUser_0]: 1/59
-     [java] answerCreateQuestion (answerCreateQuestion_0): 14/59
-     [java] answerCreateQuestion (answerCreateQuestion_2): 14/59
-     [java] authorizationRegister (authorizationRegister_0): 4/59
-     [java] questionCreateQuestion (questionCreateQuestion_1): 44/59
-     [java] questionCreateQuestion (questionCreateQuestion_2): 5/59
-     [java] questionCreateQuestion (questionCreateQuestion_3): 36/59
-     [java] questionCreateQuestion (questionCreateQuestion_4): 5/59
-     [java] questionGetQuestionsByTag (questionGetQuestionsByTag_0): 11/59
-     [java] questionGetQuestionsByTag (questionGetQuestionsByTag_1): 9/59
-     [java] tagGetTag (tagGetTag_0): 3/59
-     [java] tagGetTagsByTerm (tagGetTagsByTerm_0): 3/59
-     [java] tagListAllTags (tagListAllTags_0): 3/59
-     [java] userCreateQuestion (userCreateQuestion_0): 5/59
-     [java] userCreateUser (userCreateUser_0): 4/59
-     [java] userDeleteUser (userDeleteUser_0): 3/59
-     [java] userUpdateUser (userUpdateUser_0): 5/59
+     [java] [questionCreateQuestion_1, questionCreateQuestion_3, tagGetTag_0]: 3/58
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateUser_0, userDeleteUser_0]: 1/58
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateUser_0, userUpdateUser_0]: 1/58
+     [java] [questionCreateQuestion_1, questionCreateQuestion_3, tagGetTagsByTerm_0]: 3/58
+     [java] [questionCreateQuestion_1, questionCreateQuestion_4, questionGetQuestionsByTag_0, questionGetQuestionsByTag_1]: 4/58
+     [java] [questionCreateQuestion_2, questionCreateQuestion_4, questionGetQuestionsByTag_1]: 1/58
+     [java] [questionCreateQuestion_1, questionCreateQuestion_3, questionGetQuestionsByTag_0]: 3/58
+     [java] [questionCreateQuestion_1, questionCreateQuestion_3]: 24/58
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateUser_0]: 1/58
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateQuestion_0]: 2/58
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, authorizationRegister_0, userCreateQuestion_0]: 1/58
+     [java] [questionCreateQuestion_1, questionCreateQuestion_2, questionGetQuestionsByTag_0, questionGetQuestionsByTag_1]: 4/58
+     [java] [questionCreateQuestion_1, questionCreateQuestion_3, tagListAllTags_0]: 3/58
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateQuestion_0, userCreateUser_0]: 1/58
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userUpdateUser_0]: 2/58
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userDeleteUser_0]: 1/58
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, authorizationRegister_0, userDeleteUser_0]: 1/58
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, authorizationRegister_0]: 1/58
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, authorizationRegister_0, userUpdateUser_0]: 1/58
+     [java] answerCreateQuestion (answerCreateQuestion_0): 13/58
+     [java] answerCreateQuestion (answerCreateQuestion_2): 13/58
+     [java] authorizationRegister (authorizationRegister_0): 4/58
+     [java] questionCreateQuestion (questionCreateQuestion_1): 44/58
+     [java] questionCreateQuestion (questionCreateQuestion_2): 5/58
+     [java] questionCreateQuestion (questionCreateQuestion_3): 36/58
+     [java] questionCreateQuestion (questionCreateQuestion_4): 5/58
+     [java] questionGetQuestionsByTag (questionGetQuestionsByTag_0): 11/58
+     [java] questionGetQuestionsByTag (questionGetQuestionsByTag_1): 9/58
+     [java] tagGetTag (tagGetTag_0): 3/58
+     [java] tagGetTagsByTerm (tagGetTagsByTerm_0): 3/58
+     [java] tagListAllTags (tagListAllTags_0): 3/58
+     [java] userCreateQuestion (userCreateQuestion_0): 4/58
+     [java] userCreateUser (userCreateUser_0): 4/58
+     [java] userDeleteUser (userDeleteUser_0): 3/58
+     [java] userUpdateUser (userUpdateUser_0): 4/58
      [java] ------------------------------------------------------
      [java]  			     Schema
      [java] ------------------------------------------------------
@@ -343,22 +342,22 @@
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
      [java] ===========================================
-     [java] === AR compile time:	218ms
+     [java] === AR compile time:	277ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
      [java] +++ Lost Updates found:		0
      [java] +++ Lost Updates/Write Skews found:	0
      [java] +++ Non-Repeatable Reads found:	3
-     [java] +++ Phantom Reads found:		4
+     [java] +++ Phantom Reads found:		7
      [java] +++ Read Skews found:		0
-     [java] +++ Read-Write found:		0
+     [java] +++ Read-Write found:		2
      [java] +++ Write-Write found:		0
      [java] +++ Multi anomalies found:		0
-     [java] +++ Extensions found:		52
+     [java] +++ Extensions found:		46
      [java] -------------------------------------------
-     [java] === Total anomalies found:	59
-     [java] === Analysis time:		1530907 ms
+     [java] === Total anomalies found:	58
+     [java] === Analysis time:		1470819 ms
 
 BUILD SUCCESSFUL
-Total time: 25 minutes 34 seconds
+Total time: 24 minutes 34 seconds

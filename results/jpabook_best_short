@@ -3,8 +3,8 @@
      [java] [orderCreateForm_0, order_0, order_2, processCancelBuy_1]: 1/70
      [java] [itemList_0, order_0, order_2, processCancelBuy_1]: 1/70
      [java] [itemList_0, order_0, order_2, updateItem_0]: 2/70
-     [java] [itemList_0, order_0, order_2]: 1/70
      [java] [order_0, order_2, updateItemForm_0]: 1/70
+     [java] [itemList_0, order_0, order_2]: 1/70
      [java] [itemCreate_0, itemList_0, order_0, order_2]: 1/70
      [java] [order_1, order_3, processCancelBuy_0]: 2/70
      [java] [orderCreateForm_0, order_0, order_2]: 1/70
@@ -170,7 +170,7 @@
      [java] Microservice: M2
      [java] ----------------------------------------------------------------
      [java] ===========================================
-     [java] === AR compile time:	195ms
+     [java] === AR compile time:	193ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
@@ -179,13 +179,13 @@
      [java] +++ Non-Repeatable Reads found:	0
      [java] +++ Phantom Reads found:		0
      [java] +++ Read Skews found:		1
-     [java] +++ Read-Write found:		1
+     [java] +++ Read-Write found:		2
      [java] +++ Write-Write found:		0
      [java] +++ Multi anomalies found:		0
-     [java] +++ Extensions found:		63
+     [java] +++ Extensions found:		62
      [java] -------------------------------------------
      [java] === Total anomalies found:	70
-     [java] === Analysis time:		185150 ms
+     [java] === Analysis time:		173025 ms
 
 BUILD SUCCESSFUL
-Total time: 3 minutes 7 seconds
+Total time: 2 minutes 55 seconds

@@ -263,7 +263,7 @@
      [java] Microservice: M5
      [java] ----------------------------------------------------------------
      [java] ===========================================
-     [java] === AR compile time:	230ms
+     [java] === AR compile time:	258ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
@@ -272,13 +272,13 @@
      [java] +++ Non-Repeatable Reads found:	0
      [java] +++ Phantom Reads found:		0
      [java] +++ Read Skews found:		0
-     [java] +++ Read-Write found:		0
+     [java] +++ Read-Write found:		2
      [java] +++ Write-Write found:		0
      [java] +++ Multi anomalies found:		0
-     [java] +++ Extensions found:		7
+     [java] +++ Extensions found:		5
      [java] -------------------------------------------
      [java] === Total anomalies found:	7
-     [java] === Analysis time:		564932 ms
+     [java] === Analysis time:		524962 ms
 
 BUILD SUCCESSFUL
-Total time: 9 minutes 28 seconds
+Total time: 8 minutes 48 seconds

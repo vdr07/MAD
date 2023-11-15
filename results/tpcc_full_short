@@ -13,8 +13,8 @@
      [java] [delivery_0, delivery_2]: 4/98
      [java] [delivery_1, delivery_3]: 4/98
      [java] [delivery_0, delivery_1]: 4/98
-     [java] [delivery_1, delivery_2]: 4/98
      [java] [delivery_2, delivery_3]: 4/98
+     [java] [delivery_1, delivery_2]: 4/98
      [java] [newOrder_2, newOrder_6]: 4/98
      [java] delivery (delivery_0): 24/98
      [java] delivery (delivery_1): 24/98
@@ -230,22 +230,22 @@
      [java] Microservice: M8
      [java] ----------------------------------------------------------------
      [java] ===========================================
-     [java] === AR compile time:	213ms
+     [java] === AR compile time:	258ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		13
      [java] +++ Lost Updates found:		0
      [java] +++ Lost Updates/Write Skews found:	0
      [java] +++ Non-Repeatable Reads found:	0
-     [java] +++ Phantom Reads found:		0
+     [java] +++ Phantom Reads found:		2
      [java] +++ Read Skews found:		0
-     [java] +++ Read-Write found:		0
+     [java] +++ Read-Write found:		1
      [java] +++ Write-Write found:		0
      [java] +++ Multi anomalies found:		0
-     [java] +++ Extensions found:		85
+     [java] +++ Extensions found:		82
      [java] -------------------------------------------
      [java] === Total anomalies found:	98
-     [java] === Analysis time:		304286 ms
+     [java] === Analysis time:		381219 ms
 
 BUILD SUCCESSFUL
-Total time: 5 minutes 7 seconds
+Total time: 6 minutes 24 seconds
