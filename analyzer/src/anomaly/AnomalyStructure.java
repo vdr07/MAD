@@ -25,8 +25,9 @@ public class AnomalyStructure {
 	}
 
 	public void addStructure(List<Tuple<String, Tuple<String, String>>> struct) {
-		this.structures.add(struct);
-
+		synchronized (lock) {
+			this.structures.add(struct);
+		}
 	}
 
 	public void writeToCSV(int anmlNo, int run, Anomaly anml) {
