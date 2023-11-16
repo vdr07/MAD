@@ -1,7 +1,7 @@
 
      [java] [questionCreateQuestion_1, questionCreateQuestion_3, tagGetTag_0]: 3/58
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateUser_0, userDeleteUser_0]: 1/58
      [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateUser_0, userUpdateUser_0]: 1/58
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateUser_0, userDeleteUser_0]: 1/58
      [java] [questionCreateQuestion_1, questionCreateQuestion_3, tagGetTagsByTerm_0]: 3/58
      [java] [questionCreateQuestion_1, questionCreateQuestion_4, questionGetQuestionsByTag_0, questionGetQuestionsByTag_1]: 4/58
      [java] [questionCreateQuestion_2, questionCreateQuestion_4, questionGetQuestionsByTag_1]: 1/58
@@ -342,22 +342,20 @@
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
      [java] ===========================================
-     [java] === AR compile time:	277ms
+     [java] === AR compile time:	312ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
      [java] +++ Lost Updates found:		0
      [java] +++ Lost Updates/Write Skews found:	0
      [java] +++ Non-Repeatable Reads found:	3
-     [java] +++ Phantom Reads found:		7
-     [java] +++ Read Skews found:		0
-     [java] +++ Read-Write found:		2
-     [java] +++ Write-Write found:		0
+     [java] +++ Phantom Reads found:		4
+     [java] +++ Read Skews found:		11
      [java] +++ Multi anomalies found:		0
-     [java] +++ Extensions found:		46
+     [java] +++ Extensions found:		40
      [java] -------------------------------------------
      [java] === Total anomalies found:	58
-     [java] === Analysis time:		1470819 ms
+     [java] === Analysis time:		1522444 ms
 
 BUILD SUCCESSFUL
-Total time: 24 minutes 34 seconds
+Total time: 25 minutes 26 seconds

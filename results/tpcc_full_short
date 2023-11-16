@@ -230,22 +230,20 @@
      [java] Microservice: M8
      [java] ----------------------------------------------------------------
      [java] ===========================================
-     [java] === AR compile time:	258ms
+     [java] === AR compile time:	273ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		13
      [java] +++ Lost Updates found:		0
      [java] +++ Lost Updates/Write Skews found:	0
      [java] +++ Non-Repeatable Reads found:	0
-     [java] +++ Phantom Reads found:		2
-     [java] +++ Read Skews found:		0
-     [java] +++ Read-Write found:		1
-     [java] +++ Write-Write found:		0
+     [java] +++ Phantom Reads found:		0
+     [java] +++ Read Skews found:		12
      [java] +++ Multi anomalies found:		0
-     [java] +++ Extensions found:		82
+     [java] +++ Extensions found:		73
      [java] -------------------------------------------
      [java] === Total anomalies found:	98
-     [java] === Analysis time:		381219 ms
+     [java] === Analysis time:		313502 ms
 
 BUILD SUCCESSFUL
-Total time: 6 minutes 24 seconds
+Total time: 5 minutes 16 seconds
