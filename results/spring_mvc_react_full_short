@@ -1,16 +1,4 @@
 
-     [java] Exception in thread "Thread-450" java.util.ConcurrentModificationException
-     [java] 	at java.util.ArrayList.writeObject(ArrayList.java:772)
-     [java] 	at sun.reflect.GeneratedMethodAccessor1.invoke(Unknown Source)
-     [java] 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-     [java] 	at java.lang.reflect.Method.invoke(Method.java:498)
-     [java] 	at java.io.ObjectStreamClass.invokeWriteObject(ObjectStreamClass.java:1154)
-     [java] 	at java.io.ObjectOutputStream.writeSerialData(ObjectOutputStream.java:1496)
-     [java] 	at java.io.ObjectOutputStream.writeOrdinaryObject(ObjectOutputStream.java:1432)
-     [java] 	at java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:1178)
-     [java] 	at java.io.ObjectOutputStream.writeObject(ObjectOutputStream.java:348)
-     [java] 	at anomaly.AnomalyStructure.save(AnomalyStructure.java:67)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
      [java] [questionCreateQuestion_1, questionCreateQuestion_3, tagGetTag_0]: 3/58
      [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateUser_0, userUpdateUser_0]: 1/58
      [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateUser_0, userDeleteUser_0]: 1/58
@@ -19,8 +7,8 @@
      [java] [questionCreateQuestion_2, questionCreateQuestion_4, questionGetQuestionsByTag_1]: 1/58
      [java] [questionCreateQuestion_1, questionCreateQuestion_3, questionGetQuestionsByTag_0]: 3/58
      [java] [questionCreateQuestion_1, questionCreateQuestion_3]: 24/58
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateQuestion_0]: 2/58
      [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateUser_0]: 1/58
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateQuestion_0]: 2/58
      [java] [answerCreateQuestion_0, answerCreateQuestion_2, authorizationRegister_0, userCreateQuestion_0]: 1/58
      [java] [questionCreateQuestion_1, questionCreateQuestion_2, questionGetQuestionsByTag_0, questionGetQuestionsByTag_1]: 4/58
      [java] [questionCreateQuestion_1, questionCreateQuestion_3, tagListAllTags_0]: 3/58
@@ -354,7 +342,7 @@
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
      [java] ===========================================
-     [java] === AR compile time:	209ms
+     [java] === AR compile time:	230ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
@@ -367,7 +355,7 @@
      [java] +++ Extensions found:		40
      [java] -------------------------------------------
      [java] === Total anomalies found:	58
-     [java] === Analysis time:		1703344 ms
+     [java] === Analysis time:		1664409 ms
 
 BUILD SUCCESSFUL
-Total time: 28 minutes 26 seconds
+Total time: 27 minutes 48 seconds
