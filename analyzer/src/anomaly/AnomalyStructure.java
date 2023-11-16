@@ -18,6 +18,7 @@ import cons.ConstantArgs;
 
 public class AnomalyStructure {
 	private List<List<Tuple<String, Tuple<String, String>>>> structures = new ArrayList<>();
+	private Object lock = new Object();
 
 	public List<List<Tuple<String, Tuple<String, String>>>> getStructures() {
 		return this.structures;
@@ -59,12 +60,14 @@ public class AnomalyStructure {
 			FileOutputStream fout2;
 			fout = new FileOutputStream("anomalies/" + ConstantArgs._BENCHMARK_NAME + "/previous_data.anomaly");
 			fout2 = new FileOutputStream("previous_seen_structs_data.anomaly");
-			ObjectOutputStream oos = new ObjectOutputStream(fout);
-			ObjectOutputStream oos2 = new ObjectOutputStream(fout2);
-			oos.writeObject(this.structures);
-			oos2.writeObject(this.structures);
-			oos.close();
-			oos2.close();
+			synchronized (lock) {
+				ObjectOutputStream oos = new ObjectOutputStream(fout);
+				ObjectOutputStream oos2 = new ObjectOutputStream(fout2);
+				oos.writeObject(this.structures);
+				oos2.writeObject(this.structures);
+				oos.close();
+				oos2.close();
+			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 		}
