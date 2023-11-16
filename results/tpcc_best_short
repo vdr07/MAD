@@ -115,7 +115,7 @@
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
      [java] ===========================================
-     [java] === AR compile time:	290ms
+     [java] === AR compile time:	275ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
@@ -128,7 +128,7 @@
      [java] +++ Extensions found:		0
      [java] -------------------------------------------
      [java] === Total anomalies found:	0
-     [java] === Analysis time:		6724 ms
+     [java] === Analysis time:		6635 ms
 
 BUILD SUCCESSFUL
 Total time: 9 seconds

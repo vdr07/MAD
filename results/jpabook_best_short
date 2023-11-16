@@ -1,4 +1,16 @@
 
+     [java] Exception in thread "Thread-45" java.util.ConcurrentModificationException
+     [java] 	at java.util.ArrayList.writeObject(ArrayList.java:772)
+     [java] 	at sun.reflect.GeneratedMethodAccessor1.invoke(Unknown Source)
+     [java] 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+     [java] 	at java.lang.reflect.Method.invoke(Method.java:498)
+     [java] 	at java.io.ObjectStreamClass.invokeWriteObject(ObjectStreamClass.java:1154)
+     [java] 	at java.io.ObjectOutputStream.writeSerialData(ObjectOutputStream.java:1496)
+     [java] 	at java.io.ObjectOutputStream.writeOrdinaryObject(ObjectOutputStream.java:1432)
+     [java] 	at java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:1178)
+     [java] 	at java.io.ObjectOutputStream.writeObject(ObjectOutputStream.java:348)
+     [java] 	at anomaly.AnomalyStructure.save(AnomalyStructure.java:67)
+     [java] 	at java.lang.Thread.run(Thread.java:750)
      [java] [orderCreateForm_0, order_0, order_2, updateItem_0]: 2/70
      [java] [orderCreateForm_0, order_0, order_2, processCancelBuy_1]: 1/70
      [java] [itemList_0, order_0, order_2, processCancelBuy_1]: 1/70
@@ -16,8 +28,8 @@
      [java] [itemCreate_0, order_0, order_2, updateItemForm_0]: 1/70
      [java] [itemCreate_0, order_0, order_2, updateItem_0]: 1/70
      [java] [order_0, order_2, processCancelBuy_1]: 7/70
-     [java] [order_0, order_2, updateItemForm_0, updateItem_0]: 2/70
      [java] [itemCreate_0, order_0, order_2, processCancelBuy_1]: 2/70
+     [java] [order_0, order_2, updateItemForm_0, updateItem_0]: 2/70
      [java] [order_0, order_2, updateItem_0]: 9/70
      [java] [order_0, order_3, processCancelBuy_0, processCancelBuy_1]: 2/70
      [java] [order_0, order_2]: 4/70
@@ -170,20 +182,20 @@
      [java] Microservice: M2
      [java] ----------------------------------------------------------------
      [java] ===========================================
-     [java] === AR compile time:	191ms
+     [java] === AR compile time:	182ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
      [java] +++ Lost Updates found:		3
-     [java] +++ Lost Updates/Write Skews found:	9
+     [java] +++ Lost Updates/Write Skews found:	8
      [java] +++ Non-Repeatable Reads found:	0
      [java] +++ Phantom Reads found:		0
      [java] +++ Read Skews found:		9
      [java] +++ Multi anomalies found:		0
-     [java] +++ Extensions found:		49
+     [java] +++ Extensions found:		50
      [java] -------------------------------------------
      [java] === Total anomalies found:	70
-     [java] === Analysis time:		170699 ms
+     [java] === Analysis time:		172337 ms
 
 BUILD SUCCESSFUL
-Total time: 2 minutes 53 seconds
+Total time: 2 minutes 54 seconds

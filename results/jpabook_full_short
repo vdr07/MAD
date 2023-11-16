@@ -1,28 +1,4 @@
 
-     [java] Exception in thread "Thread-31" java.util.ConcurrentModificationException
-     [java] 	at java.util.ArrayList.writeObject(ArrayList.java:772)
-     [java] 	at sun.reflect.GeneratedMethodAccessor2.invoke(Unknown Source)
-     [java] 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-     [java] 	at java.lang.reflect.Method.invoke(Method.java:498)
-     [java] 	at java.io.ObjectStreamClass.invokeWriteObject(ObjectStreamClass.java:1154)
-     [java] 	at java.io.ObjectOutputStream.writeSerialData(ObjectOutputStream.java:1496)
-     [java] 	at java.io.ObjectOutputStream.writeOrdinaryObject(ObjectOutputStream.java:1432)
-     [java] 	at java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:1178)
-     [java] 	at java.io.ObjectOutputStream.writeObject(ObjectOutputStream.java:348)
-     [java] 	at anomaly.AnomalyStructure.save(AnomalyStructure.java:64)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-29" java.util.ConcurrentModificationException
-     [java] 	at java.util.ArrayList.writeObject(ArrayList.java:772)
-     [java] 	at sun.reflect.GeneratedMethodAccessor2.invoke(Unknown Source)
-     [java] 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-     [java] 	at java.lang.reflect.Method.invoke(Method.java:498)
-     [java] 	at java.io.ObjectStreamClass.invokeWriteObject(ObjectStreamClass.java:1154)
-     [java] 	at java.io.ObjectOutputStream.writeSerialData(ObjectOutputStream.java:1496)
-     [java] 	at java.io.ObjectOutputStream.writeOrdinaryObject(ObjectOutputStream.java:1432)
-     [java] 	at java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:1178)
-     [java] 	at java.io.ObjectOutputStream.writeObject(ObjectOutputStream.java:348)
-     [java] 	at anomaly.AnomalyStructure.save(AnomalyStructure.java:65)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
      [java] [itemList_0, order_1, order_4, processCancelBuy_4]: 1/79
      [java] [itemList_0, order_1, order_4, updateItem_0]: 2/79
      [java] [order_1, order_4, updateItemForm_0]: 1/79
@@ -33,8 +9,8 @@
      [java] [order_3, order_5, processCancelBuy_2, processCancelBuy_3]: 1/79
      [java] [order_1, order_4]: 4/79
      [java] [order_2, order_4, processCancelBuy_1, processCancelBuy_4]: 4/79
-     [java] [order_1, order_5, processCancelBuy_2, processCancelBuy_4]: 1/79
      [java] [order_3, order_5, processCancelBuy_0, processCancelBuy_3]: 1/79
+     [java] [order_1, order_5, processCancelBuy_2, processCancelBuy_4]: 1/79
      [java] [itemCreate_0, order_1, order_4]: 3/79
      [java] [order_1, order_4, processCancelBuy_4, updateItemForm_0]: 1/79
      [java] [orderCreateForm_1, order_1, order_4, updateItem_0]: 2/79
@@ -43,17 +19,17 @@
      [java] [itemList_0, order_1, order_4]: 1/79
      [java] [processCancelBuy_0, processCancelBuy_2, processCancelBuy_4]: 6/79
      [java] [itemCreate_0, itemList_0, order_1, order_4]: 1/79
-     [java] [order_1, order_4, updateItemForm_0, updateItem_0]: 2/79
      [java] [itemCreate_0, order_1, order_4, processCancelBuy_4]: 2/79
+     [java] [order_1, order_4, updateItemForm_0, updateItem_0]: 2/79
      [java] [order_1, order_4, processCancelBuy_4]: 7/79
      [java] [itemCreate_0, order_1, order_4, updateItemForm_0]: 1/79
      [java] [itemCreate_0, orderCreateForm_1, order_1, order_4]: 1/79
      [java] [orderCreateForm_1, order_1, order_4]: 1/79
      [java] [order_1, order_4, updateItem_0]: 9/79
      [java] [itemCreate_0, order_1, order_4, updateItem_0]: 1/79
-     [java] [order_2, order_5, processCancelBuy_0, processCancelBuy_1]: 1/79
      [java] [order_4, order_5, processCancelBuy_0, processCancelBuy_4]: 2/79
      [java] [order_1, order_3, processCancelBuy_3, processCancelBuy_4]: 1/79
+     [java] [order_2, order_5, processCancelBuy_0, processCancelBuy_1]: 1/79
      [java] [order_1, order_2, processCancelBuy_1, processCancelBuy_4]: 1/79
      [java] [order_4, order_5, processCancelBuy_2, processCancelBuy_4]: 2/79
      [java] [orderCreateForm_1, order_1, order_4, processCancelBuy_4]: 1/79
@@ -240,20 +216,20 @@
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
      [java] ===========================================
-     [java] === AR compile time:	195ms
+     [java] === AR compile time:	200ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
      [java] +++ Lost Updates found:		3
-     [java] +++ Lost Updates/Write Skews found:	9
+     [java] +++ Lost Updates/Write Skews found:	7
      [java] +++ Non-Repeatable Reads found:	0
      [java] +++ Phantom Reads found:		0
      [java] +++ Read Skews found:		11
      [java] +++ Multi anomalies found:		0
-     [java] +++ Extensions found:		56
+     [java] +++ Extensions found:		58
      [java] -------------------------------------------
      [java] === Total anomalies found:	79
-     [java] === Analysis time:		253404 ms
+     [java] === Analysis time:		217917 ms
 
 BUILD SUCCESSFUL
-Total time: 4 minutes 15 seconds
+Total time: 3 minutes 40 seconds
