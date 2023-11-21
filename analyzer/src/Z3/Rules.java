@@ -100,7 +100,9 @@ public class Rules {
 									q2.getWhClause());
 							BoolExpr aliveCond = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar,
 									vo2);
-							BoolExpr rwOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_O_" + tableName), rowVar,
+							//BoolExpr rwOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_O_" + tableName), rowVar,
+							//		vo1, vo2);
+							BoolExpr rwOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_O"),
 									vo1, vo2);
 							// relate the updated velues to the projected values at the next version
 							// ZZZ
@@ -123,8 +125,10 @@ public class Rules {
 								.mkNot((BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo1));
 						BoolExpr notNullCond = (BoolExpr) ctx
 								.mkApp(objs.getfuncs(txn1.getOriginalTransaction() + "_" + lhsVarName + "_isNull"), vo1);
-						BoolExpr rwAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_Alive_" + tableName),
-								rowVar, vo1, vo2);
+						//BoolExpr rwAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_Alive_" + tableName),
+						//		rowVar, vo1, vo2);
+						BoolExpr rwAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_O"),
+									vo1, vo2);
 						BoolExpr[] insertedRowConds = new BoolExpr[table.getColumns().size()];
 						int iter = 0;
 						Expr version = ctx.mkApp(objs.getfuncs(tableName + "_VERSION"), rowVar, vo2);
@@ -150,9 +154,10 @@ public class Rules {
 						BoolExpr aliveCond = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo2);
 						BoolExpr notNullCond = (BoolExpr) ctx
 								.mkApp(objs.getfuncs(txn1.getOriginalTransaction() + "_" + lhsVarName + "_isNull"), vo1);
-						BoolExpr rwAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_Alive_" + tableName),
-								rowVar, vo1, vo2);
-
+						//BoolExpr rwAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_Alive_" + tableName),
+						//		rowVar, vo1, vo2);
+						BoolExpr rwAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_O"),
+									vo1, vo2);
 						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2, 
 								pathCond1, pathCond2, aliveCond, notNullCond, rwAliveOnTableCond);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
@@ -167,8 +172,10 @@ public class Rules {
 						BoolExpr aliveCond2 = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo2);
 						BoolExpr aliveCond1 = ctx
 								.mkNot((BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo1));
-						BoolExpr rwAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_Alive_" + tableName),
-								rowVar, vo1, vo2);
+						//BoolExpr rwAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_Alive_" + tableName),
+						//		rowVar, vo1, vo2);
+						BoolExpr rwAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_O"),
+									vo1, vo2);
 						Expr body = ctx.mkAnd(otypeCond1, otypeCond2, whereClause1, whereClause2,
 								pathCond1, pathCond2, aliveCond1, aliveCond2, rwAliveOnTableCond);
 						BoolExpr rowExistsCond = ctx.mkExists(new Expr[] { rowVar }, body, 1, null, null, null, null);
@@ -182,8 +189,10 @@ public class Rules {
 								q1.getWhClause());
 						BoolExpr aliveCond1 = ctx
 								.mkNot((BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo1));
-						BoolExpr rwAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_Alive_" + tableName),
-								rowVar, vo1, vo2);
+						//BoolExpr rwAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_Alive_" + tableName),
+						//		rowVar, vo1, vo2);
+						BoolExpr rwAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_O"),
+									vo1, vo2);
 						BoolExpr[] insertedRowConds = new BoolExpr[table.getColumns().size()];
 						int iter = 0;
 						Expr version = ctx.mkApp(objs.getfuncs(tableName + "_VERSION"), rowVar, vo2);
@@ -205,8 +214,10 @@ public class Rules {
 								q1.getWhClause());
 						BoolExpr aliveCond1 = ctx
 								.mkNot((BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo1));
-						BoolExpr rwAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_Alive_" + tableName),
-								rowVar, vo1, vo2);
+						//BoolExpr rwAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_Alive_" + tableName),
+						//		rowVar, vo1, vo2);
+						BoolExpr rwAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("RW_O"),
+									vo1, vo2);
 						BoolExpr[] insertedRowConds = new BoolExpr[table.getColumns().size()];
 						int iter = 0;
 						Expr version = ctx.mkApp(objs.getfuncs(tableName + "_VERSION"), rowVar, vo2);
@@ -402,8 +413,10 @@ public class Rules {
 								q1.getWhClause());
 						BoolExpr whereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getOriginalTransaction(), vot2, rowVar, vo2,
 								q2.getWhClause());
-						BoolExpr wrOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_O_" + tableName), rowVar, vo1,
-								vo2);
+						//BoolExpr wrOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_O_" + tableName), rowVar, vo1,
+						//		vo2);
+						BoolExpr wrOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_O"),
+									vo1, vo2);
 						BoolExpr aliveCond = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo1);
 
 						BoolExpr notNullCond = (BoolExpr) ctx
@@ -426,8 +439,10 @@ public class Rules {
 						BoolExpr aliveCond = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo2);
 						BoolExpr notNullCond = ctx.mkNot((BoolExpr) ctx
 								.mkApp(objs.getfuncs(txn2.getOriginalTransaction() + "_" + lhsVarName + "_isNull"), vo2));
-						BoolExpr wrAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_Alive_" + tableName),
-								rowVar, vo1, vo2);
+						//BoolExpr wrAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_Alive_" + tableName),
+						//		rowVar, vo1, vo2);
+						BoolExpr wrAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_O"),
+									vo1, vo2);
 						BoolExpr[] insertedRowConds = new BoolExpr[table.getColumns().size()];
 						int iter = 0;
 						for (Column c : table.getColumns()) {
@@ -459,8 +474,10 @@ public class Rules {
 						BoolExpr notNullCond = (BoolExpr) ctx
 								.mkApp(objs.getfuncs(txn2.getOriginalTransaction() + "_" + lhsVarName + "_isNull"), vo2);
 
-						BoolExpr wrAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_Alive_" + tableName),
-								rowVar, vo1, vo2);
+						//BoolExpr wrAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_Alive_" + tableName),
+						//		rowVar, vo1, vo2);
+						BoolExpr wrAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_O"),
+									vo1, vo2);
 
 						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2,
 								pathCond1, pathCond2, aliveCond1, aliveCond2, notNullCond, wrAliveOnTableCond);
@@ -478,8 +495,10 @@ public class Rules {
 						BoolExpr aliveCond2 = ctx
 								.mkNot((BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo2));
 
-						BoolExpr wrAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_Alive_" + tableName),
-								rowVar, vo1, vo2);
+						//BoolExpr wrAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_Alive_" + tableName),
+						//		rowVar, vo1, vo2);
+						BoolExpr wrAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_O"),
+									vo1, vo2);
 						
 						Expr body = ctx.mkAnd(rowConflictCond, otypeCond1, otypeCond2, whereClause1, whereClause2,
 								pathCond1, pathCond2, aliveCond1, aliveCond2, wrAliveOnTableCond);
@@ -490,8 +509,10 @@ public class Rules {
 						BoolExpr whereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getOriginalTransaction(), vot2, rowVar, vo2,
 								q2.getWhClause());
 						BoolExpr aliveCond = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo2);
-						BoolExpr wrAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_Alive_" + tableName),
-								rowVar, vo1, vo2);
+						//BoolExpr wrAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_Alive_" + tableName),
+						//		rowVar, vo1, vo2);
+						BoolExpr wrAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_O"),
+									vo1, vo2);
 						BoolExpr[] insertedRowConds = new BoolExpr[table.getColumns().size()];
 						int iter = 0;
 						Expr version = ctx.mkApp(objs.getfuncs(tableName + "_VERSION"), rowVar, vo1);
@@ -510,8 +531,10 @@ public class Rules {
 						BoolExpr whereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getOriginalTransaction(), vot2, rowVar, vo2,
 								q2.getWhClause());
 						BoolExpr aliveCond = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo2);
-						BoolExpr wrAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_Alive_" + tableName),
-								rowVar, vo1, vo2);
+						//BoolExpr wrAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_Alive_" + tableName),
+						//		rowVar, vo1, vo2);
+						BoolExpr wrAliveOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WR_O"),
+									vo1, vo2);
 						BoolExpr[] insertedRowConds = new BoolExpr[table.getColumns().size()];
 						int iter = 0;
 						Expr version = ctx.mkApp(objs.getfuncs(tableName + "_VERSION"), rowVar, vo1);
@@ -569,7 +592,9 @@ public class Rules {
 								q1.getWhClause());
 						BoolExpr whereClause2 = (BoolExpr) z3Util.irCondToZ3Expr(txn2.getOriginalTransaction(), vot2, rowVar, vo2,
 								q2.getWhClause());
-						BoolExpr wwOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WW_O_" + tableName), rowVar, vo1,
+						//BoolExpr wwOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WW_O_" + tableName), rowVar, vo1,
+						//		vo2);
+						BoolExpr wwOnTableCond = (BoolExpr) ctx.mkApp(objs.getfuncs("WW_O"), vo1,
 								vo2);
 						BoolExpr aliveCond1 = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo1);
 						BoolExpr aliveCond2 = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo2);
