@@ -538,16 +538,18 @@ public class DynamicAssertsions {
 		BoolExpr[] allRhs = new BoolExpr[length];
 		for (int i = 0; i < length - 1; i++) {
 			String op = structure.get(i).x.contains("sibling") ? structure.get(i).x : structure.get(i).x + "_O";
-			allRhs[i] = op.contains("sibling") 
+			allRhs[i] = (BoolExpr) ctx.mkApp(objs.getfuncs(op), Os[i], Os[i + 1]);
+			/*op.contains("sibling") 
 					? ctx.mkAnd((BoolExpr) ctx.mkApp(objs.getfuncs("X"), Os[i], Os[i + 1]),
 						ctx.mkNot((BoolExpr) ctx.mkApp(objs.getfuncs("D"), Os[i], Os[i + 1])))
-					: (BoolExpr) ctx.mkApp(objs.getfuncs("D"), Os[i], Os[i + 1]);
+					: (BoolExpr) ctx.mkApp(objs.getfuncs("D"), Os[i], Os[i + 1]);*/
 		}
 		String op = structure.get(length - 1).x.contains("sibling") ? structure.get(length - 1).x : structure.get(length - 1).x + "_O";
-		allRhs[length - 1] = op.contains("sibling") 
+		allRhs[length - 1] = (BoolExpr) ctx.mkApp(objs.getfuncs(op), Os[length - 1], Os[0]);
+		/*op.contains("sibling") 
 					? ctx.mkAnd((BoolExpr) ctx.mkApp(objs.getfuncs("X"), Os[length - 1], Os[0]),
 							ctx.mkNot((BoolExpr) ctx.mkApp(objs.getfuncs("D"), Os[length - 1], Os[0])))
-					: (BoolExpr) ctx.mkApp(objs.getfuncs("D"), Os[length - 1], Os[0]);
+					: (BoolExpr) ctx.mkApp(objs.getfuncs("D"), Os[length - 1], Os[0]);*/
 		BoolExpr rhs = ctx.mkAnd(allRhs);
 		Expr body = ctx.mkImplies(lhs, ctx.mkNot(rhs));
 		Quantifier x = ctx.mkForall(Os, body, 1, null, null, null, null);
