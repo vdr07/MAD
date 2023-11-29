@@ -276,7 +276,6 @@ public class Rules {
 
 			Expression rhsVal = updateFuncs.get(c);
 			versionConds[iter96++] = (ctx.mkEq(z3Util.irCondToZ3Expr(txn.getOriginalTransaction(), ot, rowVar, oldO, rhsVal), lhsVal));
-
 		}
 
 		for (String readVersionVarName : nextReadVersionVars.keySet()) {
@@ -294,22 +293,36 @@ public class Rules {
 		String txnSelectVarName = txn.getOriginalTransaction() + "_" + selectVarName;
 		Map<String, FuncDecl> nextReadVersionVars = objs.getNextReadVersionVars(txnSelectVarName);
 		String tableName = q1.getTable().getName();
-		BoolExpr[] versionConds = new BoolExpr[updateFuncs.size() + nextReadVersionVars.size() + 1];
+		BoolExpr[] versionConds = new BoolExpr[updateFuncs.size() * 2 + nextReadVersionVars.size() + 1];
 		int iter96 = 0;
 		FuncDecl verFunc = objs.getfuncs(tableName + "_VERSION");
 		for (Column c : updateFuncs.keySet()) {
 			FuncDecl projFunc = objs.getfuncs(tableName + "_PROJ_" + c);
 			Expr lhsVal = ctx.mkApp(projFunc, rowVar, (ctx.mkApp(verFunc, rowVar, oldO)));
-			Expression rhsVal = updateFuncs.get(c);
-			try {
-				versionConds[iter96++] = (ctx.mkEq(z3Util.irCondToZ3Expr(oldTxn.getOriginalTransaction(), oldOt, rowVar, oldO, rhsVal), lhsVal));
-			} catch (Exception e) {
-				System.out.println(e);
-				System.out.println("rhsVal:" + rhsVal);
-				System.out.println("tr(rhsVal):" + z3Util.irCondToZ3Expr(oldTxn.getOriginalTransaction(), oldOt, rowVar, oldO, rhsVal));
-				System.out.println("lhsVal:" + lhsVal);
+			switch (c.type) {
+			case STRING:
+				SeqExpr lhsValNewVersion = (SeqExpr) ctx.mkApp(projFunc, rowVar,
+						(BitVecExpr) ctx.mkApp(verFunc, rowVar, o));
+				versionConds[iter96++] = (ctx.mkEq(lhsVal, lhsValNewVersion));
+				break;
+			case INT:
+				ArithExpr lhsValNewVersion1 = (ArithExpr) ctx.mkApp(projFunc, rowVar,
+						(BitVecExpr) ctx.mkApp(verFunc, rowVar, o));
+				versionConds[iter96++] = (ctx.mkEq(lhsVal, lhsValNewVersion1));
+				break;
+			case REAL:
+				ArithExpr lhsValNewVersion2 = (ArithExpr) ctx.mkApp(projFunc, rowVar,
+						(BitVecExpr) ctx.mkApp(verFunc, rowVar, o));
+				versionConds[iter96++] = (ctx.mkEq(lhsVal, lhsValNewVersion2));
+				break;
+			default:
+				System.out.println("----- case not handled yet: " + c.type);
 			}
+
+			Expression rhsVal = updateFuncs.get(c);
+			versionConds[iter96++] = (ctx.mkEq(z3Util.irCondToZ3Expr(oldTxn.getOriginalTransaction(), oldOt, rowVar, oldO, rhsVal), lhsVal));
 		}
+		
 		for (String readVersionVarName : nextReadVersionVars.keySet()) {
 			FuncDecl rvFunc = objs.getfuncs(readVersionVarName);
 			versionConds[iter96++] = (ctx.mkEq((BitVecExpr) ctx.mkApp(rvFunc, ot), (BitVecExpr) ctx.mkApp(verFunc, rowVar, o)));
