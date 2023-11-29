@@ -170,20 +170,20 @@
      [java] Microservice: M2
      [java] ----------------------------------------------------------------
      [java] ===========================================
-     [java] === AR compile time:	190ms
+     [java] === AR compile time:	176ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
      [java] +++ Lost Updates found:		3
-     [java] +++ Lost Updates/Write Skews found:	9
+     [java] +++ Lost Updates/Write Skews found:	10
      [java] +++ Non-Repeatable Reads found:	0
      [java] +++ Phantom Reads found:		0
      [java] +++ Read Skews found:		9
      [java] +++ Multi anomalies found:		0
-     [java] +++ Extensions found:		49
+     [java] +++ Extensions found:		48
      [java] -------------------------------------------
      [java] === Total anomalies found:	70
-     [java] === Analysis time:		177963 ms
+     [java] === Analysis time:		161409 ms
 
 BUILD SUCCESSFUL
-Total time: 3 minutes 0 seconds
+Total time: 2 minutes 43 seconds
