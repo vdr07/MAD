@@ -325,8 +325,19 @@ public class Transformer extends BodyTransformer {
 
 			// Unknown anomaly
 			if(!anmlsTypesPatterns.containsKey(edgeTypesLeftOps)) {
-				edgeTypesLeftOps.clear();
-				edgeTypesLeftOps.add(new Tuple<String, String>("X", "extension"));
+				// shift two positions in case the edges are in a different order e.g. "X WW X RW", instead of "X RW X WW"
+				int size = edgeTypesLeftOps.size();
+				List<Tuple<String, String>> temp = new ArrayList<>(edgeTypesLeftOps.subList(size - 2, size));
+				temp.addAll(edgeTypesLeftOps.subList(0, size - 2));
+
+				for (int j = 0; j < size; j++) {
+					edgeTypesLeftOps.set(j, temp.get(j));
+				}
+
+				if(!anmlsTypesPatterns.containsKey(edgeTypesLeftOps)) {
+					edgeTypesLeftOps.clear();
+					edgeTypesLeftOps.add(new Tuple<String, String>("X", "extension"));
+				}
 			}
 
 			anmlName = anmlsTypesPatterns.get(edgeTypesLeftOps);
