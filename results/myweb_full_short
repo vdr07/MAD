@@ -276,7 +276,7 @@
      [java] +++ Extensions found:		0
      [java] -------------------------------------------
      [java] === Total anomalies found:	7
-     [java] === Analysis time:		522339 ms
+     [java] === Analysis time:		495562 ms
 
 BUILD SUCCESSFUL
-Total time: 8 minutes 45 seconds
+Total time: 8 minutes 18 seconds

@@ -19,8 +19,8 @@
      [java] [itemList_0, order_1, order_4]: 1/79
      [java] [processCancelBuy_0, processCancelBuy_2, processCancelBuy_4]: 6/79
      [java] [itemCreate_0, itemList_0, order_1, order_4]: 1/79
-     [java] [order_1, order_4, updateItemForm_0, updateItem_0]: 2/79
      [java] [itemCreate_0, order_1, order_4, processCancelBuy_4]: 2/79
+     [java] [order_1, order_4, updateItemForm_0, updateItem_0]: 2/79
      [java] [order_1, order_4, processCancelBuy_4]: 7/79
      [java] [itemCreate_0, orderCreateForm_1, order_1, order_4]: 1/79
      [java] [itemCreate_0, order_1, order_4, updateItemForm_0]: 1/79
@@ -216,7 +216,7 @@
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
      [java] ===========================================
-     [java] === AR compile time:	202ms
+     [java] === AR compile time:	167ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
@@ -229,7 +229,7 @@
      [java] +++ Extensions found:		54
      [java] -------------------------------------------
      [java] === Total anomalies found:	79
-     [java] === Analysis time:		214200 ms
+     [java] === Analysis time:		236632 ms
 
 BUILD SUCCESSFUL
-Total time: 3 minutes 36 seconds
+Total time: 3 minutes 59 seconds
