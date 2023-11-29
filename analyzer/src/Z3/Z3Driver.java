@@ -532,7 +532,8 @@ public class Z3Driver {
 	// ---------------------------------------------------------------------------
 	// functions adding assertions for every pair of operations that 'potentially'
 	// create the edge
-	private void RWthen(Set<Table> includedTables, List<String> txnsNamesComb) throws UnexoectedOrUnhandledConditionalExpression {
+	private void RWthen(Set<Table> includedTables, List<String> txnsNamesComb,
+			boolean versionEnforcement) throws UnexoectedOrUnhandledConditionalExpression {
 		Map<String, FuncDecl> Ts = objs.getAllTTypes();
 		for (FuncDecl t1 : Ts.values()) {
 			if (!txnsNamesComb.contains(mapTxnToOrigTxn.get(t1.getName().toString())))
@@ -541,7 +542,7 @@ public class Z3Driver {
 				if (!txnsNamesComb.contains(mapTxnToOrigTxn.get(t2.getName().toString())))
 					continue;
 				List<BoolExpr> conditions = ruleGenerator.return_conditions_rw_then(t1, t2, vo1, vo2, vt1, vt2, vot1, vot2,
-						includedTables);
+						includedTables, versionEnforcement);
 				conditions.add(ctx.mkFalse());
 				BoolExpr rhs = ctx.mkOr(conditions.toArray(new BoolExpr[conditions.size()]));
 				BoolExpr lhs1 = ctx.mkEq(ctx.mkApp(objs.getfuncs("parent"), vo1), vt1);
@@ -573,7 +574,8 @@ public class Z3Driver {
 		}
 	}
 
-	private void WRthen(Set<Table> includedTables, List<String> txnsNamesComb) throws UnexoectedOrUnhandledConditionalExpression {
+	private void WRthen(Set<Table> includedTables, List<String> txnsNamesComb,
+			boolean versionEnforcement) throws UnexoectedOrUnhandledConditionalExpression {
 		Map<String, FuncDecl> Ts = objs.getAllTTypes();
 		for (FuncDecl t1 : Ts.values()) {
 			if (!txnsNamesComb.contains(mapTxnToOrigTxn.get(t1.getName().toString())))
@@ -582,7 +584,7 @@ public class Z3Driver {
 				if (!txnsNamesComb.contains(mapTxnToOrigTxn.get(t2.getName().toString())))
 					continue;
 				List<BoolExpr> conditions = ruleGenerator.return_conditions_wr_then(t1, t2, vo1, vo2, vt1, vt2, vot1, vot2,
-						includedTables);
+						includedTables, versionEnforcement);
 				conditions.add(ctx.mkFalse());
 				BoolExpr rhs = ctx.mkOr(conditions.toArray(new BoolExpr[conditions.size()]));
 				BoolExpr lhs1 = ctx.mkEq(ctx.mkApp(objs.getfuncs("parent"), vo1), vt1);
@@ -614,7 +616,8 @@ public class Z3Driver {
 		}
 	}
 
-	private void WWthen(Set<Table> includedTables, List<String> txnsNamesComb) throws UnexoectedOrUnhandledConditionalExpression {
+	private void WWthen(Set<Table> includedTables, List<String> txnsNamesComb,
+			boolean versionEnforcement) throws UnexoectedOrUnhandledConditionalExpression {
 		Map<String, FuncDecl> Ts = objs.getAllTTypes();
 		for (FuncDecl t1 : Ts.values()) {
 			if (!txnsNamesComb.contains(mapTxnToOrigTxn.get(t1.getName().toString())))
@@ -623,7 +626,7 @@ public class Z3Driver {
 				if (!txnsNamesComb.contains(mapTxnToOrigTxn.get(t2.getName().toString())))
 					continue;
 				List<BoolExpr> conditions = ruleGenerator.return_conditions_ww_then(t1, t2, vo1, vo2, vt1, vt2, vot1, vot2,
-						includedTables);
+						includedTables, versionEnforcement);
 				conditions.add(ctx.mkFalse());
 				BoolExpr rhs = ctx.mkOr(conditions.toArray(new BoolExpr[conditions.size()]));
 				BoolExpr lhs1 = ctx.mkEq(ctx.mkApp(objs.getfuncs("parent"), vo1), vt1);
@@ -670,7 +673,7 @@ public class Z3Driver {
 	 */
 	public Anomaly analyze(int round, List<List<Tuple<String, Tuple<String, String>>>> seenStructures,
 						   List<Anomaly> seenAnmls, Set<Table> includedTables, Anomaly unVersionedAnml,
-						   List<String> txnsNamesComb, int length) {
+						   List<String> txnsNamesComb, int length, boolean versionEnforcement) {
 		// this function is called twice at each iteration: once for unannotated
 		// solution and once for the annotated (second call). In the second call certain
 		// constraints (e.g. rule constraints) must be popped and be replaced with
@@ -696,11 +699,11 @@ public class Z3Driver {
 					HeaderZ3(" ->WR ");
 					thenWR(includedTables);
 					HeaderZ3(" WW-> ");
-					WWthen(includedTables, txnsNamesComb);
+					WWthen(includedTables, txnsNamesComb, versionEnforcement);
 					HeaderZ3(" WR-> ");
-					WRthen(includedTables, txnsNamesComb);
+					WRthen(includedTables, txnsNamesComb, versionEnforcement);
 					HeaderZ3(" RW-> ");
-					RWthen(includedTables, txnsNamesComb);
+					RWthen(includedTables, txnsNamesComb, versionEnforcement);
 				} catch (UnexoectedOrUnhandledConditionalExpression e) {
 					e.printStackTrace();
 				}
@@ -728,11 +731,11 @@ public class Z3Driver {
 					HeaderZ3(" ->WR ");
 					thenWR(includedTables);
 					HeaderZ3(" WW-> ");
-					WWthen(includedTables, txnsNamesComb);
+					WWthen(includedTables, txnsNamesComb, versionEnforcement);
 					HeaderZ3(" WR-> ");
-					WRthen(includedTables, txnsNamesComb);
+					WRthen(includedTables, txnsNamesComb, versionEnforcement);
 					HeaderZ3(" RW-> ");
-					RWthen(includedTables, txnsNamesComb);
+					RWthen(includedTables, txnsNamesComb, versionEnforcement);
 				} catch (UnexoectedOrUnhandledConditionalExpression e) {
 					e.printStackTrace();
 				}

@@ -58,7 +58,7 @@ public class Rules {
 	//
 	////////////////////////
 	public List<BoolExpr> return_conditions_rw_then(FuncDecl t1, FuncDecl t2, Expr vo1, Expr vo2, Expr vt1, Expr vt2,
-			Expr vot1, Expr vot2, Set<Table> includedTables) throws UnexoectedOrUnhandledConditionalExpression {
+			Expr vot1, Expr vot2, Set<Table> includedTables, boolean versionEnforcement) throws UnexoectedOrUnhandledConditionalExpression {
 		List<BoolExpr> result = new ArrayList<BoolExpr>();
 		Transaction txn1 = app.getTxnByName(t1.getName().toString());
 		Transaction txn2 = app.getTxnByName(t2.getName().toString());
@@ -87,7 +87,7 @@ public class Rules {
 
 					String relatedOps = ((InvokeStmt) o1).getType() + "_" + ((InvokeStmt) o2).getType();
 					FuncDecl funcConf = objs.getfuncs(relatedOps + "_conflict_rows");
-					BoolExpr rowConflictCond = ConstantArgs._current_version_enforcement
+					BoolExpr rowConflictCond = versionEnforcement
 							? ctx.mkEq(ctx.mkApp(funcConf, vo1, vo2), rowVar)
 							: ctx.mkTrue();
 
@@ -106,7 +106,7 @@ public class Rules {
 									vo1, vo2);
 							// relate the updated velues to the projected values at the next version
 							// ZZZ
-							BoolExpr versionCond2 = ConstantArgs._current_version_enforcement
+							BoolExpr versionCond2 = versionEnforcement
 									? ctx.mkAnd(getVersionCondsRW(txn1, txn2, vot1, vo1, vot2, vo2, q1, q2, rowVar))
 									: ctx.mkTrue();
 
@@ -374,7 +374,7 @@ public class Rules {
 	//
 	////////////////////////
 	public List<BoolExpr> return_conditions_wr_then(FuncDecl t1, FuncDecl t2, Expr vo1, Expr vo2, Expr vt1, Expr vt2,
-			Expr vot1, Expr vot2, Set<Table> includedTables) throws UnexoectedOrUnhandledConditionalExpression {
+			Expr vot1, Expr vot2, Set<Table> includedTables, boolean versionEnforcement) throws UnexoectedOrUnhandledConditionalExpression {
 		List<BoolExpr> result = new ArrayList<BoolExpr>();
 		Transaction txn1 = app.getTxnByName(t1.getName().toString());
 		Transaction txn2 = app.getTxnByName(t2.getName().toString());
@@ -422,7 +422,7 @@ public class Rules {
 						BoolExpr notNullCond = (BoolExpr) ctx
 								.mkApp(objs.getfuncs(txn2.getOriginalTransaction() + "_" + lhsVarName + "_isNull"), vo2);
 						// ZZZ
-						BoolExpr versionCond1 = ConstantArgs._current_version_enforcement
+						BoolExpr versionCond1 = versionEnforcement
 								? ctx.mkAnd(getVersionCondsWR(txn1, txn2, vot1, vo1, vot2, vo2, q1, q2, rowVar))
 								: ctx.mkTrue();
 
@@ -557,7 +557,7 @@ public class Rules {
 	}
 
 	public List<BoolExpr> return_conditions_ww_then(FuncDecl t1, FuncDecl t2, Expr vo1, Expr vo2, Expr vt1, Expr vt2,
-			Expr vot1, Expr vot2, Set<Table> includedTables) throws UnexoectedOrUnhandledConditionalExpression {
+			Expr vot1, Expr vot2, Set<Table> includedTables, boolean versionEnforcement) throws UnexoectedOrUnhandledConditionalExpression {
 		List<BoolExpr> result = new ArrayList<BoolExpr>();
 		Transaction txn1 = app.getTxnByName(t1.getName().toString());
 		Transaction txn2 = app.getTxnByName(t2.getName().toString());
@@ -599,7 +599,7 @@ public class Rules {
 						BoolExpr aliveCond1 = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo1);
 						BoolExpr aliveCond2 = (BoolExpr) ctx.mkApp(objs.getfuncs("IsAlive_" + tableName), rowVar, vo2);
 						
-						BoolExpr versionCond2 = ConstantArgs._current_version_enforcement
+						BoolExpr versionCond2 = versionEnforcement
 								? ctx.mkAnd(getVersionCondsWW(txn1, txn2, vot1, vo1, vot2, vo2, q1, q2, rowVar))
 								: ctx.mkTrue();
 						
