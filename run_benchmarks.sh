@@ -29,13 +29,13 @@ mv analyzer/src/benchmarks/find_sport_mates/mono_decomposition.json analyzer/src
 cat results/find_sport_mates_mono | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -e "Buildfile" -e "analyzing" -e "structure1" -e "structure3" -e "java].$" > results/find_sport_mates_mono_short
 rm results/find_sport_mates_mono
 mv analyzer/src/benchmarks/find_sport_mates/decomposition.json analyzer/src/benchmarks/find_sport_mates/mono_decomposition.json
-echo "TPC-C Best"
+echo "find_sport_mates Best"
 mv analyzer/src/benchmarks/find_sport_mates/best_decomposition.json analyzer/src/benchmarks/find_sport_mates/decomposition.json
 ./clotho.sh --analyze find_sport_mates > results/find_sport_mates_best
 cat results/find_sport_mates_best | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -e "Buildfile" -e "analyzing" -e "structure1" -e "structure3" -e "java].$" > results/find_sport_mates_best_short
 rm results/find_sport_mates_best
 mv analyzer/src/benchmarks/find_sport_mates/decomposition.json analyzer/src/benchmarks/find_sport_mates/best_decomposition.json
-echo "TPC-C Full"
+echo "find_sport_mates Full"
 mv analyzer/src/benchmarks/find_sport_mates/full_decomposition.json analyzer/src/benchmarks/find_sport_mates/decomposition.json
 ./clotho.sh --analyze find_sport_mates > results/find_sport_mates_full
 cat results/find_sport_mates_full | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -e "Buildfile" -e "analyzing" -e "structure1" -e "structure3" -e "java].$" > results/find_sport_mates_full_short
