@@ -1,0 +1,17 @@
+{
+    "M1": [
+        "supplier",
+        "signon",
+        "account",
+        "profile",
+        "bannerdata",
+        "orders",
+        "orderstatus",
+        "lineitem",
+        "category",
+        "product",
+        "item",
+        "inventory",
+        "sequence"
+    ]
+}

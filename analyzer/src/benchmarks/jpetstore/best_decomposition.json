@@ -1,0 +1,21 @@
+{
+    "M1": [
+        "account",
+        "bannerdata",
+        "profile",
+        "signon"
+    ],
+    "M2": [
+        "category",
+        "inventory",
+        "item",
+        "supplier",
+        "product"
+    ],
+    "M3": [
+        "lineitem",
+        "orders",
+        "orderstatus",
+        "sequence"
+    ]
+}

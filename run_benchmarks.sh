@@ -21,6 +21,27 @@ cat results/tpcc_full | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -
 rm results/tpcc_full
 mv analyzer/src/benchmarks/tpcc/decomposition.json analyzer/src/benchmarks/tpcc/full_decomposition.json
 
+echo "find_sport_mates"
+make benchmark=find_sport_mates | grep "ç"
+echo "find_sport_mates Mono"
+mv analyzer/src/benchmarks/find_sport_mates/mono_decomposition.json analyzer/src/benchmarks/find_sport_mates/decomposition.json
+./clotho.sh --analyze find_sport_mates > results/find_sport_mates_mono
+cat results/find_sport_mates_mono | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -e "Buildfile" -e "analyzing" -e "structure1" -e "structure3" -e "java].$" > results/find_sport_mates_mono_short
+rm results/find_sport_mates_mono
+mv analyzer/src/benchmarks/find_sport_mates/decomposition.json analyzer/src/benchmarks/find_sport_mates/mono_decomposition.json
+echo "TPC-C Best"
+mv analyzer/src/benchmarks/find_sport_mates/best_decomposition.json analyzer/src/benchmarks/find_sport_mates/decomposition.json
+./clotho.sh --analyze find_sport_mates > results/find_sport_mates_best
+cat results/find_sport_mates_best | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -e "Buildfile" -e "analyzing" -e "structure1" -e "structure3" -e "java].$" > results/find_sport_mates_best_short
+rm results/find_sport_mates_best
+mv analyzer/src/benchmarks/find_sport_mates/decomposition.json analyzer/src/benchmarks/find_sport_mates/best_decomposition.json
+echo "TPC-C Full"
+mv analyzer/src/benchmarks/find_sport_mates/full_decomposition.json analyzer/src/benchmarks/find_sport_mates/decomposition.json
+./clotho.sh --analyze find_sport_mates > results/find_sport_mates_full
+cat results/find_sport_mates_full | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -e "Buildfile" -e "analyzing" -e "structure1" -e "structure3" -e "java].$" > results/find_sport_mates_full_short
+rm results/find_sport_mates_full
+mv analyzer/src/benchmarks/find_sport_mates/decomposition.json analyzer/src/benchmarks/find_sport_mates/full_decomposition.json
+
 echo "jpabook"
 make benchmark=jpabook | grep "ç"
 echo "jpabook Mono"
@@ -41,6 +62,27 @@ mv analyzer/src/benchmarks/jpabook/full_decomposition.json analyzer/src/benchmar
 cat results/jpabook_full | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -e "Buildfile" -e "analyzing" -e "structure1" -e "structure3" -e "java].$" > results/jpabook_full_short
 rm results/jpabook_full
 mv analyzer/src/benchmarks/jpabook/decomposition.json analyzer/src/benchmarks/jpabook/full_decomposition.json
+
+echo "jpetstore"
+make benchmark=jpetstore | grep "ç"
+echo "jpetstore Mono"
+mv analyzer/src/benchmarks/jpetstore/mono_decomposition.json analyzer/src/benchmarks/jpetstore/decomposition.json
+./clotho.sh --analyze jpetstore > results/jpetstore_mono
+cat results/jpetstore_mono | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -e "Buildfile" -e "analyzing" -e "structure1" -e "structure3" -e "java].$" > results/jpetstore_mono_short
+rm results/jpetstore_mono
+mv analyzer/src/benchmarks/jpetstore/decomposition.json analyzer/src/benchmarks/jpetstore/mono_decomposition.json
+echo "jpetstore Best"
+mv analyzer/src/benchmarks/jpetstore/best_decomposition.json analyzer/src/benchmarks/jpetstore/decomposition.json
+./clotho.sh --analyze jpetstore > results/jpetstore_best
+cat results/jpetstore_best | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -e "Buildfile" -e "analyzing" -e "structure1" -e "structure3" -e "java].$" > results/jpetstore_best_short
+rm results/jpetstore_best
+mv analyzer/src/benchmarks/jpetstore/decomposition.json analyzer/src/benchmarks/jpetstore/best_decomposition.json
+echo "jpetstore Full"
+mv analyzer/src/benchmarks/jpetstore/full_decomposition.json analyzer/src/benchmarks/jpetstore/decomposition.json
+./clotho.sh --analyze jpetstore > results/jpetstore_full
+cat results/jpetstore_full | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -e "Buildfile" -e "analyzing" -e "structure1" -e "structure3" -e "java].$" > results/jpetstore_full_short
+rm results/jpetstore_full
+mv analyzer/src/benchmarks/jpetstore/decomposition.json analyzer/src/benchmarks/jpetstore/full_decomposition.json
 
 echo "petclinic"
 make benchmark=petclinic | grep "ç"
