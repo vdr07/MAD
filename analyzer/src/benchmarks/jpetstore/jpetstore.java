@@ -287,7 +287,7 @@ public class jpetstore {
 				" WHERE itemid = ?";
 
 		String getItemByIdSQL = 
-				"SELECT * FROM " + "ITEM"+
+				"SELECT * FROM " + "ITEMS"+
 				" WHERE itemid = ?";
 
 		String getProductByIdSQL = 
@@ -344,7 +344,7 @@ public class jpetstore {
 				" WHERE productid = ?";
 
 		String getItemListByProductIdSQL = 
-				"SELECT * FROM " + "ITEM"+
+				"SELECT * FROM " + "ITEMS"+
 				" WHERE productid = ?";
 
 		PreparedStatement getProductById = connect.prepareStatement(getProductByIdSQL);
@@ -365,7 +365,7 @@ public class jpetstore {
 
 	public void viewItem(String itemid) throws SQLException {
 		String getItemByIdSQL = 
-				"SELECT * FROM " + "ITEM"+
+				"SELECT * FROM " + "ITEMS"+
 				" WHERE itemid = ?";
 
 		String getProductByIdSQL = 
@@ -422,7 +422,7 @@ public class jpetstore {
 				" WHERE userid = ?";
 
 		String getOrderStatusByOrderIdSQL = 
-				"SELECT status FROM " + "ORDERSTATUS"+
+				"SELECT status FROM " + "ORDER_STATUS"+
 				" WHERE orderid = ?";
 
 		PreparedStatement getOrdersByUserId = connect.prepareStatement(getOrdersByUserIdSQL);
@@ -469,7 +469,7 @@ public class jpetstore {
 				" VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 
 		String insertOrderStatusSQL = 
-				"INSERT INTO " + "ORDERSTATUS" +
+				"INSERT INTO " + "ORDER_STATUS" +
 				" (orderid, linenum, timestamp, status) " +
 				" VALUES ( ?, ?, ?, ? )";
 
@@ -571,7 +571,7 @@ public class jpetstore {
 				" WHERE orderid = ?";
 
 		String getOrderStatusByOrderIdSQL = 
-				"SELECT status FROM " + "ORDERSTATUS"+
+				"SELECT status FROM " + "ORDER_STATUS"+
 				" WHERE orderid = ?";
 
 		String getLineItemsByOrderIdSQL = 
@@ -579,7 +579,7 @@ public class jpetstore {
 				" WHERE orderid = ?";
 
 		String getItemByIdSQL = 
-				"SELECT * FROM " + "ITEM"+
+				"SELECT * FROM " + "ITEMS"+
 				" WHERE itemid = ?";
 
 		String getProductByIdSQL = 

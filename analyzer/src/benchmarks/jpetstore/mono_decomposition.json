@@ -6,11 +6,11 @@
         "profile",
         "bannerdata",
         "orders",
-        "orderstatus",
+        "order_status",
         "lineitem",
         "category",
         "product",
-        "item",
+        "items",
         "inventory",
         "sequence"
     ]

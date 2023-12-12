@@ -8,14 +8,14 @@
     "M2": [
         "category",
         "inventory",
-        "item",
+        "items",
         "supplier",
         "product"
     ],
     "M3": [
         "lineitem",
         "orders",
-        "orderstatus",
+        "order_status",
         "sequence"
     ]
 }

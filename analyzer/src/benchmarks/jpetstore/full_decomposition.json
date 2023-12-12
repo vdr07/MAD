@@ -18,7 +18,7 @@
         "orders"
     ],
     "M7": [
-        "orderstatus"
+        "order_status"
     ],
     "M8": [
         "lineitem"
@@ -30,7 +30,7 @@
         "product"
     ],
     "M11": [
-        "item"
+        "items"
     ],
     "M12": [
         "inventory"

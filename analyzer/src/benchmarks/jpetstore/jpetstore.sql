@@ -77,7 +77,7 @@ create table orders (
       PRIMARY KEY (orderid)
 );
 
-create table orderstatus (
+create table order_status (
       orderid INT,
       linenum INT,
       timestamp VARCHAR(20),
@@ -109,7 +109,7 @@ create table product (
     PRIMARY KEY (productid)
 );
 
-create table item (
+create table items (
     itemid VARCHAR(10),
     productid VARCHAR(10),
     listprice INT,

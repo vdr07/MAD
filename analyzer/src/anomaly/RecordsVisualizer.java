@@ -98,7 +98,7 @@ public class RecordsVisualizer {
 
 		
 		for (Tuple<Expr, Integer> versionedRow : conflictingRow.values()) {
-			Table table = tables.stream().filter(t -> versionedRow.x.toString().equals(t.getName())).findAny().get();
+			Table table = tables.stream().filter(t -> versionedRow.x.toString().contains(t.getName())).findAny().get();
 			String content = "";
 			String lable = versionedRow.x.toString().replaceAll("!val!", "");
 			String labelVersion = String.valueOf(versionedRow.y);
