@@ -1,0 +1,127 @@
+
+     [java] ------------------------------------------------------
+     [java]  			     Schema
+     [java] ------------------------------------------------------
+     [java] ##event## <<eventId:INT>> <hostId:INT> <eventType:STRING> <eventTime:STRING> <eventDate:STRING> <eventPlace:STRING>
+     [java] ##user## <<userId:INT>> <username:STRING> <password:STRING> <role:STRING> <phone:STRING> <firstname:STRING> <lastname:STRING>
+     [java] ##event_user## <<eventId:INT>> <<userId:INT>>
+     [java] ------------------------------------------------------
+     [java]  			Compiled Application
+     [java] ------------------------------------------------------
+     [java] TXN_showMainPage_0
+     [java]  ++ showMainPage_0-select#1#1 (SELECT[event:[eventId, hostId, eventType, eventTime, eventDate, eventPlace]]  <<(EQ 1,1)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: showMainPage
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] TXN_showMainPage_1
+     [java]  ++ showMainPage_1-select#1#1 (SELECT[user:[username]]  <<(EQ user.userId,(ROW:event-r4-loopVar0).hostId)>>)
+     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: event WHERE: (EQ 1,1)],0))),(NOT (EQ NULL[null],0)))]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: showMainPage
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] TXN_showUserEvents_0
+     [java]  ++ showUserEvents_0-select#1#1 (SELECT[event:[eventId, hostId, eventType, eventTime, eventDate, eventPlace]]  <<(EQ event.hostId,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: showUserEvents
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] TXN_addEvent_0
+     [java]  ++ addEvent_0-select#1#1 (SELECT[user:[userId, username, password, role, phone, firstname, lastname]]  <<(EQ user.userId,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: addEvent
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] TXN_addEvent_1
+     [java]  ++ addEvent_1-insert#1#1 (INSERT[event] [i1_param, i0_param, r1_param, r2_param, r3_param, r4_param])
+     [java]     [PATH CONDITION: true]
+     [java]  ++ addEvent_1-insert#2#2 (INSERT[event_user] [i1_param, i0_param])
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: addEvent
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] TXN_removeEvent_0
+     [java]  ++ removeEvent_0-delete#1#1 (DELETE[event] <<(EQ event.eventId,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: removeEvent
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] TXN_joinEvent_0
+     [java]  ++ joinEvent_0-select#1#1 (SELECT[user:[userId, username, password, role, phone, firstname, lastname]]  <<(EQ user.userId,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: joinEvent
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] TXN_joinEvent_1
+     [java]  ++ joinEvent_1-select#1#1 (SELECT[event:[eventId, hostId, eventType, eventTime, eventDate, eventPlace]]  <<(EQ event.eventId,i1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ joinEvent_1-select#2#2 (SELECT[event_user:[eventId, userId]]  <<(EQ event_user.eventId,i1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ joinEvent_1-insert#1#3 (INSERT[event_user] [i1_param, i0_param])
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: joinEvent
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] TXN_searchEvent_0
+     [java]  ++ searchEvent_0-select#1#1 (SELECT[event:[eventId, hostId, eventType, eventTime, eventDate, eventPlace]]  <<(EQ 1,1)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: searchEvent
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] TXN_searchEvent_1
+     [java]  ++ searchEvent_1-select#1#1 (SELECT[user:[username]]  <<(EQ user.userId,(ROW:event-r4-loopVar0).hostId)>>)
+     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: event WHERE: (EQ 1,1)],0))),(NOT (EQ NULL[null],0)))]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: searchEvent
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] TXN_addUser_0
+     [java]  ++ addUser_0-insert#1#1 (INSERT[user] [i0_param, r1_param, r2_param, r3_param, r4_param, r5_param, r6_param])
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: addUser
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] TXN_handleLoginRequest_0
+     [java]  ++ handleLoginRequest_0-select#1#1 (SELECT[user:[userId, username, password, role, phone, firstname, lastname]]  <<(EQ user.username,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ handleLoginRequest_0-select#2#2 (SELECT[user:[]]  <<(EQ user.username,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: handleLoginRequest
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] TXN_searchUser_0
+     [java]  ++ searchUser_0-select#1#1 (SELECT[user:[userId, username, password, role, phone, firstname, lastname]]  <<(EQ user.username,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: searchUser
+     [java] Microservice: M2
+     [java] ----------------------------------------------------------------
+     [java] ===========================================
+     [java] === AR compile time:	176ms
+     [java] -------------------------------------------
+     [java] +++ Dirty Reads found:		0
+     [java] +++ Dirty Writes found:		0
+     [java] +++ Lost Updates found:		0
+     [java] +++ Lost Updates/Write Skews found:	0
+     [java] +++ Non-Repeatable Reads found:	0
+     [java] +++ Phantom Reads found:		0
+     [java] +++ Read Skews found:		0
+     [java] +++ Multi anomalies found:		0
+     [java] +++ Extensions found:		0
+     [java] -------------------------------------------
+     [java] === Total anomalies found:	0
+     [java] === Analysis time:		34383 ms
+
+BUILD SUCCESSFUL
+Total time: 37 seconds

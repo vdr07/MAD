@@ -46,8 +46,10 @@
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
      [java] TXN_ownerProcessUpdateOwnerForm_0
-     [java]  ++ ownerProcessUpdateOwnerForm_0-update#1#1 (UPDATE[owners] {id=i0_param} <<(EQ owners.id,i1_param)>>)
-     [java]     [PATH CONDITION: true]
+     [java]  ++ ownerProcessUpdateOwnerForm_0-insert#1#1 (INSERT[owners] [i2_param, r1_param, r2_param, r3_param, r4_param, r5_param])
+     [java]     [PATH CONDITION: (AND true,(NOT (NOT (EQ i0_param,1))))]
+     [java]  ++ ownerProcessUpdateOwnerForm_0-update#1#2 (UPDATE[owners] {id=i1_param} <<(EQ owners.id,i2_param)>>)
+     [java]     [PATH CONDITION: (AND true,(NOT (EQ i0_param,1)))]
      [java] Dependencies: <empty>
      [java] Original Transaction: ownerProcessUpdateOwnerForm
      [java] Microservice: M1
@@ -75,11 +77,11 @@
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
      [java] TXN_petProcessCreationForm_0
-     [java]  ++ petProcessCreationForm_0-select#1#1 (SELECT[pets:[id]]  <<(EQ pets.name,r1_param)>>)
+     [java]  ++ petProcessCreationForm_0-select#1#1 (SELECT[pets:[id]]  <<(AND (EQ pets.name,r1_param),(EQ pets.owner_id,i2_param))>>)
      [java]     [PATH CONDITION: true]
      [java]  ++ petProcessCreationForm_0-insert#1#2 (INSERT[pets] [i0_param, r1_param, r2_param, i1_param, i2_param])
      [java]     [PATH CONDITION: (AND true,(NOT (NOT (EQ i3_param,1))))]
-     [java]  ++ petProcessCreationForm_0-update#1#3 (UPDATE[pets] {birth_date=r2_param, type_id=i1_param, name=r1_param, owner_id=i2_param} <<(EQ pets.id,i0_param)>>)
+     [java]  ++ petProcessCreationForm_0-update#1#3 (UPDATE[pets] {name=r1_param, birth_date=r2_param, type_id=i1_param, owner_id=i2_param} <<(EQ pets.id,i0_param)>>)
      [java]     [PATH CONDITION: (AND true,(NOT (EQ i3_param,1)))]
      [java] Dependencies: <empty>
      [java] Original Transaction: petProcessCreationForm
@@ -93,8 +95,12 @@
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
      [java] TXN_petProcessUpdateForm_0
-     [java]  ++ petProcessUpdateForm_0-update#1#1 (UPDATE[pets] {owner_id=i0_param} <<(EQ pets.id,i1_param)>>)
+     [java]  ++ petProcessUpdateForm_0-select#1#1 (SELECT[pets:[id]]  <<(AND (EQ pets.name,r1_param),(EQ pets.owner_id,i2_param))>>)
      [java]     [PATH CONDITION: true]
+     [java]  ++ petProcessUpdateForm_0-insert#1#2 (INSERT[pets] [i0_param, r1_param, r2_param, i1_param, i2_param])
+     [java]     [PATH CONDITION: (AND true,(NOT (NOT (EQ i3_param,1))))]
+     [java]  ++ petProcessUpdateForm_0-update#1#3 (UPDATE[pets] {name=r1_param, birth_date=r2_param, type_id=i1_param, owner_id=i2_param} <<(EQ pets.id,i0_param)>>)
+     [java]     [PATH CONDITION: (AND true,(NOT (EQ i3_param,1)))]
      [java] Dependencies: <empty>
      [java] Original Transaction: petProcessUpdateForm
      [java] Microservice: M1
@@ -110,26 +116,15 @@
      [java] Original Transaction: vetShowVetList
      [java] Microservice: M2
      [java] ----------------------------------------------------------------
-     [java] TXN_vetShowJsonVetList_0
-     [java]  ++ vetShowJsonVetList_0-select#1#1 (SELECT[vets:[id, first_name, last_name]]  <<(EQ 1,1)>>)
+     [java] TXN_vetShowResourcesVetList_0
+     [java]  ++ vetShowResourcesVetList_0-select#1#1 (SELECT[vets:[id, first_name, last_name]]  <<(EQ 1,1)>>)
      [java]     [PATH CONDITION: true]
-     [java]  ++ vetShowJsonVetList_0-select#2#2 (SELECT[vet_specialties:[specialty_id]]  <<(EQ vet_specialties.vet_id,(ROW:vets-r5-loopVar0).id)>>)
+     [java]  ++ vetShowResourcesVetList_0-select#2#2 (SELECT[vet_specialties:[specialty_id]]  <<(EQ vet_specialties.vet_id,(ROW:vets-r5-loopVar0).id)>>)
      [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: vets WHERE: (EQ 1,1)],0))),(NOT (EQ NULL[null],0)))]
-     [java]  ++ vetShowJsonVetList_0-select#3#3 (SELECT[specialties:[id, name]]  <<(EQ specialties.id,(ROW:vet_specialties-r7-loopVar0).specialty_id)>>)
+     [java]  ++ vetShowResourcesVetList_0-select#3#3 (SELECT[specialties:[id, name]]  <<(EQ specialties.id,(ROW:vet_specialties-r7-loopVar0).specialty_id)>>)
      [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: vets WHERE: (EQ 1,1)],0))),(NOT (EQ NULL[null],0)))]
      [java] Dependencies: <empty>
-     [java] Original Transaction: vetShowJsonVetList
-     [java] Microservice: M2
-     [java] ----------------------------------------------------------------
-     [java] TXN_vetShowXmlVetList_0
-     [java]  ++ vetShowXmlVetList_0-select#1#1 (SELECT[vets:[id, first_name, last_name]]  <<(EQ 1,1)>>)
-     [java]     [PATH CONDITION: true]
-     [java]  ++ vetShowXmlVetList_0-select#2#2 (SELECT[vet_specialties:[specialty_id]]  <<(EQ vet_specialties.vet_id,(ROW:vets-r5-loopVar0).id)>>)
-     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: vets WHERE: (EQ 1,1)],0))),(NOT (EQ NULL[null],0)))]
-     [java]  ++ vetShowXmlVetList_0-select#3#3 (SELECT[specialties:[id, name]]  <<(EQ specialties.id,(ROW:vet_specialties-r7-loopVar0).specialty_id)>>)
-     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: vets WHERE: (EQ 1,1)],0))),(NOT (EQ NULL[null],0)))]
-     [java] Dependencies: <empty>
-     [java] Original Transaction: vetShowXmlVetList
+     [java] Original Transaction: vetShowResourcesVetList
      [java] Microservice: M2
      [java] ----------------------------------------------------------------
      [java] TXN_visitProcessNewVisitForm_0
@@ -139,17 +134,8 @@
      [java] Original Transaction: visitProcessNewVisitForm
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
-     [java] TXN_visitShowVisits_0
-     [java]  ++ visitShowVisits_0-select#1#1 (SELECT[pets:[id, name, birth_date, type_id, owner_id]]  <<(EQ pets.id,i0_param)>>)
-     [java]     [PATH CONDITION: true]
-     [java]  ++ visitShowVisits_0-select#2#2 (SELECT[visits:[id, date, description, pet_id]]  <<(EQ visits.pet_id,(ROW:pets-r4-next1).id)>>)
-     [java]     [PATH CONDITION: true]
-     [java] Dependencies: <empty>
-     [java] Original Transaction: visitShowVisits
-     [java] Microservice: M1
-     [java] ----------------------------------------------------------------
      [java] ===========================================
-     [java] === AR compile time:	219ms
+     [java] === AR compile time:	228ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
@@ -162,7 +148,7 @@
      [java] +++ Extensions found:		0
      [java] -------------------------------------------
      [java] === Total anomalies found:	0
-     [java] === Analysis time:		103752 ms
+     [java] === Analysis time:		110957 ms
 
 BUILD SUCCESSFUL
-Total time: 1 minute 46 seconds
+Total time: 1 minute 54 seconds
