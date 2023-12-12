@@ -408,12 +408,11 @@ public class jpetstore {
 		ResultSet rs = getProductByName.executeQuery();
 		rs.next();
 
-		if (both == 1) {
-			PreparedStatement getProductByName2 = connect.prepareStatement(getProductByNameSQL);
-			getProductByName2.setString(1, keyword2);
-			ResultSet rs2 = getProductByName2.executeQuery();
-			rs2.next();
-		}
+		PreparedStatement getProductByName2 = connect.prepareStatement(getProductByNameSQL);
+		getProductByName2.setString(1, keyword2);
+		ResultSet rs2 = getProductByName2.executeQuery();
+		rs2.next();
+
 	}
 
 	// Order
@@ -490,34 +489,29 @@ public class jpetstore {
 		updateSequence.setString(2, "ordernum");
 		updateSequence.executeUpdate();
 
-		int newQuantity1;
-		// newQuantity2 is either assigned the correct value for usage or will not be used
-		int newQuantity2 = 0;
 		PreparedStatement isItemInStock = connect.prepareStatement(isItemInStockSQL);
 		isItemInStock.setString(1, itemid1);
 		ResultSet rs2 = isItemInStock.executeQuery();
 		rs2.next();
 		int currentQuantity1 = rs2.getInt("qty");
-		newQuantity1 = currentQuantity1 + increment1;
+		int newQuantity1 = currentQuantity1 + increment1;
 
 		PreparedStatement updateQuantity = connect.prepareStatement(updateQuantitySQL);
 		updateQuantity.setInt(1, newQuantity1);
 		updateQuantity.setString(2, itemid1);
 		updateQuantity.executeUpdate();
 
-		if (both == 1) {
-			PreparedStatement isItemInStock2 = connect.prepareStatement(isItemInStockSQL);
-			isItemInStock2.setString(1, itemid2);
-			ResultSet rs3 = isItemInStock2.executeQuery();
-			rs3.next();
-			int currentQuantity2 = rs3.getInt("qty");
-			newQuantity2 = currentQuantity2 + increment2;
+		PreparedStatement isItemInStock2 = connect.prepareStatement(isItemInStockSQL);
+		isItemInStock2.setString(1, itemid2);
+		ResultSet rs3 = isItemInStock2.executeQuery();
+		rs3.next();
+		int currentQuantity2 = rs3.getInt("qty");
+		int newQuantity2 = currentQuantity2 + increment2;
 
-			PreparedStatement updateQuantity2 = connect.prepareStatement(updateQuantitySQL);
-			updateQuantity2.setInt(1, newQuantity2);
-			updateQuantity2.setString(2, itemid2);
-			updateQuantity2.executeUpdate();	
-		}
+		PreparedStatement updateQuantity2 = connect.prepareStatement(updateQuantitySQL);
+		updateQuantity2.setInt(1, newQuantity2);
+		updateQuantity2.setString(2, itemid2);
+		updateQuantity2.executeUpdate();
 
 		PreparedStatement insertOrder = connect.prepareStatement(insertOrderSQL);
 		insertOrder.setInt(1, readNextId);
@@ -562,15 +556,13 @@ public class jpetstore {
 		insertLineItem1.setInt(5, unitPrice1);
 		insertLineItem1.executeUpdate();
 
-		if (both == 1) {
-			PreparedStatement insertLineItem2 = connect.prepareStatement(insertLineItemSQL);
-			insertLineItem2.setInt(1, readNextId);
-			insertLineItem2.setInt(2, itemLinenum2);
-			insertLineItem2.setString(3, itemid2);
-			insertLineItem2.setInt(4, newQuantity2);
-			insertLineItem2.setInt(5, unitPrice2);
-			insertLineItem2.executeUpdate();
-		}
+		PreparedStatement insertLineItem2 = connect.prepareStatement(insertLineItemSQL);
+		insertLineItem2.setInt(1, readNextId);
+		insertLineItem2.setInt(2, itemLinenum2);
+		insertLineItem2.setString(3, itemid2);
+		insertLineItem2.setInt(4, newQuantity2);
+		insertLineItem2.setInt(5, unitPrice2);
+		insertLineItem2.executeUpdate();
 	}
 
 	public void viewOrder(int orderid) throws SQLException {
