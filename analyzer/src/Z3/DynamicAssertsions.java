@@ -613,13 +613,8 @@ public class DynamicAssertsions {
 				for (int j = 0; j < txnsNamesComb.size(); j++)
 					txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
 				
-				txnRestrExprList = new ArrayList<BoolExpr>();
-				for (int j = 0; j < app.getOrigTxns().size(); j++)
-					if (!txnsNamesComb.contains(app.getOrigTxns().get(j).getName()))
-						txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", app.getOrigTxns().get(j).getName())))));
-				txnRestrExpr = txnRestrExprList.toArray(new BoolExpr[txnRestrExprList.size()]);
 
-				txnRestrExprs[iter2++] = ctx.mkAnd(ctx.mkOr(txnAssExpr), ctx.mkAnd(txnRestrExpr));
+				txnRestrExprs[iter2++] = ctx.mkAnd(ctx.mkOr(txnAssExpr));
 
 				for (int j = i + 1; j < length; j++)
 					notEqExprs[iter++] = ctx.mkNot(ctx.mkEq(Os[i], Os[j]));
@@ -628,14 +623,8 @@ public class DynamicAssertsions {
 			txnAssExpr = new BoolExpr[txnsNamesComb.size()];
 			for (int j = 0; j < txnsNamesComb.size(); j++)
 				txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
-			
-			txnRestrExprList = new ArrayList<BoolExpr>();
-			for (int j = 0; j < app.getOrigTxns().size(); j++)
-				if (!txnsNamesComb.contains(app.getOrigTxns().get(j).getName()))
-					txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("OTType", app.getOrigTxns().get(j).getName())))));
-			txnRestrExpr = txnRestrExprList.toArray(new BoolExpr[txnRestrExprList.size()]);
 
-			txnRestrExprs[iter2] = ctx.mkAnd(ctx.mkOr(txnAssExpr), ctx.mkAnd(txnRestrExpr));
+			txnRestrExprs[iter2] = ctx.mkAnd(ctx.mkOr(txnAssExpr));
 
 			BoolExpr depExprs[] = new BoolExpr[length];
 			BoolExpr prevAnmlExprs[] = null;
@@ -663,14 +652,8 @@ public class DynamicAssertsions {
 				txnAssExpr = new BoolExpr[txnsNamesComb.size()];
 				for (int j = 0; j < txnsNamesComb.size(); j++)
 					txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
-				
-				txnRestrExprList = new ArrayList<BoolExpr>();
-				for (int j = 0; j < app.getOrigTxns().size(); j++)
-					if (!txnsNamesComb.contains(app.getOrigTxns().get(j).getName()))
-						txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", app.getOrigTxns().get(j).getName())))));
-				txnRestrExpr = txnRestrExprList.toArray(new BoolExpr[txnRestrExprList.size()]);
 
-				txnRestrExprs[iter2++] = ctx.mkAnd(ctx.mkOr(txnAssExpr), ctx.mkAnd(txnRestrExpr));
+				txnRestrExprs[iter2++] = ctx.mkAnd(ctx.mkOr(txnAssExpr));
 
 				for (int j = i + 1; j < length; j++)
 					notEqExprs2[iter++] = ctx.mkNot(ctx.mkEq(Os[i], Os[j]));
@@ -679,14 +662,8 @@ public class DynamicAssertsions {
 			txnAssExpr = new BoolExpr[txnsNamesComb.size()];
 			for (int j = 0; j < txnsNamesComb.size(); j++)
 				txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
-			
-			txnRestrExprList = new ArrayList<BoolExpr>();
-			for (int j = 0; j < app.getOrigTxns().size(); j++)
-				if (!txnsNamesComb.contains(app.getOrigTxns().get(j).getName()))
-					txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("OTType", app.getOrigTxns().get(j).getName())))));
-			txnRestrExpr = txnRestrExprList.toArray(new BoolExpr[txnRestrExprList.size()]);
 
-			txnRestrExprs[iter2] = ctx.mkAnd(ctx.mkOr(txnAssExpr), ctx.mkAnd(txnRestrExpr));
+			txnRestrExprs[iter2] = ctx.mkAnd(ctx.mkOr(txnAssExpr));
 
 			BoolExpr depExprs[] = new BoolExpr[length];
 			prepareBasicCycle(depExprs, Os, length);
@@ -914,14 +891,8 @@ public class DynamicAssertsions {
 			txnAssExpr = new BoolExpr[txnsNamesComb.size()];
 			for (int j = 0; j < txnsNamesComb.size(); j++)
 				txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
-			
-			txnRestrExprList = new ArrayList<BoolExpr>();
-			for (int j = 0; j < app.getOrigTxns().size(); j++)
-				if (!txnsNamesComb.contains(app.getOrigTxns().get(j).getName()))
-					txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", app.getOrigTxns().get(j).getName())))));
-			txnRestrExpr = txnRestrExprList.toArray(new BoolExpr[txnRestrExprList.size()]);
 
-			txnRestrExprs[iter2++] = ctx.mkAnd(ctx.mkOr(txnAssExpr), ctx.mkAnd(txnRestrExpr));
+			txnRestrExprs[iter2++] = ctx.mkAnd(ctx.mkOr(txnAssExpr));
 
 			for (int j = i + 1; j < length; j++)
 				notEqExprs[iter++] = ctx.mkNot(ctx.mkEq(Os[i], Os[j]));
@@ -930,14 +901,8 @@ public class DynamicAssertsions {
 		txnAssExpr = new BoolExpr[txnsNamesComb.size()];
 		for (int j = 0; j < txnsNamesComb.size(); j++)
 			txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
-		
-		txnRestrExprList = new ArrayList<BoolExpr>();
-		for (int j = 0; j < app.getOrigTxns().size(); j++)
-			if (!txnsNamesComb.contains(app.getOrigTxns().get(j).getName()))
-				txnRestrExprList.add(ctx.mkNot(ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("OTType", app.getOrigTxns().get(j).getName())))));
-		txnRestrExpr = txnRestrExprList.toArray(new BoolExpr[txnRestrExprList.size()]);
 
-		txnRestrExprs[iter2] = ctx.mkAnd(ctx.mkOr(txnAssExpr), ctx.mkAnd(txnRestrExpr));
+		txnRestrExprs[iter2] = ctx.mkAnd(ctx.mkOr(txnAssExpr));
 
 		// constraints regarding previously found anomaly (limit the
 		// solutions to structurally close ones )

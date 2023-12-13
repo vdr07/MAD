@@ -154,10 +154,10 @@ public class Z3Driver {
 	private void ctxInitialize(Anomaly unVersionedAnml, List<String> txnsNamesComb) {
 
 		LogZ3(";data types");
-		objs.addDataType("TType", mkDataType("TType", app.getAllTxnNames()));
-		objs.addDataType("OType", mkDataType("OType", app.getAllStmtTypes()));
-		objs.addDataType("OTType", mkDataType("OTType", app.getAllOrigTxnNames()));
-		objs.addDataType("MType", mkDataType("MType", app.getAllMicroNames()));
+		objs.addDataType("TType", mkDataType("TType", app.getAllTxnsNamesByOrigTxns(txnsNamesComb)));
+		objs.addDataType("OType", mkDataType("OType", app.getAllStmtTypesByOrigTxns(txnsNamesComb)));
+		objs.addDataType("OTType", mkDataType("OTType", txnsNamesComb.toArray(new String[txnsNamesComb.size()])));
+		objs.addDataType("MType", mkDataType("MType", app.getAllMicroNamesByOrigTxns(txnsNamesComb)));
 
 		// =====================================================================================================================================================
 		HeaderZ3("STATIC FUNCTIONS & PROPS");
@@ -251,26 +251,27 @@ public class Z3Driver {
 
 		// =====================================================================================================================================================
 		HeaderZ3("DYNAMIC FUNCTIONS & PROPS");
-		addAssertion("oType_to_is_update", dynamicAssertions.mk_oType_to_is_update(app.getAllUpdateStmtTypes()));
-		addAssertion("is_update_to_oType", dynamicAssertions.mk_is_update_to_oType(app.getAllUpdateStmtTypes()));
+		addAssertion("oType_to_is_update", dynamicAssertions.mk_oType_to_is_update(app.getAllUpdateStmtTypesByOrigTxns(txnsNamesComb)));
+		addAssertion("is_update_to_oType", dynamicAssertions.mk_is_update_to_oType(app.getAllUpdateStmtTypesByOrigTxns(txnsNamesComb)));
 
-		// relating operation otypes to parent ttypes
-		for (Transaction txn : app.getTxns()) {
-			String name = txn.getName();
-			String origTxnName = txn.getOriginalTransaction();
-			String microName = txn.getMicroservice();
-			for (String stmtName : txn.getStmtNames()) {
-				addAssertion("op_types_" + name + "_" + stmtName,
-						dynamicAssertions.op_types_to_parent_type(name, stmtName));
-				addAssertion("op_types_orig_" + origTxnName + "_" + stmtName,
-					dynamicAssertions.op_types_to_original_transaction_type(origTxnName, stmtName));
+		// relating operation otypes to the other types
+		for (String origTxnName : txnsNamesComb)
+			for (Transaction txn : app.getTxnsByOrigTxnName(origTxnName)) {
+				String name = txn.getName();
+				String microName = txn.getMicroservice();
+				for (String stmtName : txn.getStmtNames()) {
+					addAssertion("op_types_" + name + "_" + stmtName,
+							dynamicAssertions.op_types_to_parent_type(name, stmtName));
+					addAssertion("op_types_orig_" + origTxnName + "_" + stmtName,
+						dynamicAssertions.op_types_to_original_transaction_type(origTxnName, stmtName));
+					
+					addAssertion("op_types_micro_" + microName + "_" + stmtName,
+						dynamicAssertions.op_types_to_microservice_type(microName, stmtName));
+				}
 				
-				addAssertion("op_types_micro_" + microName + "_" + stmtName,
-					dynamicAssertions.op_types_to_microservice_type(microName, stmtName));
+				mapTxnToOrigTxn.put(name, origTxnName);
+				mapTxnToMicroTxn.put(name, microName);
 			}
-			mapTxnToOrigTxn.put(name, origTxnName);
-			mapTxnToMicroTxn.put(name, microName);
-		}
 
 		for (String origTxnName : txnsNamesComb)
 			for (Transaction txn : app.getTxnsByOrigTxnName(origTxnName)) {
