@@ -200,7 +200,7 @@
      [java] Microservice: M2
      [java] ----------------------------------------------------------------
      [java] ===========================================
-     [java] === AR compile time:	233ms
+     [java] === AR compile time:	253ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
@@ -213,7 +213,7 @@
      [java] +++ Extensions found:		0
      [java] -------------------------------------------
      [java] === Total anomalies found:	0
-     [java] === Analysis time:		542910 ms
+     [java] === Analysis time:		331943 ms
 
 BUILD SUCCESSFUL
-Total time: 9 minutes 6 seconds
+Total time: 5 minutes 35 seconds

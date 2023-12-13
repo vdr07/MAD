@@ -2,32 +2,32 @@
      [java] ------------------------------------------------------
      [java]  			     Schema
      [java] ------------------------------------------------------
-     [java] ##event## <<eventId:INT>> <hostId:INT> <eventType:STRING> <eventTime:STRING> <eventDate:STRING> <eventPlace:STRING>
-     [java] ##user## <<userId:INT>> <username:STRING> <password:STRING> <role:STRING> <phone:STRING> <firstname:STRING> <lastname:STRING>
+     [java] ##events## <<eventId:INT>> <hostId:INT> <eventType:STRING> <eventTime:STRING> <eventDate:STRING> <eventPlace:STRING>
+     [java] ##users## <<userId:INT>> <username:STRING> <password:STRING> <role:STRING> <phone:STRING> <firstname:STRING> <lastname:STRING>
      [java] ##event_user## <<eventId:INT>> <<userId:INT>>
      [java] ------------------------------------------------------
      [java]  			Compiled Application
      [java] ------------------------------------------------------
      [java] TXN_showMainPage_0
-     [java]  ++ showMainPage_0-select#1#1 (SELECT[event:[eventId, hostId, eventType, eventTime, eventDate, eventPlace]]  <<(EQ 1,1)>>)
+     [java]  ++ showMainPage_0-select#1#1 (SELECT[events:[eventId, hostId, eventType, eventTime, eventDate, eventPlace]]  <<(EQ 1,1)>>)
      [java]     [PATH CONDITION: true]
-     [java]  ++ showMainPage_0-select#2#2 (SELECT[user:[username]]  <<(EQ user.userId,(ROW:event-r4-loopVar0).hostId)>>)
-     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: event WHERE: (EQ 1,1)],0))),(NOT (EQ NULL[null],0)))]
+     [java]  ++ showMainPage_0-select#2#2 (SELECT[users:[username]]  <<(EQ users.userId,(ROW:events-r4-loopVar0).hostId)>>)
+     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: events WHERE: (EQ 1,1)],0))),(NOT (EQ NULL[null],0)))]
      [java] Dependencies: <empty>
      [java] Original Transaction: showMainPage
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
      [java] TXN_showUserEvents_0
-     [java]  ++ showUserEvents_0-select#1#1 (SELECT[event:[eventId, hostId, eventType, eventTime, eventDate, eventPlace]]  <<(EQ event.hostId,i0_param)>>)
+     [java]  ++ showUserEvents_0-select#1#1 (SELECT[events:[eventId, hostId, eventType, eventTime, eventDate, eventPlace]]  <<(EQ events.hostId,i0_param)>>)
      [java]     [PATH CONDITION: true]
      [java] Dependencies: <empty>
      [java] Original Transaction: showUserEvents
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
      [java] TXN_addEvent_0
-     [java]  ++ addEvent_0-select#1#1 (SELECT[user:[userId, username, password, role, phone, firstname, lastname]]  <<(EQ user.userId,i0_param)>>)
+     [java]  ++ addEvent_0-select#1#1 (SELECT[users:[userId, username, password, role, phone, firstname, lastname]]  <<(EQ users.userId,i0_param)>>)
      [java]     [PATH CONDITION: true]
-     [java]  ++ addEvent_0-insert#1#2 (INSERT[event] [i1_param, i0_param, r1_param, r2_param, r3_param, r4_param])
+     [java]  ++ addEvent_0-insert#1#2 (INSERT[events] [i1_param, i0_param, r1_param, r2_param, r3_param, r4_param])
      [java]     [PATH CONDITION: true]
      [java]  ++ addEvent_0-insert#2#3 (INSERT[event_user] [i1_param, i0_param])
      [java]     [PATH CONDITION: true]
@@ -36,16 +36,16 @@
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
      [java] TXN_removeEvent_0
-     [java]  ++ removeEvent_0-delete#1#1 (DELETE[event] <<(EQ event.eventId,i0_param)>>)
+     [java]  ++ removeEvent_0-delete#1#1 (DELETE[events] <<(EQ events.eventId,i0_param)>>)
      [java]     [PATH CONDITION: true]
      [java] Dependencies: <empty>
      [java] Original Transaction: removeEvent
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
      [java] TXN_joinEvent_0
-     [java]  ++ joinEvent_0-select#1#1 (SELECT[user:[userId, username, password, role, phone, firstname, lastname]]  <<(EQ user.userId,i0_param)>>)
+     [java]  ++ joinEvent_0-select#1#1 (SELECT[users:[userId, username, password, role, phone, firstname, lastname]]  <<(EQ users.userId,i0_param)>>)
      [java]     [PATH CONDITION: true]
-     [java]  ++ joinEvent_0-select#2#2 (SELECT[event:[eventId, hostId, eventType, eventTime, eventDate, eventPlace]]  <<(EQ event.eventId,i1_param)>>)
+     [java]  ++ joinEvent_0-select#2#2 (SELECT[events:[eventId, hostId, eventType, eventTime, eventDate, eventPlace]]  <<(EQ events.eventId,i1_param)>>)
      [java]     [PATH CONDITION: true]
      [java]  ++ joinEvent_0-select#3#3 (SELECT[event_user:[eventId, userId]]  <<(EQ event_user.eventId,i1_param)>>)
      [java]     [PATH CONDITION: true]
@@ -56,39 +56,39 @@
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
      [java] TXN_searchEvent_0
-     [java]  ++ searchEvent_0-select#1#1 (SELECT[event:[eventId, hostId, eventType, eventTime, eventDate, eventPlace]]  <<(EQ 1,1)>>)
+     [java]  ++ searchEvent_0-select#1#1 (SELECT[events:[eventId, hostId, eventType, eventTime, eventDate, eventPlace]]  <<(EQ 1,1)>>)
      [java]     [PATH CONDITION: true]
-     [java]  ++ searchEvent_0-select#2#2 (SELECT[user:[username]]  <<(EQ user.userId,(ROW:event-r4-loopVar0).hostId)>>)
-     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: event WHERE: (EQ 1,1)],0))),(NOT (EQ NULL[null],0)))]
+     [java]  ++ searchEvent_0-select#2#2 (SELECT[users:[username]]  <<(EQ users.userId,(ROW:events-r4-loopVar0).hostId)>>)
+     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: events WHERE: (EQ 1,1)],0))),(NOT (EQ NULL[null],0)))]
      [java] Dependencies: <empty>
      [java] Original Transaction: searchEvent
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
      [java] TXN_addUser_0
-     [java]  ++ addUser_0-insert#1#1 (INSERT[user] [i0_param, r1_param, r2_param, r3_param, r4_param, r5_param, r6_param])
+     [java]  ++ addUser_0-insert#1#1 (INSERT[users] [i0_param, r1_param, r2_param, r3_param, r4_param, r5_param, r6_param])
      [java]     [PATH CONDITION: true]
      [java] Dependencies: <empty>
      [java] Original Transaction: addUser
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
      [java] TXN_handleLoginRequest_0
-     [java]  ++ handleLoginRequest_0-select#1#1 (SELECT[user:[userId, username, password, role, phone, firstname, lastname]]  <<(EQ user.username,r1_param)>>)
+     [java]  ++ handleLoginRequest_0-select#1#1 (SELECT[users:[userId, username, password, role, phone, firstname, lastname]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
-     [java]  ++ handleLoginRequest_0-select#2#2 (SELECT[user:[]]  <<(EQ user.username,r1_param)>>)
+     [java]  ++ handleLoginRequest_0-select#2#2 (SELECT[users:[]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
      [java] Dependencies: <empty>
      [java] Original Transaction: handleLoginRequest
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
      [java] TXN_searchUser_0
-     [java]  ++ searchUser_0-select#1#1 (SELECT[user:[userId, username, password, role, phone, firstname, lastname]]  <<(EQ user.username,r1_param)>>)
+     [java]  ++ searchUser_0-select#1#1 (SELECT[users:[userId, username, password, role, phone, firstname, lastname]]  <<(EQ users.username,r1_param)>>)
      [java]     [PATH CONDITION: true]
      [java] Dependencies: <empty>
      [java] Original Transaction: searchUser
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
      [java] ===========================================
-     [java] === AR compile time:	179ms
+     [java] === AR compile time:	173ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
@@ -101,7 +101,7 @@
      [java] +++ Extensions found:		0
      [java] -------------------------------------------
      [java] === Total anomalies found:	0
-     [java] === Analysis time:		28773 ms
+     [java] === Analysis time:		25829 ms
 
 BUILD SUCCESSFUL
-Total time: 31 seconds
+Total time: 28 seconds
