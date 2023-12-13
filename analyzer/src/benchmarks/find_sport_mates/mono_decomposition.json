@@ -1,7 +1,7 @@
 {
     "M1": [
-        "event",
-        "user",
+        "events",
+        "users",
         "event_user"
     ]
 }

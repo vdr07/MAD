@@ -40,11 +40,11 @@ public class find_sport_mates {
 	// EventController
 	public void showMainPage() throws SQLException {
 		String getAllEventsSQL = 
-				"SELECT * FROM " + "EVENT"+
+				"SELECT * FROM " + "EVENTS"+
 				" WHERE 1 = 1";
 
 		String getUsernameByIdSQL = 
-				"SELECT username FROM " + "USER"+
+				"SELECT username FROM " + "USERS"+
 				" WHERE userId = ?";
 
 		PreparedStatement getAllEvents = connect.prepareStatement(getAllEventsSQL);
@@ -60,7 +60,7 @@ public class find_sport_mates {
 
 	public void showUserEvents(int hostId) throws SQLException {
 		String findUserEventsSQL = 
-				"SELECT * FROM " + "EVENT"+
+				"SELECT * FROM " + "EVENTS"+
 				" WHERE hostId = ?";
 
 		PreparedStatement findUserEvents = connect.prepareStatement(findUserEventsSQL);
@@ -72,11 +72,11 @@ public class find_sport_mates {
 	public void addEvent(int userId, int eventId, String eventType, String eventTime, 
 			String eventDate, String eventPlace) throws SQLException {
 		String getUserByIdSQL = 
-				"SELECT * FROM " + "USER"+
+				"SELECT * FROM " + "USERS"+
 				" WHERE userId = ?";
 
 		String insertEventSQL = 
-				"INSERT INTO " + "EVENT" +
+				"INSERT INTO " + "EVENTS" +
 				" (eventId, hostId, eventType, eventTime, eventDate, eventPlace) " +
 				" VALUES ( ?, ?, ?, ?, ?, ? )";
 		
@@ -107,7 +107,7 @@ public class find_sport_mates {
 
 	public void removeEvent(int eventId) throws SQLException {
 		String removeEventSQL = 
-				"DELETE FROM " + "EVENT"+
+				"DELETE FROM " + "EVENTS"+
 				" WHERE eventId = ?";
 
 		PreparedStatement removeEvent = connect.prepareStatement(removeEventSQL);
@@ -117,11 +117,11 @@ public class find_sport_mates {
 
 	public void joinEvent(int userId, int eventId) throws SQLException {
 		String getUserByIdSQL = 
-				"SELECT * FROM " + "USER"+
+				"SELECT * FROM " + "USERS"+
 				" WHERE userId = ?";
 
 		String getEventByIdSQL = 
-				"SELECT * FROM " + "EVENT"+
+				"SELECT * FROM " + "EVENTS"+
 				" WHERE eventId = ?";
 
 		String getEventParticipantsSQL = 
@@ -157,11 +157,11 @@ public class find_sport_mates {
 	public void searchEvent() throws SQLException {
 		
 		String getAllEventsSQL = 
-				"SELECT * FROM " + "EVENT"+
+				"SELECT * FROM " + "EVENTS"+
 				" WHERE 1 = 1";
 
 		String getUsernameByIdSQL = 
-				"SELECT username FROM " + "USER"+
+				"SELECT username FROM " + "USERS"+
 				" WHERE userId = ?";
 
 		PreparedStatement getAllEvents = connect.prepareStatement(getAllEventsSQL);
@@ -179,7 +179,7 @@ public class find_sport_mates {
 	public void addUser(int userId, String username, String password, String role,
 			String phone, String firstname, String lastname) throws SQLException {
 		String insertUserSQL = 
-				"INSERT INTO " + "USER" +
+				"INSERT INTO " + "USERS" +
 				" (userId, username, password, role, phone, firstname, lastname) " +
 				" VALUES ( ?, ?, ?, ?, ?, ?, ? )";
 
@@ -196,11 +196,11 @@ public class find_sport_mates {
 
 	public void handleLoginRequest(String username, String password) throws SQLException {
 		String getUserByUsernameSQL = 
-				"SELECT * FROM " + "USER"+
+				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
 
 		String getUserIdByUsernameSQL = 
-				"SELECT id FROM " + "USER"+
+				"SELECT id FROM " + "USERS"+
 				" WHERE username = ?";
 
 		PreparedStatement getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);
@@ -220,7 +220,7 @@ public class find_sport_mates {
 
 	public void searchUser(String username) throws SQLException {
 		String getUserByUsernameSQL = 
-				"SELECT * FROM " + "USER"+
+				"SELECT * FROM " + "USERS"+
 				" WHERE username = ?";
 
 		PreparedStatement getUserByUsername = connect.prepareStatement(getUserByUsernameSQL);

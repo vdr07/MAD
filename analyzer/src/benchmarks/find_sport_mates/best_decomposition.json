@@ -1,9 +1,9 @@
 {
     "M1": [
-        "event",
+        "events",
         "event_user"
     ],
     "M2": [
-        "user"
+        "users"
     ]
 }

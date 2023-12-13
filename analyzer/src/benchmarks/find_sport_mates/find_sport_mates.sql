@@ -1,4 +1,4 @@
-CREATE TABLE event (
+CREATE TABLE events (
   eventId INT,
   hostId INT,
   eventType VARCHAR(24),
@@ -8,7 +8,7 @@ CREATE TABLE event (
   PRIMARY KEY (eventId)
 );
 
-CREATE TABLE user (
+CREATE TABLE users (
   userId INT,
   username VARCHAR(24),
   password VARCHAR(24),
@@ -25,5 +25,5 @@ CREATE TABLE event_user (
   PRIMARY KEY (eventId, userId)
 );
 
-ALTER TABLE event_user  ADD CONSTRAINT fkey_event_user_1 FOREIGN KEY(eventId) REFERENCES EVENT(eventId);
-ALTER TABLE event_user  ADD CONSTRAINT fkey_event_user_2 FOREIGN KEY(userId) REFERENCES USER(userId);
+ALTER TABLE event_user  ADD CONSTRAINT fkey_event_user_1 FOREIGN KEY(eventId) REFERENCES EVENTS(eventId);
+ALTER TABLE event_user  ADD CONSTRAINT fkey_event_user_2 FOREIGN KEY(userId) REFERENCES USERS(userId);
