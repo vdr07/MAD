@@ -570,7 +570,7 @@ public class DynamicAssertsions {
 	// 1. when a basic cycle is generated
 	// 2. when a cycle with additional operations is generated
 	public BoolExpr mk_cycle(boolean findCore, Anomaly unVersionedAnml,
-			List<String> txnsNamesComb, int length) {
+			int length) {
 		List<Tuple<String, Tuple<String, String>>> structure = null;
 		Map<Tuple<String, String>, Set<String>> completeStructure = null;
 		List<Tuple<String, String>> cycleTxns = null;
@@ -609,22 +609,9 @@ public class DynamicAssertsions {
 			FuncDecl ottypeFunc = objs.getfuncs("ottype");
 			FuncDecl originalTransactionFunc = objs.getfuncs("original_transaction");
 			for (int i = 0; i < length - 1; i++) {
-				txnAssExpr = new BoolExpr[txnsNamesComb.size()];
-				for (int j = 0; j < txnsNamesComb.size(); j++)
-					txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
-				
-
-				txnRestrExprs[iter2++] = ctx.mkAnd(ctx.mkOr(txnAssExpr));
-
 				for (int j = i + 1; j < length; j++)
 					notEqExprs[iter++] = ctx.mkNot(ctx.mkEq(Os[i], Os[j]));
 			}
-
-			txnAssExpr = new BoolExpr[txnsNamesComb.size()];
-			for (int j = 0; j < txnsNamesComb.size(); j++)
-				txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
-
-			txnRestrExprs[iter2] = ctx.mkAnd(ctx.mkOr(txnAssExpr));
 
 			BoolExpr depExprs[] = new BoolExpr[length];
 			BoolExpr prevAnmlExprs[] = null;
@@ -636,7 +623,7 @@ public class DynamicAssertsions {
 					: new BoolExpr[structure.size()];
 			prepareCompleteCycle(unVersionedAnml, depExprs, prevAnmlExprs, structure, completeStructure, cycleTxns,
 					length, Os, allOs, additionalOs);
-			BoolExpr body = ctx.mkAnd(ctx.mkAnd(notEqExprs), ctx.mkAnd(prevAnmlExprs), ctx.mkAnd(depExprs), ctx.mkAnd(txnRestrExprs));
+			BoolExpr body = ctx.mkAnd(ctx.mkAnd(notEqExprs), ctx.mkAnd(prevAnmlExprs), ctx.mkAnd(depExprs));
 			x = ctx.mkExists(allOs, body, 1, null, null, null, null);
 		} else {
 			BoolExpr notEqExprs2[] = new BoolExpr[length * (length - 1) / 2];
@@ -649,25 +636,13 @@ public class DynamicAssertsions {
 			FuncDecl ottypeFunc = objs.getfuncs("ottype");
 			FuncDecl originalTransactionFunc = objs.getfuncs("original_transaction");
 			for (int i = 0; i < length - 1; i++) {
-				txnAssExpr = new BoolExpr[txnsNamesComb.size()];
-				for (int j = 0; j < txnsNamesComb.size(); j++)
-					txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
-
-				txnRestrExprs[iter2++] = ctx.mkAnd(ctx.mkOr(txnAssExpr));
-
 				for (int j = i + 1; j < length; j++)
 					notEqExprs2[iter++] = ctx.mkNot(ctx.mkEq(Os[i], Os[j]));
 			}
 
-			txnAssExpr = new BoolExpr[txnsNamesComb.size()];
-			for (int j = 0; j < txnsNamesComb.size(); j++)
-				txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
-
-			txnRestrExprs[iter2] = ctx.mkAnd(ctx.mkOr(txnAssExpr));
-
 			BoolExpr depExprs[] = new BoolExpr[length];
 			prepareBasicCycle(depExprs, Os, length);
-			BoolExpr body = ctx.mkAnd(ctx.mkAnd(notEqExprs2), ctx.mkAnd(depExprs), ctx.mkAnd(txnRestrExprs));
+			BoolExpr body = ctx.mkAnd(ctx.mkAnd(notEqExprs2), ctx.mkAnd(depExprs));
 			x = ctx.mkExists(Os, body, 1, null, null, null, null);
 		}
 		return x;
@@ -872,7 +847,7 @@ public class DynamicAssertsions {
 
 	// LOOSE CYCLE ENFORCEMENT (4)
 	public BoolExpr mk_loose_cycle(boolean findCore, List<Tuple<String, Tuple<String, String>>> structure,
-			List<String> txnsNamesComb, int length) {
+			int length) {
 
 		Expr[] Os = new Expr[length];
 		for (int i = 0; i < length; i++)
@@ -888,21 +863,9 @@ public class DynamicAssertsions {
 		FuncDecl ottypeFunc = objs.getfuncs("ottype");
 		FuncDecl originalTransactionFunc = objs.getfuncs("original_transaction");
 		for (int i = 0; i < length - 1; i++) {
-			txnAssExpr = new BoolExpr[txnsNamesComb.size()];
-			for (int j = 0; j < txnsNamesComb.size(); j++)
-				txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[i])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
-
-			txnRestrExprs[iter2++] = ctx.mkAnd(ctx.mkOr(txnAssExpr));
-
 			for (int j = i + 1; j < length; j++)
 				notEqExprs[iter++] = ctx.mkNot(ctx.mkEq(Os[i], Os[j]));
 		}
-
-		txnAssExpr = new BoolExpr[txnsNamesComb.size()];
-		for (int j = 0; j < txnsNamesComb.size(); j++)
-			txnAssExpr[j] = ctx.mkEq(ctx.mkApp(ottypeFunc, ctx.mkApp(originalTransactionFunc, Os[length - 1])), ctx.mkApp(objs.getConstructor("OTType", txnsNamesComb.get(j))));
-
-		txnRestrExprs[iter2] = ctx.mkAnd(ctx.mkOr(txnAssExpr));
 
 		// constraints regarding previously found anomaly (limit the
 		// solutions to structurally close ones )
@@ -960,8 +923,8 @@ public class DynamicAssertsions {
 			}
 		}
 		BoolExpr body = (structure != null && structure.size() > 0 && structure.size() == Os.length)
-				? ctx.mkAnd(ctx.mkAnd(notEqExprs), ctx.mkAnd(prevAnmlExprs), ctx.mkAnd(depExprs), ctx.mkAnd(txnRestrExprs))
-				: ctx.mkAnd(ctx.mkAnd(notEqExprs), ctx.mkAnd(depExprs), ctx.mkAnd(txnRestrExprs));
+				? ctx.mkAnd(ctx.mkAnd(notEqExprs), ctx.mkAnd(prevAnmlExprs), ctx.mkAnd(depExprs))
+				: ctx.mkAnd(ctx.mkAnd(notEqExprs), ctx.mkAnd(depExprs));
 
 		Quantifier x = ctx.mkExists(Os, body, 1, null, null, null, null);
 		return x;
