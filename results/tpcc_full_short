@@ -1,135 +1,39 @@
 
-     [java] Exception in thread "Thread-10" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-13" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-14" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-22" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-15" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-20" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-17" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-18" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-16" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-19" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-24" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-21" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-28" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-32" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-29" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-33" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-31" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-25" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-26" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-30" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-34" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] [newOrder_3, newOrder_7, orderStatus_1, orderStatus_2]: 2/22
-     [java] [delivery_1, delivery_2, newOrder_3, newOrder_7]: 2/22
-     [java] [newOrder_1, newOrder_2, payment_0, payment_1]: 1/22
-     [java] [payment_0, payment_1]: 1/22
-     [java] [payment_1, payment_2]: 2/22
-     [java] [payment_0, payment_2]: 2/22
-     [java] [delivery_0, delivery_3]: 2/22
-     [java] [delivery_0, delivery_1]: 6/22
-     [java] [newOrder_2, newOrder_7, stockLevel_0, stockLevel_1]: 1/22
-     [java] [newOrder_2, newOrder_6]: 3/22
-     [java] delivery (delivery_0): 8/22
-     [java] delivery (delivery_1): 8/22
-     [java] delivery (delivery_2): 2/22
-     [java] delivery (delivery_3): 2/22
-     [java] newOrder (newOrder_1): 1/22
-     [java] newOrder (newOrder_2): 5/22
-     [java] newOrder (newOrder_3): 4/22
-     [java] newOrder (newOrder_6): 3/22
-     [java] newOrder (newOrder_7): 5/22
-     [java] orderStatus (orderStatus_1): 2/22
-     [java] orderStatus (orderStatus_2): 2/22
-     [java] payment (payment_0): 4/22
-     [java] payment (payment_1): 4/22
-     [java] payment (payment_2): 4/22
-     [java] stockLevel (stockLevel_0): 1/22
-     [java] stockLevel (stockLevel_1): 1/22
+     [java] [newOrder_3, newOrder_7, orderStatus_1, orderStatus_2]: 2/98
+     [java] [delivery_0, delivery_2, newOrder_4, newOrder_7]: 8/98
+     [java] [delivery_1, delivery_2, newOrder_3, newOrder_7]: 8/98
+     [java] [delivery_0, delivery_1, newOrder_3, newOrder_4]: 4/98
+     [java] [newOrder_6, newOrder_7, stockLevel_1, stockLevel_2]: 1/98
+     [java] [newOrder_2, newOrder_7, stockLevel_0, stockLevel_1]: 1/98
+     [java] [newOrder_1, newOrder_2, payment_0, payment_1]: 2/98
+     [java] [payment_0, payment_1]: 4/98
+     [java] [payment_1, payment_2]: 20/98
+     [java] [payment_0, payment_2]: 20/98
+     [java] [delivery_0, delivery_3]: 4/98
+     [java] [delivery_0, delivery_2]: 4/98
+     [java] [delivery_1, delivery_3]: 4/98
+     [java] [delivery_2, delivery_3]: 4/98
+     [java] [delivery_0, delivery_1]: 4/98
+     [java] [delivery_1, delivery_2]: 4/98
+     [java] [newOrder_2, newOrder_6]: 4/98
+     [java] delivery (delivery_0): 24/98
+     [java] delivery (delivery_1): 24/98
+     [java] delivery (delivery_2): 28/98
+     [java] delivery (delivery_3): 12/98
+     [java] newOrder (newOrder_1): 2/98
+     [java] newOrder (newOrder_2): 7/98
+     [java] newOrder (newOrder_3): 14/98
+     [java] newOrder (newOrder_4): 12/98
+     [java] newOrder (newOrder_6): 5/98
+     [java] newOrder (newOrder_7): 20/98
+     [java] orderStatus (orderStatus_1): 2/98
+     [java] orderStatus (orderStatus_2): 2/98
+     [java] payment (payment_0): 26/98
+     [java] payment (payment_1): 26/98
+     [java] payment (payment_2): 40/98
+     [java] stockLevel (stockLevel_0): 1/98
+     [java] stockLevel (stockLevel_1): 2/98
+     [java] stockLevel (stockLevel_2): 1/98
      [java] ------------------------------------------------------
      [java]  			     Schema
      [java] ------------------------------------------------------
@@ -166,11 +70,6 @@
      [java] TXN_delivery_2
      [java]  ++ delivery_2-update#1#1 (UPDATE[order_line] {ol_delivery_d=?} <<(AND (AND (EQ order_line.ol_o_id,(ROW:new_order-r17-next1).no_o_id),(EQ order_line.ol_d_id,i0_param)),(EQ order_line.ol_w_id,i1_param))>>)
      [java]     [PATH CONDITION: true]
-     [java] Exception in thread "Thread-27" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
      [java]  ++ delivery_2-select#1#2 (SELECT[order_line:[]]  <<(AND (AND (EQ order_line.ol_o_id,(ROW:new_order-r17-next1).no_o_id),(EQ order_line.ol_d_id,i0_param)),(EQ order_line.ol_w_id,i1_param))>>)
      [java]     [PATH CONDITION: true]
      [java] Dependencies: <empty>
@@ -331,20 +230,20 @@
      [java] Microservice: M8
      [java] ----------------------------------------------------------------
      [java] ===========================================
-     [java] === AR compile time:	350ms
+     [java] === AR compile time:	292ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
-     [java] +++ Dirty Writes found:		1
+     [java] +++ Dirty Writes found:		13
      [java] +++ Lost Updates found:		0
-     [java] +++ Lost Updates/Write Skews found:	1
+     [java] +++ Lost Updates/Write Skews found:	3
      [java] +++ Non-Repeatable Reads found:	0
      [java] +++ Phantom Reads found:		0
-     [java] +++ Read Skews found:		9
+     [java] +++ Read Skews found:		12
      [java] +++ Multi anomalies found:		0
-     [java] +++ Extensions found:		11
+     [java] +++ Extensions found:		70
      [java] -------------------------------------------
-     [java] === Total anomalies found:	22
-     [java] === Analysis time:		90997 ms
+     [java] === Total anomalies found:	98
+     [java] === Analysis time:		1712500 ms
 
 BUILD SUCCESSFUL
-Total time: 1 minute 34 seconds
+Total time: 28 minutes 35 seconds
