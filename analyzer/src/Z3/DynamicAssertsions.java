@@ -600,9 +600,6 @@ public class DynamicAssertsions {
 			System.arraycopy(Os, 0, allOs, 0, length);
 			System.arraycopy(additionalOs, 0, allOs, length, additionalOperationCount);
 			BoolExpr notEqExprs[] = new BoolExpr[length * (length - 1) / 2];
-			BoolExpr txnAssExpr[];
-			List<BoolExpr> txnRestrExprList;
-			BoolExpr txnRestrExpr[];
 			int iter = 0;
 			int iter2 = 0;
 			FuncDecl ottypeFunc = objs.getfuncs("ottype");
@@ -625,9 +622,6 @@ public class DynamicAssertsions {
 			x = ctx.mkExists(allOs, body, 1, null, null, null, null);
 		} else {
 			BoolExpr notEqExprs2[] = new BoolExpr[length * (length - 1) / 2];
-			BoolExpr txnAssExpr[];
-			List<BoolExpr> txnRestrExprList;
-			BoolExpr txnRestrExpr[];
 			int iter = 0;
 			int iter2 = 0;
 			FuncDecl ottypeFunc = objs.getfuncs("ottype");
@@ -850,9 +844,6 @@ public class DynamicAssertsions {
 			Os[i] = ctx.mkFreshConst("o", objs.getSort("O"));
 
 		BoolExpr notEqExprs[] = new BoolExpr[length * (length - 1) / 2];
-		BoolExpr txnAssExpr[];
-		List<BoolExpr> txnRestrExprList;
-		BoolExpr txnRestrExpr[];
 		int iter = 0;
 		int iter2 = 0;
 		FuncDecl ottypeFunc = objs.getfuncs("ottype");
