@@ -1,7 +1,7 @@
 
      [java] [newOrder_3, newOrder_7, orderStatus_1, orderStatus_2]: 2/98
-     [java] [delivery_0, delivery_2, newOrder_4, newOrder_7]: 8/98
      [java] [delivery_1, delivery_2, newOrder_3, newOrder_7]: 8/98
+     [java] [delivery_0, delivery_2, newOrder_4, newOrder_7]: 8/98
      [java] [delivery_0, delivery_1, newOrder_3, newOrder_4]: 4/98
      [java] [newOrder_6, newOrder_7, stockLevel_1, stockLevel_2]: 1/98
      [java] [newOrder_2, newOrder_7, stockLevel_0, stockLevel_1]: 1/98
@@ -230,7 +230,7 @@
      [java] Microservice: M8
      [java] ----------------------------------------------------------------
      [java] ===========================================
-     [java] === AR compile time:	378ms
+     [java] === AR compile time:	266ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		13
@@ -243,7 +243,7 @@
      [java] +++ Extensions found:		70
      [java] -------------------------------------------
      [java] === Total anomalies found:	98
-     [java] === Analysis time:		298612 ms
+     [java] === Analysis time:		253375 ms
 
 BUILD SUCCESSFUL
-Total time: 5 minutes 1 second
+Total time: 4 minutes 16 seconds

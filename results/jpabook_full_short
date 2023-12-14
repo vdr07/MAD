@@ -1,6 +1,6 @@
 
-     [java] [itemList_0, order_1, order_4, updateItem_0]: 2/79
      [java] [itemList_0, order_1, order_4, processCancelBuy_4]: 1/79
+     [java] [itemList_0, order_1, order_4, updateItem_0]: 2/79
      [java] [order_1, order_4, updateItemForm_0]: 1/79
      [java] [orderList_1, order_5, processCancelBuy_0, processCancelBuy_2]: 1/79
      [java] [order_1, order_5, processCancelBuy_0, processCancelBuy_4]: 1/79
@@ -9,8 +9,8 @@
      [java] [order_3, order_5, processCancelBuy_2, processCancelBuy_3]: 1/79
      [java] [order_1, order_4]: 4/79
      [java] [order_2, order_4, processCancelBuy_1, processCancelBuy_4]: 4/79
-     [java] [order_3, order_5, processCancelBuy_0, processCancelBuy_3]: 1/79
      [java] [order_1, order_5, processCancelBuy_2, processCancelBuy_4]: 1/79
+     [java] [order_3, order_5, processCancelBuy_0, processCancelBuy_3]: 1/79
      [java] [itemCreate_0, order_1, order_4]: 3/79
      [java] [order_1, order_4, processCancelBuy_4, updateItemForm_0]: 1/79
      [java] [orderCreateForm_1, order_1, order_4, updateItem_0]: 2/79
@@ -28,8 +28,8 @@
      [java] [order_1, order_4, updateItem_0]: 9/79
      [java] [itemCreate_0, order_1, order_4, updateItem_0]: 1/79
      [java] [order_4, order_5, processCancelBuy_0, processCancelBuy_4]: 2/79
-     [java] [order_2, order_5, processCancelBuy_0, processCancelBuy_1]: 1/79
      [java] [order_1, order_3, processCancelBuy_3, processCancelBuy_4]: 1/79
+     [java] [order_2, order_5, processCancelBuy_0, processCancelBuy_1]: 1/79
      [java] [order_1, order_2, processCancelBuy_1, processCancelBuy_4]: 1/79
      [java] [order_4, order_5, processCancelBuy_2, processCancelBuy_4]: 2/79
      [java] [orderCreateForm_1, order_1, order_4, processCancelBuy_4]: 1/79
@@ -216,7 +216,7 @@
      [java] Microservice: M1
      [java] ----------------------------------------------------------------
      [java] ===========================================
-     [java] === AR compile time:	215ms
+     [java] === AR compile time:	206ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
@@ -229,7 +229,7 @@
      [java] +++ Extensions found:		54
      [java] -------------------------------------------
      [java] === Total anomalies found:	79
-     [java] === Analysis time:		231155 ms
+     [java] === Analysis time:		213824 ms
 
 BUILD SUCCESSFUL
-Total time: 3 minutes 54 seconds
+Total time: 3 minutes 36 seconds
