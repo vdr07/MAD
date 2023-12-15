@@ -1,125 +1,17 @@
 
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-58" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-209" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-54" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-183" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-201" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-136" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-88" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-81" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-202" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-208" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-225" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-71" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-69" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-210" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-119" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-45" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-220" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-224" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-73" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-205" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] Exception in thread "Thread-545" java.util.NoSuchElementException: No value present
-     [java] 	at java.util.Optional.get(Optional.java:135)
-     [java] 	at anomaly.RecordsVisualizer.createGraph(RecordsVisualizer.java:101)
-     [java] 	at anomaly.Anomaly.announce(Anomaly.java:340)
-     [java] 	at java.lang.Thread.run(Thread.java:750)
-     [java] [userSaveUser_0, userSaveUser_2, userUpdate_0, userUpdate_2]: 2/22
-     [java] [index_1, index_2, roleAuthorise_4, roleAuthorise_5]: 1/22
-     [java] [roleAuthorise_3, roleAuthorise_4, roleAuthorise_5]: 18/22
-     [java] [roleAuthorise_3, roleAuthorise_5]: 1/22
-     [java] index (index_1): 1/22
-     [java] index (index_2): 1/22
-     [java] roleAuthorise (roleAuthorise_3): 19/22
-     [java] roleAuthorise (roleAuthorise_4): 19/22
-     [java] roleAuthorise (roleAuthorise_5): 20/22
-     [java] userSaveUser (userSaveUser_0): 2/22
-     [java] userSaveUser (userSaveUser_2): 2/22
-     [java] userUpdate (userUpdate_0): 2/22
-     [java] userUpdate (userUpdate_2): 2/22
+     [java] [userSaveUser_0, userSaveUser_2, userUpdate_0, userUpdate_2]: 2/7
+     [java] [index_1, index_2, roleAuthorise_4, roleAuthorise_5]: 1/7
+     [java] [roleAuthorise_3, roleAuthorise_4, roleAuthorise_5]: 3/7
+     [java] [roleAuthorise_3, roleAuthorise_5]: 1/7
+     [java] index (index_1): 1/7
+     [java] index (index_2): 1/7
+     [java] roleAuthorise (roleAuthorise_3): 4/7
+     [java] roleAuthorise (roleAuthorise_4): 4/7
+     [java] roleAuthorise (roleAuthorise_5): 5/7
+     [java] userSaveUser (userSaveUser_0): 2/7
+     [java] userSaveUser (userSaveUser_2): 2/7
+     [java] userUpdate (userUpdate_0): 2/7
+     [java] userUpdate (userUpdate_2): 2/7
      [java] ------------------------------------------------------
      [java]  			     Schema
      [java] ------------------------------------------------------
@@ -371,20 +263,20 @@
      [java] Microservice: M5
      [java] ----------------------------------------------------------------
      [java] ===========================================
-     [java] === AR compile time:	230ms
+     [java] === AR compile time:	272ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
      [java] +++ Lost Updates found:		0
-     [java] +++ Lost Updates/Write Skews found:	10
+     [java] +++ Lost Updates/Write Skews found:	3
      [java] +++ Non-Repeatable Reads found:	0
      [java] +++ Phantom Reads found:		0
-     [java] +++ Read Skews found:		12
+     [java] +++ Read Skews found:		4
      [java] +++ Multi anomalies found:		0
      [java] +++ Extensions found:		0
      [java] -------------------------------------------
-     [java] === Total anomalies found:	22
-     [java] === Analysis time:		906153 ms
+     [java] === Total anomalies found:	7
+     [java] === Analysis time:		350490 ms
 
 BUILD SUCCESSFUL
-Total time: 15 minutes 10 seconds
+Total time: 5 minutes 53 seconds
