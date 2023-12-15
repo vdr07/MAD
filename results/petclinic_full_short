@@ -190,7 +190,7 @@
      [java] Microservice: M6
      [java] ----------------------------------------------------------------
      [java] ===========================================
-     [java] === AR compile time:	260ms
+     [java] === AR compile time:	215ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
@@ -203,7 +203,7 @@
      [java] +++ Extensions found:		0
      [java] -------------------------------------------
      [java] === Total anomalies found:	0
-     [java] === Analysis time:		129431 ms
+     [java] === Analysis time:		125437 ms
 
 BUILD SUCCESSFUL
-Total time: 2 minutes 12 seconds
+Total time: 2 minutes 8 seconds

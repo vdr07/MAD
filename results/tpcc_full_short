@@ -230,7 +230,7 @@
      [java] Microservice: M8
      [java] ----------------------------------------------------------------
      [java] ===========================================
-     [java] === AR compile time:	266ms
+     [java] === AR compile time:	309ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		13
@@ -243,7 +243,7 @@
      [java] +++ Extensions found:		70
      [java] -------------------------------------------
      [java] === Total anomalies found:	98
-     [java] === Analysis time:		253375 ms
+     [java] === Analysis time:		303355 ms
 
 BUILD SUCCESSFUL
-Total time: 4 minutes 16 seconds
+Total time: 5 minutes 6 seconds

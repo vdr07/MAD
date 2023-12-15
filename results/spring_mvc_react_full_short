@@ -7,8 +7,8 @@
      [java] [questionCreateQuestion_2, questionCreateQuestion_4, questionGetQuestionsByTag_1]: 1/58
      [java] [questionCreateQuestion_1, questionCreateQuestion_3, questionGetQuestionsByTag_0]: 3/58
      [java] [questionCreateQuestion_1, questionCreateQuestion_3]: 24/58
-     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateQuestion_0]: 2/58
      [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateUser_0]: 1/58
+     [java] [answerCreateQuestion_0, answerCreateQuestion_2, userCreateQuestion_0]: 2/58
      [java] [answerCreateQuestion_0, answerCreateQuestion_2, authorizationRegister_0, userCreateQuestion_0]: 1/58
      [java] [questionCreateQuestion_1, questionCreateQuestion_2, questionGetQuestionsByTag_0, questionGetQuestionsByTag_1]: 4/58
      [java] [questionCreateQuestion_1, questionCreateQuestion_3, tagListAllTags_0]: 3/58
@@ -342,7 +342,7 @@
      [java] Microservice: M4
      [java] ----------------------------------------------------------------
      [java] ===========================================
-     [java] === AR compile time:	270ms
+     [java] === AR compile time:	252ms
      [java] -------------------------------------------
      [java] +++ Dirty Reads found:		0
      [java] +++ Dirty Writes found:		0
@@ -355,7 +355,7 @@
      [java] +++ Extensions found:		40
      [java] -------------------------------------------
      [java] === Total anomalies found:	58
-     [java] === Analysis time:		1405808 ms
+     [java] === Analysis time:		1513582 ms
 
 BUILD SUCCESSFUL
-Total time: 23 minutes 29 seconds
+Total time: 25 minutes 17 seconds

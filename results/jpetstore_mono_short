@@ -1,0 +1,203 @@
+
+     [java] ------------------------------------------------------
+     [java]  			     Schema
+     [java] ------------------------------------------------------
+     [java] ##supplier## <<suppid:INT>> <name:STRING> <status:STRING> <addr1:STRING> <addr2:STRING> <city:STRING> <state:STRING> <zip:STRING> <phone:STRING>
+     [java] ##signon## <<username:STRING>> <password:STRING>
+     [java] ##account## <<userid:STRING>> <email:STRING> <firstname:STRING> <lastname:STRING> <status:STRING> <addr1:STRING> <addr2:STRING> <city:STRING> <state:STRING> <zip:STRING> <country:STRING> <phone:STRING>
+     [java] ##profile## <<userid:STRING>> <langpref:STRING> <favcategory:STRING> <mylistopt:INT> <banneropt:INT>
+     [java] ##bannerdata## <<favcategory:STRING>> <bannername:STRING>
+     [java] ##orders## <<orderid:INT>> <userid:STRING> <orderdate:STRING> <shipaddr1:STRING> <shipaddr2:STRING> <shipcity:STRING> <shipstate:STRING> <shipzip:STRING> <shipcountry:STRING> <billaddr1:STRING> <billaddr2:STRING> <billcity:STRING> <billstate:STRING> <billzip:STRING> <billcountry:STRING> <courier:STRING> <totalprice:INT> <billtofirstname:STRING> <billtolastname:STRING> <shiptofirstname:STRING> <shiptolastname:STRING> <creditcard:STRING> <exprdate:STRING> <cardtype:STRING> <locale:STRING>
+     [java] ##order_status## <<orderid:INT>> <<linenum:INT>> <timestamp:STRING> <status:STRING>
+     [java] ##lineitem## <<orderid:INT>> <<linenum:INT>> <itemid:STRING> <quantity:INT> <unitprice:INT>
+     [java] ##category## <<catid:STRING>> <name:STRING> <descn:STRING>
+     [java] ##product## <<productid:STRING>> <category:STRING> <name:STRING> <descn:STRING>
+     [java] ##items## <<itemid:STRING>> <productid:STRING> <listprice:INT> <unitcost:INT> <supplier:INT> <status:STRING> <attr1:STRING> <attr2:STRING> <attr3:STRING> <attr4:STRING> <attr5:STRING>
+     [java] ##inventory## <<itemid:STRING>> <qty:INT>
+     [java] ##sequence## <<name:STRING>> <nextid:INT>
+     [java] ------------------------------------------------------
+     [java]  			Compiled Application
+     [java] ------------------------------------------------------
+     [java] TXN_newAccount_0
+     [java]  ++ newAccount_0-insert#1#1 (INSERT[account] [r1_param, r2_param, r3_param, r4_param, r5_param, r6_param, r7_param, r8_param, r9_param, r10_param, r11_param, r12_param])
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newAccount_0-insert#2#2 (INSERT[profile] [r1_param, r13_param, r14_param, i0_param, i1_param])
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newAccount_0-insert#3#3 (INSERT[signon] [r1_param, r15_param])
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newAccount_0-select#1#4 (SELECT[account:[email, firstname, lastname, status, addr1, addr2, city, state, zip, country, phone]]  <<(EQ account.userid,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newAccount_0-select#2#5 (SELECT[signon:[username]]  <<(EQ signon.username,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newAccount_0-select#3#6 (SELECT[profile:[langpref, favcategory, mylistopt, banneropt]]  <<(EQ profile.userid,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newAccount_0-select#4#7 (SELECT[bannerdata:[bannername]]  <<(EQ bannerdata.favcategory,(ROW:profile-r32-next1).favcategory)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newAccount_0-select#5#8 (SELECT[product:[productid, category, name, descn]]  <<(EQ product.category,(ROW:profile-r32-next1).favcategory)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: newAccount
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] TXN_editAccount_0
+     [java]  ++ editAccount_0-update#1#1 (UPDATE[account] {addr1=r6_param, state=r9_param, lastname=r4_param, phone=r12_param, status=r5_param, addr2=r7_param, country=r11_param, zip=r10_param, firstname=r3_param, city=r8_param, email=r2_param} <<(EQ account.userid,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ editAccount_0-update#2#2 (UPDATE[profile] {favcategory=r14_param, langpref=r13_param, mylistopt=i0_param, banneropt=i1_param} <<(EQ profile.userid,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ editAccount_0-update#3#3 (UPDATE[signon] {password=r15_param} <<(EQ signon.username,r1_param)>>)
+     [java]     [PATH CONDITION: (AND true,(NOT (LEQ Abs-REAL#0,0)))]
+     [java]  ++ editAccount_0-select#1#4 (SELECT[account:[email, firstname, lastname, status, addr1, addr2, city, state, zip, country, phone]]  <<(EQ account.userid,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ editAccount_0-select#2#5 (SELECT[signon:[username]]  <<(EQ signon.username,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ editAccount_0-select#3#6 (SELECT[profile:[langpref, favcategory, mylistopt, banneropt]]  <<(EQ profile.userid,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ editAccount_0-select#4#7 (SELECT[bannerdata:[bannername]]  <<(EQ bannerdata.favcategory,(ROW:profile-r30-next1).favcategory)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ editAccount_0-select#5#8 (SELECT[product:[productid, category, name, descn]]  <<(EQ product.category,(ROW:profile-r30-next1).favcategory)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: editAccount
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] TXN_signon_0
+     [java]  ++ signon_0-select#1#1 (SELECT[account:[email, firstname, lastname, status, addr1, addr2, city, state, zip, country, phone]]  <<(EQ account.userid,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ signon_0-select#2#2 (SELECT[signon:[username]]  <<(AND (EQ signon.username,r1_param),(EQ signon.password,r2_param))>>)
+     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: account WHERE: (EQ account.userid,r1_param)],0))),(NOT (EQ NULL[null],0)))]
+     [java]  ++ signon_0-select#3#3 (SELECT[profile:[langpref, favcategory, mylistopt, banneropt]]  <<(EQ profile.userid,r1_param)>>)
+     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: account WHERE: (EQ account.userid,r1_param)],0))),(NOT (EQ NULL[null],0)))]
+     [java]  ++ signon_0-select#4#4 (SELECT[bannerdata:[bannername]]  <<(EQ bannerdata.favcategory,(ROW:profile-r13-next1).favcategory)>>)
+     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: account WHERE: (EQ account.userid,r1_param)],0))),(NOT (EQ NULL[null],0)))]
+     [java]  ++ signon_0-select#5#5 (SELECT[product:[productid, category, name, descn]]  <<(EQ product.category,(ROW:profile-r13-next1).favcategory)>>)
+     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: account WHERE: (EQ account.userid,r1_param)],0))),(NOT (EQ NULL[null],0)))]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: signon
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] TXN_addItemToCart_0
+     [java]  ++ addItemToCart_0-select#1#1 (SELECT[inventory:[qty]]  <<(EQ inventory.itemid,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ addItemToCart_0-select#2#2 (SELECT[items:[itemid, productid, listprice, unitcost, supplier, status, attr1, attr2, attr3, attr4, attr5]]  <<(EQ items.itemid,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ addItemToCart_0-select#3#3 (SELECT[product:[productid, category, name, descn]]  <<(EQ product.productid,(ROW:items-r8-next1).productid)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ addItemToCart_0-select#4#4 (SELECT[inventory:[qty]]  <<(EQ inventory.itemid,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: addItemToCart
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] TXN_viewCategory_0
+     [java]  ++ viewCategory_0-select#1#1 (SELECT[product:[productid, category, name, descn]]  <<(EQ product.category,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ viewCategory_0-select#2#2 (SELECT[category:[catid, name, descn]]  <<(EQ category.catid,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: viewCategory
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] TXN_viewProduct_0
+     [java]  ++ viewProduct_0-select#1#1 (SELECT[product:[productid, category, name, descn]]  <<(EQ product.productid,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ viewProduct_0-select#2#2 (SELECT[items:[itemid, productid, listprice, unitcost, supplier, status, attr1, attr2, attr3, attr4, attr5]]  <<(EQ items.productid,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ viewProduct_0-select#3#3 (SELECT[product:[productid, category, name, descn]]  <<(EQ product.productid,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: viewProduct
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] TXN_viewItem_0
+     [java]  ++ viewItem_0-select#1#1 (SELECT[items:[itemid, productid, listprice, unitcost, supplier, status, attr1, attr2, attr3, attr4, attr5]]  <<(EQ items.itemid,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ viewItem_0-select#2#2 (SELECT[product:[productid, category, name, descn]]  <<(EQ product.productid,(ROW:items-r6-next1).productid)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ viewItem_0-select#3#3 (SELECT[inventory:[qty]]  <<(EQ inventory.itemid,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ viewItem_0-select#4#4 (SELECT[product:[productid, category, name, descn]]  <<(EQ product.productid,(ROW:items-r6-next1).productid)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: viewItem
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] TXN_searchProducts_0
+     [java]  ++ searchProducts_0-select#1#1 (SELECT[product:[productid, category, name, descn]]  <<(EQ product.name,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ searchProducts_0-select#2#2 (SELECT[product:[productid, category, name, descn]]  <<(EQ product.name,r2_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: searchProducts
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] TXN_listOrders_0
+     [java]  ++ listOrders_0-select#1#1 (SELECT[orders:[orderid, userid, orderdate, shipaddr1, shipaddr2, shipcity, shipstate, shipzip, shipcountry, billaddr1, billaddr2, billcity, billstate, billzip, billcountry, courier, totalprice, billtofirstname, billtolastname, shiptofirstname, shiptolastname, creditcard, exprdate, cardtype, locale]]  <<(EQ orders.userid,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ listOrders_0-select#2#2 (SELECT[order_status:[status]]  <<(EQ order_status.orderid,(ROW:orders-r5-loopVar0).orderid)>>)
+     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: orders WHERE: (EQ orders.userid,r1_param)],0))),(NOT (EQ NULL[null],0)))]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: listOrders
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] TXN_newOrder_0
+     [java]  ++ newOrder_0-select#1#1 (SELECT[sequence:[name, nextid]]  <<(EQ sequence.name,ordernum)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newOrder_0-update#1#2 (UPDATE[sequence] {nextid=(PLUS (ROW:sequence-r36-next1).nextid,1)} <<(EQ sequence.name,ordernum)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newOrder_0-select#2#3 (SELECT[inventory:[qty]]  <<(EQ inventory.itemid,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newOrder_0-update#2#4 (UPDATE[inventory] {qty=(PLUS (ROW:inventory-r39-next1).qty,i0_param)} <<(EQ inventory.itemid,r1_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newOrder_0-select#3#5 (SELECT[inventory:[qty]]  <<(EQ inventory.itemid,r2_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newOrder_0-update#3#6 (UPDATE[inventory] {qty=(PLUS (ROW:inventory-r42-next1).qty,i1_param)} <<(EQ inventory.itemid,r2_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newOrder_0-insert#1#7 (INSERT[orders] [(ROW:sequence-r36-next1).nextid, r3_param, r4_param, r5_param, r6_param, r7_param, r8_param, r9_param, r10_param, r11_param, r12_param, r13_param, r14_param, r15_param, r16_param, r17_param, i3_param, r18_param, r19_param, r20_param, r21_param, r22_param, r23_param, r24_param, r25_param])
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newOrder_0-insert#2#8 (INSERT[order_status] [(ROW:sequence-r36-next1).nextid, i4_param, r26_param, r27_param])
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newOrder_0-insert#3#9 (INSERT[lineitem] [(ROW:sequence-r36-next1).nextid, i5_param, r1_param, (PLUS (ROW:inventory-r39-next1).qty,i0_param), i7_param])
+     [java]     [PATH CONDITION: true]
+     [java]  ++ newOrder_0-insert#4#10 (INSERT[lineitem] [(ROW:sequence-r36-next1).nextid, i6_param, r2_param, (PLUS (ROW:inventory-r42-next1).qty,i1_param), i8_param])
+     [java]     [PATH CONDITION: true]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: newOrder
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] TXN_viewOrder_0
+     [java]  ++ viewOrder_0-select#1#1 (SELECT[orders:[orderid, userid, orderdate, shipaddr1, shipaddr2, shipcity, shipstate, shipzip, shipcountry, billaddr1, billaddr2, billcity, billstate, billzip, billcountry, courier, totalprice, billtofirstname, billtolastname, shiptofirstname, shiptolastname, creditcard, exprdate, cardtype, locale]]  <<(EQ orders.orderid,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ viewOrder_0-select#2#2 (SELECT[order_status:[status]]  <<(EQ order_status.orderid,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ viewOrder_0-select#3#3 (SELECT[lineitem:[orderid, linenum, itemid, quantity, unitprice]]  <<(EQ lineitem.orderid,i0_param)>>)
+     [java]     [PATH CONDITION: true]
+     [java]  ++ viewOrder_0-select#4#4 (SELECT[items:[itemid, productid, listprice, unitcost, supplier, status, attr1, attr2, attr3, attr4, attr5]]  <<(EQ items.itemid,(ROW:lineitem-r12-loopVar0).itemid)>>)
+     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: lineitem WHERE: (EQ lineitem.orderid,i0_param)],0))),(NOT (EQ NULL[null],0)))]
+     [java]  ++ viewOrder_0-select#5#5 (SELECT[product:[productid, category, name, descn]]  <<(EQ product.productid,(ROW:items-r15-loopVar0).productid)>>)
+     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: lineitem WHERE: (EQ lineitem.orderid,i0_param)],0))),(NOT (EQ NULL[null],0)))]
+     [java]  ++ viewOrder_0-select#6#6 (SELECT[inventory:[qty]]  <<(EQ inventory.itemid,(ROW:lineitem-r12-loopVar0).itemid)>>)
+     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: lineitem WHERE: (EQ lineitem.orderid,i0_param)],0))),(NOT (EQ NULL[null],0)))]
+     [java]  ++ viewOrder_0-select#7#7 (SELECT[inventory:[qty]]  <<(EQ inventory.itemid,(ROW:lineitem-r12-loopVar0).itemid)>>)
+     [java]     [PATH CONDITION: (AND (AND true,(NOT (EQ NULL[ROW SET: lineitem WHERE: (EQ lineitem.orderid,i0_param)],0))),(NOT (EQ NULL[null],0)))]
+     [java] Dependencies: <empty>
+     [java] Original Transaction: viewOrder
+     [java] Microservice: M1
+     [java] ----------------------------------------------------------------
+     [java] ===========================================
+     [java] === AR compile time:	292ms
+     [java] -------------------------------------------
+     [java] +++ Dirty Reads found:		0
+     [java] +++ Dirty Writes found:		0
+     [java] +++ Lost Updates found:		0
+     [java] +++ Lost Updates/Write Skews found:	0
+     [java] +++ Non-Repeatable Reads found:	0
+     [java] +++ Phantom Reads found:		0
+     [java] +++ Read Skews found:		0
+     [java] +++ Multi anomalies found:		0
+     [java] +++ Extensions found:		0
+     [java] -------------------------------------------
+     [java] === Total anomalies found:	0
+     [java] === Analysis time:		362444 ms
+
+BUILD SUCCESSFUL
+Total time: 6 minutes 5 seconds

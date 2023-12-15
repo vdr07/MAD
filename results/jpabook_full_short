@@ -27,8 +27,8 @@
      [java] [orderCreateForm_1, order_1, order_4]: 1/79
      [java] [order_1, order_4, updateItem_0]: 9/79
      [java] [itemCreate_0, order_1, order_4, updateItem_0]: 1/79
-     [java] [order_4, order_5, processCancelBuy_0, processCancelBuy_4]: 2/79
      [java] [order_1, order_3, processCancelBuy_3, processCancelBuy_4]: 1/79
+     [java] [order_4, order_5, processCancelBuy_0, processCancelBuy_4]: 2/79
      [java] [order_2, order_5, processCancelBuy_0, processCancelBuy_1]: 1/79
      [java] [order_1, order_2, processCancelBuy_1, processCancelBuy_4]: 1/79
      [java] [order_4, order_5, processCancelBuy_2, processCancelBuy_4]: 2/79
@@ -229,7 +229,7 @@
      [java] +++ Extensions found:		54
      [java] -------------------------------------------
      [java] === Total anomalies found:	79
-     [java] === Analysis time:		213824 ms
+     [java] === Analysis time:		219400 ms
 
 BUILD SUCCESSFUL
-Total time: 3 minutes 36 seconds
+Total time: 3 minutes 42 seconds
