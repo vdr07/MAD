@@ -1,17 +1,9 @@
-## CLOTHO:  Directed Test Generation for Weakly Consistent Database Systems
-CLOTHO is a testing framework for detecting serializability
-violations in (SQL) database-backed Java applications executing on weakly-consistent storage systems. It 
-combines a static analyzer and model checker to generate abstract executions, discover 
-serializability violations in these executions, and translate them back into concrete test inputs suitable 
-for deployment in a test environment.
-CLOTHO currently supports [Apache Cassandra](http://cassandra.apache.org/) as
-its database module. We are planning to add support for other databases in the
-future. 
+## Microservice Anomaly Detector: SMT-based Automatic Design-Time Detection of Anomalies in Migrations to Microservices
+MAD (Microservice Anomaly Detector) is a testing framework for identifying anomalies that result from the decomposition of a monolith into microservices during design time.
+Leveraging a static analyzer, it takes as input a (SQL) database-backed JAVA monolith application and a given decomposition and identifies possible data anomalies derived from the decomposition.
+Furthermore, MAD classifies the anomalies according to definitions described in [Atya et al](https://ieeexplore.ieee.org/abstract/document/839388?casa_token=zuOCltn8xycAAAAA:vrespMjx6ygF-NPiUPWi2MyaOwlK_CUYzRWOnMXzDZvrb7XEUKdmhA8OG7lN-N1emW6_RaDD8Lk), providing developers a glimpse of the challenges that a given decomposition will entail. 
 
-<img src="readme/pipeline.png"
-     alt="Markdown Monster icon"
-     style="float: center; margin-left: 15px; margin-bottom: 20px" />
-
+MAD's implementation is a fork of [CLOTHO](https://github.com/Kiarahmani/CLOTHO).
 ---
 
 ### Dependencies 
@@ -20,7 +12,6 @@ future.
 - [Docker](https://www.docker.com/)
 
 
- 
 ---
 
 ### Setup
@@ -118,34 +109,6 @@ Line 163: mk_linearizable
 To make use of them, you just need to uncomment (or uncomment) the lines 199 - 203 in analyzer/src/Z3/Z3Driver.java
 
 The combination of mk_read_comm + mk_rep_read + mk_linearizable makes serializability and seems to be working correctly.
-
-### Replaying Anomalies
-Following command will create required keyspace and schema for an anomaly on the Cassandra cluster:
-```sh
-./clotho.sh --init <benchmark_name> <anomaly_number>
-```
-Now open separate terminals: one for the test controller and one for each transaction (a.k.a client) involned in the anomaly.
-
-Run  the following command in the controller terminal:
-```sh
-./clotho.sh -d <benchmark_name> <anomaly_number>
-```
-
-Finally, run the following command in each client terminal:
-```sh
-./clotho.sh --client <benchmark_name> <anomaly_number> <client_number>
-```
-You should see each client running according to the buggy schedule determined in the static analysis step. 
-Have fun!
-
-
-
-
----
-## Publications
-- CLOTHO: Directed Test Generation for Weakly Consistent Database Systems (Conditionally Accepted to [OOPSLA'19](https://conf.researchr.org/track/splash-2019/splash-2019-oopsla#event-overview))
-
-
 
 ---
 Copyright (c) 2019 Kia Rahmani
