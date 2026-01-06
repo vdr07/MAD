@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: my_app
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - cas1
+      - cas2
+    environment:
+      CASSANDRA_CONTACT_POINTS: cas1,cas2
+    networks:
+      - cassandra-net
+
+  cas1:
+    image: cassandra:latest
+    container_name: cas1
+    hostname: cas1
+    ports:
+      - "19041:9042"
+    environment:
+      CASSANDRA_CLUSTER_NAME: MyCluster
+      CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+      CASSANDRA_DC: DC1
+      CASSANDRA_RACK: RAC1
+      MAX_HEAP_SIZE: 512M
+      HEAP_NEWSIZE: 128M
+      CASSANDRA_SEEDS: cas1
+    volumes:
+      - cas1-data:/var/lib/cassandra
+    networks:
+      - cassandra-net
+
+  cas2:
+    image: cassandra:latest
+    container_name: cas2
+    hostname: cas2
+    ports:
+      - "19042:9042"
+    environment:
+      CASSANDRA_CLUSTER_NAME: MyCluster
+      CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+      CASSANDRA_DC: DC2
+      CASSANDRA_RACK: RAC2
+      MAX_HEAP_SIZE: 512M
+      HEAP_NEWSIZE: 128M
+      CASSANDRA_SEEDS: cas1
+    depends_on:
+      - cas1
+    volumes:
+      - cas2-data:/var/lib/cassandra
+    networks:
+      - cassandra-net
+
+networks:
+  cassandra-net:
+    driver: bridge
+
+volumes:
+  cas1-data:
+  cas2-data:

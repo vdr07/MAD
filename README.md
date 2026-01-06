@@ -8,7 +8,7 @@ MAD's implementation is a fork of [CLOTHO](https://github.com/Kiarahmani/CLOTHO)
 
 ### Dependencies 
 - [Java 1.8.0](https://java.com/en/download/help/index_installing.xml)
-- [Z3 Theorem Prover](https://github.com/Z3Prover/z3)
+- [Z3 Theorem Prover (version 4.11.2)](https://github.com/Z3Prover/z3)
 - [Docker](https://www.docker.com/)
 
 

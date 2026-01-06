@@ -40,18 +40,10 @@ import Z3.Z3Driver;
 public class Transformer extends BodyTransformer {
 	private static final Logger LOG = LogManager.getLogger(Transformer.class);
 	static long start_fec, end_fec;
-	//static String _RT_PATH = "/Library/Java/JavaVirtualMachines/jdk1.8.0_77.jdk/Contents/Home/jre/lib/rt.jar:";
-	//static String _JCE_PATH = "/Library/Java/JavaVirtualMachines/jdk1.8.0_77.jdk/Contents/Home/jre/lib/jce.jar";
 	private static final String irOptionName = "ir";
 	private CFGIntermediateRep ir;
 	static ArrayList<Body> bodies;
 
-	//private static final List<String> choppedDirtyReadPattern = List.of("step_sibling", "WR", "RW");
-	//private static final List<String> nonRepeatableReadPattern = List.of("X", "RW", "WR");
-	//private static final List<String> choppedNonRepeatableReadPattern = List.of("step_sibling", "RW", "WR");
-	//private static final List<String> choppedDirtyWritePattern = List.of("step_sibling", "WW", "WW");
-	//private static final List<String> choppedLostUpdateWriteSkewPattern = List.of("step_sibling", "RW", "step_sibling", "RW");
-	//private static final List<String> choppedReadSkewPattern = List.of("step_sibling", "RW", "step_sibling", "WR");
 	private static final List<String> dirtyReadPattern = Arrays.asList(new String[]{"X", "WR", "RW"});
 	private static final List<String> dirtyWritePattern = Arrays.asList(new String[]{"X", "WW", "WW"});
 	private static final List<String> dirtyWritePattern2 = Arrays.asList(new String[]{"X", "WW", "X", "WW"});
@@ -64,12 +56,6 @@ public class Transformer extends BodyTransformer {
 	private static final Map<List<String>, String> structure2anmlName;
     static {
         Map<List<String>, String> auxMap = new HashMap<List<String>, String>();
-		//auxMap.put(choppedDirtyReadPattern, "Dirty Read");
-		//auxMap.put(nonRepeatableReadPattern, "Non-repeatable Read");
-		//auxMap.put(choppedNonRepeatableReadPattern, "Non-repeatable Read");
-		//auxMap.put(choppedDirtyWritePattern, "Dirty Write");
-		//auxMap.put(choppedLostUpdateWriteSkewPattern, "Lost Update/Write Skew");
-		//auxMap.put(choppedReadSkewPattern, "Read Skew");
         auxMap.put(dirtyReadPattern, "Dirty Reads");
 		auxMap.put(dirtyWritePattern, "Dirty Writes");
 		auxMap.put(dirtyWritePattern2, "Dirty Writes");
@@ -85,7 +71,6 @@ public class Transformer extends BodyTransformer {
 	protected void internalTransform(Body b, String phaseName, Map<String, String> options) {
 		if (bodies == null)
 			bodies = new ArrayList<Body>();
-		// options.put("brief", "fa");
 		Map<String, String> modifiedOptions = new HashMap<String, String>();
 		for (String option : options.keySet())
 			modifiedOptions.put(option, options.get(option));
@@ -217,13 +202,10 @@ public class Transformer extends BodyTransformer {
 								anml2.generateCycleStructure();
 								System.out.println("structure3: "+anml2.getCycleStructure());
 								seenVersAnmls.add(anml2);
-								// seenStructures.addStructure(anml2.getCycleStructure());
-								// seenStructures.writeToCSV(seenStructures.size(), iter - 1, anml2);
+
 								long anml2_finish_time = System.currentTimeMillis();
 								anml2.setExtractionTime(-1, anml2_finish_time - anml2_begin_time);
-								// anml2.announce(false, seenStructures.size());
-								// LOG.info("Versioned anomaly generated (" + seenStructures.size() + ") -- " + anml2);
-								
+
 								// Commented since it is not being used and contributing to an error
 								anml2.announce(false, seenVersAnmls.size());
 								LOG.info("Versioned anomaly generated (" + seenVersAnmls.size() + ") -- " + anml2);
