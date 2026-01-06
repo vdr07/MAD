@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:20.04 AS builder
 LABEL authors="jrsoares"
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -54,10 +54,12 @@ ENV CLOTHO_RT_PATH=/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/rt.jar \
     CLOTHO_JCE_PATH=/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/jce.jar \
     JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8"
 
+FROM builder AS runner
 # Clone Mad repository
 RUN git clone https://github.com/vdr07/MAD.git
 
 WORKDIR "MAD"
+RUN git pull
 RUN chmod +x mad.sh
 RUN make benchmark=tpcc
 

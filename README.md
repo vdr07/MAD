@@ -65,7 +65,7 @@ docker compose up -d --build
 
 If the deployment goes well, you should see a success message as so:
 
-![DockerComposeSuccess](readme_docs/DockerComposeSuccess.png)
+![DockerComposeSuccess](readme/DockerComposeSuccess.png)
 
 You can also see their running status by running the command:
 ``` 
@@ -73,7 +73,7 @@ docker ps
 ```
 
 To which you should see a similar output to the image bellow, where STATUS of all docker containers is set to **Up**:
-![DockerComposePS](readme_docs/DockerComposePS.png)
+![DockerComposePS](readme/DockerComposePS.png)
 
 ### Shutting down the deployment
 If at any point you need to shutdown the deployment or restart the experiments, you may do so by running the command:
@@ -83,7 +83,7 @@ docker compose down
 
 To which you should see a successful shutdown by observing a similar output:
 
-![DockerComposeDown](readme_docs/DockerComposeDown.png)
+![DockerComposeDown](readme/DockerComposeDown.png)
 
 ## Test Run
 
@@ -105,11 +105,11 @@ Both clusters are ready once both containers are observed in the `UN` state and 
 
 Example of an unready / loading scenario (Note that the node representing DC1 is **UP** (via the state **UN** and **Load** different than **?**) while DC2 is still down (via the state **DN** and **Load** = **?**)
 
-![CassandraNotReady](readme_docs/CassandraNotReady.png)
+![CassandraNotReady](readme/CassandraNotReady.png)
 
 Example of a ready state / scenario, with both clusters showing the **UP** state:
 
-![CassandraNotReady](readme_docs/CassandraReady.png)
+![CassandraNotReady](readme/CassandraReady.png)
 
 ### Build
 To ensure the code has compiled correctly, run the command:
@@ -119,7 +119,7 @@ make benchmark=tpcc
 
 It should return a **BUILD SUCCESSFUL** message like so:
 
-![BuildSuccessful](readme_docs/BuildSuccessful.png)
+![BuildSuccessful](readme/BuildSuccessful.png)
 
 ### Test Run
 
@@ -131,6 +131,11 @@ rm analyzer/src/benchmarks/tpcc/decomposition.json
 cp analyzer/src/benchmarks/tpcc/mono_decomposition.json analyzer/src/benchmarks/tpcc/decomposition.json
 ./mad.sh --analyze tpcc | tee results/tpcc_mono
 ```
+
+The test scenario should take around 25-30 seconds to run, and should return a `BUILD SUCCESSFUL` message, including the information about the AR compile time and anomaly detection:
+
+![SuccessTestCase](readme/SuccessTestCase.png)
+
 
 ## Manual Installation
 
