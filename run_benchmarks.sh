@@ -3,7 +3,8 @@
 echo "TPC-C"
 make benchmark=tpcc | grep "ç"
 echo "TPC-C Mono"
-mv analyzer/src/benchmarks/tpcc/mono_decomposition.json analyzer/src/benchmarks/tpcc/decomposition.json
+rm analyzer/src/benchmarks/tpcc/decomposition.json
+cp analyzer/src/benchmarks/tpcc/mono_decomposition.json analyzer/src/benchmarks/tpcc/decomposition.json
 ./mad.sh --analyze tpcc | tee results/tpcc_mono
 cat results/tpcc_mono | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -e "Buildfile" -e "analyzing" -e "structure1" -e "structure3" -e "java].$" > results/tpcc_mono_short
 rm results/tpcc_mono
@@ -15,7 +16,8 @@ cat results/tpcc_best | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -
 rm results/tpcc_best
 mv analyzer/src/benchmarks/tpcc/decomposition.json analyzer/src/benchmarks/tpcc/best_decomposition.json
 echo "TPC-C Full"
-mv analyzer/src/benchmarks/tpcc/full_decomposition.json analyzer/src/benchmarks/tpcc/decomposition.json
+rm -f analyzer/src/benchmarks/tpcc/decomposition.json
+cp analyzer/src/benchmarks/tpcc/full_decomposition.json analyzer/src/benchmarks/tpcc/decomposition.json
 ./mad.sh --analyze tpcc | tee results/tpcc_full
 cat results/tpcc_full | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -e "Buildfile" -e "analyzing" -e "structure1" -e "structure3" -e "java].$" > results/tpcc_full_short
 rm results/tpcc_full

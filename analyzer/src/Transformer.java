@@ -195,9 +195,13 @@ public class Transformer extends BodyTransformer {
 						ConstantArgs._current_version_enforcement = false;
 						anml1 = zdr.analyze(1, seenStructures.getStructures(), seenAnmls, includedTables, null, txnsNamesCombs.get(txnsNamesCombIdx));
 						if (anml1 != null) {
+							int detected_versions = 1;
+							VLOG(1, "Anomaly Detected. Identifying versions of the same anomaly.");
+							VLOG(1, "Currently Identified Versions: " + detected_versions);
+
 							VLOG(2, "Unversioned anomaly generated: " + anml1);
 							anml1.generateCycleStructure();
-							System.out.println("structure1: "+anml1.getCycleStructure());
+							VLOG(2, "structure1: "+anml1.getCycleStructure());
 							seenAnmls.add(anml1);
 							seenStructures.addStructure(anml1.getCycleStructure());
 							seenStructures.writeToCSV(seenStructures.size(), iter - 1, anml1);
@@ -206,10 +210,11 @@ public class Transformer extends BodyTransformer {
 							anml2 = zdr.analyze(2, null, seenAnmls, includedTables, anml1, txnsNamesCombs.get(txnsNamesCombIdx));
 							if (anml2 != null) {
 
-								anml2.generateCycleStructure();
-								System.out.println("structure3: "+anml2.getCycleStructure());
-								seenVersAnmls.add(anml2);
+								VLOG(1, "Currently Identified Versions: " + ++detected_versions);
 
+								anml2.generateCycleStructure();
+								VLOG(2, "structure3: "+anml2.getCycleStructure());
+								seenVersAnmls.add(anml2);
 								long anml2_finish_time = System.currentTimeMillis();
 								anml2.setExtractionTime(-1, anml2_finish_time - anml2_begin_time);
 
@@ -224,8 +229,9 @@ public class Transformer extends BodyTransformer {
 									if (anml3 == null)
 										VLOG(2, "No structurally similar anomaly exists");
 									while (anml3 != null) {
+										VLOG(1, "Currently Identified Versions: " + ++detected_versions);
 										anml3.generateCycleStructure();
-										System.out.println("structure3: "+anml3.getCycleStructure());
+										VLOG(2,"structure3: "+anml3.getCycleStructure());
 										seenAnmls.add(anml3);
 										seenVersAnmls.add(anml3);
 										seenStructures.addStructure(anml3.getCycleStructure());
@@ -243,6 +249,7 @@ public class Transformer extends BodyTransformer {
 							} else
 								VLOG(2, "No versioning exists for: " + anml1);
 							anml1.closeCtx();
+							VLOG(1, "Finished Versioning detection");
 
 						} else {
 							zdr.closeCtx();
