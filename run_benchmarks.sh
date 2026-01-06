@@ -4,7 +4,7 @@ echo "TPC-C"
 make benchmark=tpcc | grep "ç"
 echo "TPC-C Mono"
 mv analyzer/src/benchmarks/tpcc/mono_decomposition.json analyzer/src/benchmarks/tpcc/decomposition.json
-./mad.sh --analyze tpcc > results/tpcc_mono
+./mad.sh --analyze tpcc | tee results/tpcc_mono
 cat results/tpcc_mono | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -e "Buildfile" -e "analyzing" -e "structure1" -e "structure3" -e "java].$" > results/tpcc_mono_short
 rm results/tpcc_mono
 mv analyzer/src/benchmarks/tpcc/decomposition.json analyzer/src/benchmarks/tpcc/mono_decomposition.json

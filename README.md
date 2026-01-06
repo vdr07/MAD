@@ -20,5 +20,4 @@ MAD follows the same running instruction as of CLOTHO, which can be found in det
 For reproducibility, we provide `run_benchmark.sh`, which analyses the seven benchmarks and respective decomponsotions evaluated in the paper.
 
 ---
-Copyright (c) 2019 Kia Rahmani
-
+Copyright (c) 2019 Kia Rahmani, Rafael Soares

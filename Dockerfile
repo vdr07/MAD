@@ -59,6 +59,6 @@ RUN git clone https://github.com/vdr07/MAD.git
 
 WORKDIR "MAD"
 RUN chmod +x mad.sh
-RUN make benchmark=tpcc 
+RUN make benchmark=tpcc
 
 CMD ["sleep", "infinity"]
