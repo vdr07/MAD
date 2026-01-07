@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Collections;
 import java.util.stream.Collectors;
+import java.io.File;
 import utils.Tuple;
 
 import org.apache.logging.log4j.LogManager;
@@ -23,6 +24,9 @@ import fec.utils.DDLParser;
 import ar.Application;
 import ar.Transaction;
 import ar.OriginalTransaction;
+import ar.statement.Statement;
+import ar.statement.InvokeStmt;
+
 import soot.Body;
 import soot.BodyTransformer;
 import soot.PhaseOptions;
@@ -290,6 +294,7 @@ public class Transformer extends BodyTransformer {
 		for (Anomaly seenVersAnml : seenVersAnmls) {
 			List<String> seenTxns = new ArrayList<>();
 			List<String> seenOriginalTxns = new ArrayList<>();
+			List<String> seenEntities = new ArrayList<>();
 
 			List<Tuple<String, String>> edgeTypesLeftOps = new ArrayList<>(); 
 			for (Tuple<String, Tuple<String, String>> edge : seenVersAnml.getCycleStructure()) {
@@ -325,10 +330,18 @@ public class Transformer extends BodyTransformer {
 					seenOriginalTxns.add(origTxnName);
 				}
 
+				Statement s = t.getStmt(rightIndex-1);
+				String entityName = ((InvokeStmt) s).getQuery().getTable().getName();
+
+				if (!seenEntities.contains(entityName)){
+					seenEntities.add(entityName);
+				}
+
 			}
 
 			Collections.sort(seenTxns);
 			Collections.sort(seenOriginalTxns);
+			Collections.sort(seenEntities);
 
 			if(!txnsInteractions.containsKey(seenTxns)) {
 				txnsInteractions.put(seenTxns, 1);
@@ -356,7 +369,9 @@ public class Transformer extends BodyTransformer {
 			anmlName = anmlsTypesPatterns.get(edgeTypesLeftOps);
 			String subTransactions = "[" + String.join(", ", seenTxns) + "]";
 			String originalTxns = "[" + String.join(", ", seenOriginalTxns) + "]";
-			results.addAnomaly(anmlName, seenVersAnml.getEntitiesNames(), subTransactions, originalTxns);
+			String entities = "[" + String.join(", ", seenEntities) + "]";
+
+			results.addAnomaly(anmlName, entities, subTransactions, originalTxns);
 			currentCounterValue = anmlsCounters.get(anmlName);
 			anmlsCounters.put(anmlName, ++currentCounterValue);
 		}
@@ -374,11 +389,14 @@ public class Transformer extends BodyTransformer {
 			}
 		}
 
+		results.setFinalStatistics(System.currentTimeMillis()-start_fec);
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			String json = mapper.writeValueAsString(results);
+
 			System.out.println(json);
-		} catch (JsonProcessingException e) {
+			mapper.writeValue(new File("results.json"), results);
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
