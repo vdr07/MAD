@@ -158,4 +158,61 @@ public class Application {
 		}
 		return result.toArray(new String[size]);
 	}
+
+	public String[] getAllTxnsNamesByOrigTxns(List<String> origTxnNames) {
+		List<String> result = new ArrayList<String>();
+		int size = 0;
+		for (Transaction t : this.txns) {
+			String originalTransactionName = t.getOriginalTransaction();
+			if(origTxnNames.contains(originalTransactionName)) {
+				result.add(t.getName());
+				size++;
+			}
+		}
+		return result.toArray(new String[size]);
+	}
+
+	public String[] getAllStmtTypesByOrigTxns(List<String> origTxnNames) {
+		List<String> result = new ArrayList<String>();
+		int size = 0;
+		for (Transaction t : this.txns) {
+			String originalTransactionName = t.getOriginalTransaction();
+			if(origTxnNames.contains(originalTransactionName)) {
+				for (String s : t.getStmtNames()) {
+					result.add(s);
+					size++;
+				}
+			}
+		}
+		return result.toArray(new String[size]);
+	}
+
+	public List<String> getAllUpdateStmtTypesByOrigTxns(List<String> origTxnNames) {
+		List<String> result = new ArrayList<String>();
+		for (Transaction t : this.txns) {
+			String originalTransactionName = t.getOriginalTransaction();
+			if(origTxnNames.contains(originalTransactionName)) {
+				for (String s : t.getUpdateStmtNames()) {
+					result.add(s);
+				}
+			}
+		}
+		return result;
+	}
+
+	public String[] getAllMicroNamesByOrigTxns(List<String> origTxnNames) {
+		List<String> result = new ArrayList<String>();
+		int size = 0;
+		for (Transaction t : this.txns) {
+			String originalTransactionName = t.getOriginalTransaction();
+			if(origTxnNames.contains(originalTransactionName)) {
+				String microserviceName = t.getMicroservice();
+				if(microserviceName != null && !result.contains(microserviceName)) {
+					result.add(microserviceName);
+					size++;
+				}
+			}
+		}
+		return result.toArray(new String[size]);
+	}
 }

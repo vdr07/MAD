@@ -1,0 +1,41 @@
+{
+    "M1": [
+        "supplier"
+    ],
+    "M2": [
+        "signon"
+    ],
+    "M3": [
+        "account"
+    ],
+    "M4": [
+        "profile"
+    ],
+    "M5": [
+        "bannerdata"
+    ],
+    "M6": [
+        "orders"
+    ],
+    "M7": [
+        "order_status"
+    ],
+    "M8": [
+        "lineitem"
+    ],
+    "M9": [
+        "category"
+    ],
+    "M10": [
+        "product"
+    ],
+    "M11": [
+        "items"
+    ],
+    "M12": [
+        "inventory"
+    ],
+    "M13": [
+        "sequence"
+    ]
+}

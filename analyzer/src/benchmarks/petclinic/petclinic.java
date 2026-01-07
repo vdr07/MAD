@@ -130,16 +130,33 @@ public class petclinic {
 		petTypes.next();
 	}
 
-	public void ownerProcessUpdateOwnerForm(int currentId, int newId) throws SQLException {
+	public void ownerProcessUpdateOwnerForm(int newOwner, int currentId, int newId, String firstName, String lastName,
+			String address, String city, String telephone) throws SQLException {
+		String insertOwnerSQL = 
+				"INSERT INTO " + "OWNERS" +
+				" (id, first_name, last_name, address, city, telephone) " +
+				" VALUES ( ?, ?, ?, ?, ?, ? )";
+
 		String updateOwnerSQL = 
 				"UPDATE " + "OWNERS" +
 				"   SET id = ?" +
 				" WHERE id = ?";
-
-		PreparedStatement updateOwner = connect.prepareStatement(updateOwnerSQL);
-		updateOwner.setInt(1, currentId);
-		updateOwner.setInt(2, newId);
-		updateOwner.executeUpdate();
+				
+		if (newOwner == 1) {
+			PreparedStatement insertOwner = connect.prepareStatement(insertOwnerSQL);
+			insertOwner.setInt(1, newId);
+			insertOwner.setString(2, firstName);
+			insertOwner.setString(3, lastName);
+			insertOwner.setString(4, address);
+			insertOwner.setString(5, city);
+			insertOwner.setString(6, telephone);
+			insertOwner.executeUpdate();
+		} else {
+			PreparedStatement updateOwner = connect.prepareStatement(updateOwnerSQL);
+			updateOwner.setInt(1, currentId);
+			updateOwner.setInt(2, newId);
+			updateOwner.executeUpdate();
+		}
 	}
 
 	public void ownerShowOwner(int ownerId) throws SQLException {
@@ -206,9 +223,9 @@ public class petclinic {
 
 	public void petProcessCreationForm(int petId, String petName, String birthDate, 
 			int typeId, int ownerId, int isNew) throws SQLException {
-		String findPetByNameSQL = 
+		String findPetByNameAndOwnerIdSQL = 
 				"SELECT id FROM " + "PETS"+
-				" WHERE name = ?";
+				" WHERE name = ? and owner_id = ?";
 
 		String insertPetSQL = 
 				"INSERT INTO " + "PETS" +
@@ -223,9 +240,10 @@ public class petclinic {
 				"       owner_id = ?" +
 				" WHERE id = ?";
 
-		PreparedStatement findPetByName = connect.prepareStatement(findPetByNameSQL);
-		findPetByName.setString(1, petName);
-		ResultSet pet = findPetByName.executeQuery();
+		PreparedStatement findPetByNameAndOwnerId = connect.prepareStatement(findPetByNameAndOwnerIdSQL);
+		findPetByNameAndOwnerId.setString(1, petName);
+		findPetByNameAndOwnerId.setInt(2, ownerId);
+		ResultSet pet = findPetByNameAndOwnerId.executeQuery();
 		if (pet.next()) {
 			System.out.println("duplicate pet name");
 			return;
@@ -248,7 +266,6 @@ public class petclinic {
 			updatePet.setInt(5, petId);
 			updatePet.executeUpdate();
 		}
-
 	}
 
 	public void petInitUpdateForm(int petId) throws SQLException {
@@ -262,16 +279,51 @@ public class petclinic {
 		pet.next();
 	}
 
-	public void petProcessUpdateForm(int ownerId, int petId) throws SQLException {
-		String updatePetOwnerSQL = 
+	public void petProcessUpdateForm(int petId, String petName, String birthDate, 
+			int typeId, int ownerId, int isNew) throws SQLException {
+		String findPetByNameAndOwnerIdSQL = 
+				"SELECT id FROM " + "PETS"+
+				" WHERE name = ? and owner_id = ?";
+
+		String insertPetSQL = 
+				"INSERT INTO " + "PETS" +
+				" (id, name, birth_date, type_id, owner_id) " +
+				" VALUES ( ?, ?, ?, ?, ? )";
+
+		String updatePetSQL = 
 				"UPDATE " + "PETS" +
-				"   SET owner_id = ?" +
+				"   SET name = ?," +
+				"       birth_date = ?," +
+				"       type_id = ?," +
+				"       owner_id = ?" +
 				" WHERE id = ?";
 
-		PreparedStatement updatePetOwner = connect.prepareStatement(updatePetOwnerSQL);
-		updatePetOwner.setInt(1, ownerId);
-		updatePetOwner.setInt(2, petId);
-		updatePetOwner.executeUpdate();
+		PreparedStatement findPetByNameAndOwnerId = connect.prepareStatement(findPetByNameAndOwnerIdSQL);
+		findPetByNameAndOwnerId.setString(1, petName);
+		findPetByNameAndOwnerId.setInt(2, ownerId);
+		ResultSet pet = findPetByNameAndOwnerId.executeQuery();
+		if (pet.next()) {
+			System.out.println("duplicate pet name");
+			return;
+		}
+
+		if (isNew == 1) {
+			PreparedStatement insertPet = connect.prepareStatement(insertPetSQL);
+			insertPet.setInt(1, petId);
+			insertPet.setString(2, petName);
+			insertPet.setString(3, birthDate);
+			insertPet.setInt(4, typeId);
+			insertPet.setInt(5, ownerId);
+			insertPet.executeUpdate();
+		} else {
+			PreparedStatement updatePet = connect.prepareStatement(updatePetSQL);
+			updatePet.setString(1, petName);
+			updatePet.setString(2, birthDate);
+			updatePet.setInt(3, typeId);
+			updatePet.setInt(4, ownerId);
+			updatePet.setInt(5, petId);
+			updatePet.executeUpdate();
+		}
 	}
 
 	// VetController
@@ -306,38 +358,7 @@ public class petclinic {
 		}
 	}
 
-	public void vetShowJsonVetList() throws SQLException {
-		String findVetsSQL = 
-				"SELECT * FROM " + "VETS"+
-				" WHERE 1 = 1";
-
-		String findVetSpecialitiesSQL = 
-				"SELECT specialty_id FROM " + "VET_SPECIALTIES"+
-				" WHERE vet_id = ?";
-
-		String findSpecialitiesSQL = 
-				"SELECT * FROM " + "SPECIALTIES"+
-				" WHERE id = ?";
-
-		PreparedStatement findVets = connect.prepareStatement(findVetsSQL);
-		ResultSet vets = findVets.executeQuery();
-		while (vets.next()) {
-			int vetId = vets.getInt("id");
-
-			PreparedStatement findVetSpecialities = connect.prepareStatement(findVetSpecialitiesSQL);
-			findVetSpecialities.setInt(1, vetId);
-			ResultSet vetSpecialty = findVetSpecialities.executeQuery();
-			vetSpecialty.next();
-			int specialtyId = vetSpecialty.getInt("specialty_id");
-
-			PreparedStatement findSpecialities = connect.prepareStatement(findSpecialitiesSQL);
-			findSpecialities.setInt(1, specialtyId);
-			ResultSet specialty = findSpecialities.executeQuery();
-			specialty.next();
-		}
-	}
-
-	public void vetShowXmlVetList() throws SQLException {
+	public void vetShowResourcesVetList() throws SQLException {
 		String findVetsSQL = 
 				"SELECT * FROM " + "VETS"+
 				" WHERE 1 = 1";
@@ -382,26 +403,5 @@ public class petclinic {
 		insertVisit.setString(3, description);
 		insertVisit.setInt(4, petId);
 		insertVisit.executeUpdate();
-	}
-
-	public void visitShowVisits(int petId) throws SQLException {
-		String findPetByIdSQL = 
-				"SELECT * FROM " + "PETS"+
-				" WHERE id = ?";
-		
-		String findPetVisitsSQL = 
-				"SELECT * FROM " + "VISITS"+
-				" WHERE pet_id = ?";
-
-		PreparedStatement findPetById = connect.prepareStatement(findPetByIdSQL);
-		findPetById.setInt(1, petId);
-		ResultSet pet = findPetById.executeQuery();
-		pet.next();
-		int petTableId = pet.getInt("id");
-
-		PreparedStatement findPetVisits = connect.prepareStatement(findPetVisitsSQL);
-		findPetVisits.setInt(1, petTableId);
-		ResultSet petVisits = findPetVisits.executeQuery();
-		petVisits.next();
 	}
 }

@@ -1,0 +1,9 @@
+{
+    "M1": [
+        "events",
+        "event_user"
+    ],
+    "M2": [
+        "users"
+    ]
+}
