@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.stream.Collectors;
 import java.io.File;
 import utils.Tuple;
+import java.util.Iterator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -309,7 +310,6 @@ public class Transformer extends BodyTransformer {
 				String leftOpType = edge.y.x.substring(leftIndex+1, rightIndex);
 				Tuple<String, String> edgeTypeLeftOp = new Tuple<String, String>(edgeType, leftOpType);
 				edgeTypesLeftOps.add(edgeTypeLeftOp);
-
 				Tuple<String,String> relatedOps = edge.y;
 				String leftTxn = relatedOps.x.split("-")[0];
 				leftTxn = leftTxn.substring(1,leftTxn.length());
@@ -330,7 +330,10 @@ public class Transformer extends BodyTransformer {
 					seenOriginalTxns.add(origTxnName);
 				}
 
-				Statement s = t.getStmt(rightIndex-1);
+				int stmtLeftIndexBound = edge.y.x.indexOf("#", rightIndex + 1);
+				int StmtRightIndexBound = edge.y.x.indexOf("|", stmtLeftIndexBound + 1);
+				String stmtIndex = edge.y.x.substring(stmtLeftIndexBound+1, StmtRightIndexBound);
+				Statement s = t.getStmt(Integer.parseInt(stmtIndex)-1);
 				String entityName = ((InvokeStmt) s).getQuery().getTable().getName();
 
 				if (!seenEntities.contains(entityName)){
