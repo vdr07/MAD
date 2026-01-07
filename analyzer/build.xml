@@ -71,7 +71,7 @@
         <java classname="Transformer" failonerror="true" fork="true">
 		<classpath refid="CLOTHO.classpath"/>
 		<!-- TODO: is hard coded for the system under test-->
-		<sysproperty key="java.library.path" path="/mnt/c/Users/valen/Desktop/Thesis/z3-z3-4.11.2/build"/>
+		<sysproperty key="java.library.path" path="/opt/z3-z3-4.11.2/build"/>
         <env key="CLOTHO_RT_PATH" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/rt.jar"/>
         <env key="CLOTHO_JCE_PATH" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/jce.jar"/>
     <!--sysproperty key="java.library.path" path="/Users/Kiarash/dev/packages/z3/build"/-->

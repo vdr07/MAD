@@ -5,8 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static logging.VLOGClass.*;
 
 import exceptions.ColumnDoesNotExist;
 import exceptions.UnknownUnitException;
@@ -49,7 +48,6 @@ import soot.jimple.internal.JGotoStmt;
 import soot.jimple.toolkits.infoflow.FakeJimpleLocal;
 
 public class UnitHandler {
-	private static final Logger LOG = LogManager.getLogger(Transformer.class);
 	UnitData data;
 	ValueToExpression veTranslator;
 	QueryPatcher queryPatcher;
@@ -70,7 +68,7 @@ public class UnitHandler {
 	public void extractParams() {
 		int iter = 0;
 		for (Local l : body.getParameterLocals()) {
-			LOG.info("parameter " + l + " extracted");
+			VLOG(2, "parameter " + l + " extracted");
 			this.data.addParam(l, body.getParameterRefs().get(iter++));
 		}
 	}
@@ -95,7 +93,7 @@ public class UnitHandler {
 			data.units.add(u);
 			data.addCondToUnit(u, new ConstValExp(true));
 		}
-		LOG.info("Initial list of units created");
+		VLOG(2, "Initial list of units created");
 		for (Unit u : body.getUnits()) {
 			switch (u.getClass().getSimpleName()) {
 			case "GIdentityStmt":
@@ -118,7 +116,7 @@ public class UnitHandler {
 				ifInitHandler(u);
 				break;
 			default:
-				LOG.fatal("Unknown Jimple/Grimp unit class: " + u.getClass().getSimpleName());
+				FATAL("Unknown Jimple/Grimp unit class: " + u.getClass().getSimpleName());
 				throw new UnknownUnitException("Unknown Jimple/Grimp unit class: " + u.getClass().getSimpleName());
 			}
 		}
@@ -128,7 +126,7 @@ public class UnitHandler {
 	public void finalizeStatements() throws UnknownUnitException {
 		for (Unit u : data.getQueries().keySet()) {
 			data.getStmtByUnit(u).updatePathCond(data.getCondFromUnit(u));
-			LOG.info("Path condition patched: " + data.getCondFromUnit(u));
+			VLOG(2, "Path condition patched: " + data.getCondFromUnit(u));
 		}
 
 	}
@@ -140,7 +138,7 @@ public class UnitHandler {
 		// extract and create queries with holes
 		for (Unit u : body.getUnits()) {
 			if (data.isExecute(u)) {
-				LOG.info("SQL statement detected:  " + u);
+				VLOG(2, "SQL statement detected:  " + u);
 				Query query = extractQuery(data.getExecuteValue(u), u);
 				this.data.addQuery(lastPreparedStatementUnit, query);
 			}
@@ -225,7 +223,7 @@ public class UnitHandler {
 			// the program logic not affecting queries is abstracted
 			if (data.getQueries().containsKey(u)) {
 				queryPatcher.patchQuery(u, veTranslator, data);
-				LOG.info("Query patched: " + data.getQueryFromUnit(u));
+				VLOG(2, "Query patched: " + data.getQueryFromUnit(u));
 			}
 		}
 		// loop #4
@@ -284,7 +282,7 @@ public class UnitHandler {
 		case "StringConstant":
 			StringConstant expr2 = (StringConstant) v;
 			Query query = new Query(expr2.toString(), data, tables);
-			LOG.info("SQL statement extracted: " + query);
+			VLOG(2, "SQL statement extracted: " + query);
 			return query;
 
 		case "GVirtualInvokeExpr":

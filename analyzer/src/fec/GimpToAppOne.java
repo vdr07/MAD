@@ -7,8 +7,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static logging.VLOGClass.*;
 
 import java.io.FileReader;
 
@@ -36,7 +35,6 @@ import soot.Value;
 import soot.tagkit.*;
 
 public class GimpToAppOne extends GimpToApp {
-	private static final Logger LOG = LogManager.getLogger(Transformer.class);
 
 	public GimpToAppOne(Scene v2, ArrayList<Body> bodies, ArrayList<Table> tables) {
 		super(v2, bodies, tables);
@@ -67,13 +65,13 @@ public class GimpToAppOne extends GimpToApp {
 			if (!b.getMethod().getName().contains("init")
 					&& !ConstantArgs._EXCLUDED_TXNS.contains(b.getMethod().getName())) {
 				OriginalTransaction origTxn = extractOrigTxn(b, app, entitiesMicroservicesMap);
-				LOG.info("Transaction <<" + b.getMethod().getName() + ">> compiled to AR");
+				VLOG(2, "Transaction <<" + b.getMethod().getName() + ">> compiled to AR");
 
 				if (origTxn != null)
 					app.addOrigTxn(origTxn);
 			}
 		}
-		LOG.info("AR application successfully generated");
+		VLOG(2, "AR application successfully generated");
 		return app;
 	}
 
@@ -87,7 +85,7 @@ public class GimpToAppOne extends GimpToApp {
 		// INTERNAL ANALYSIS
 		// Parameter extraction
 		unitHandler.extractParams();
-		LOG.info("Original Transaction <<" + name + ">> parameters extracted");
+		VLOG(2, "Original Transaction <<" + name + ">> parameters extracted");
 
 		for (Local l : unitHandler.data.getParams().keySet()) {
 			Type t = Type.INT; // just to instantiate it, needed for calling the typing function
@@ -102,13 +100,13 @@ public class GimpToAppOne extends GimpToApp {
 		}
 
 		unitHandler.InitialAnalysis();
-		LOG.info("Initial analysis done");
+		VLOG(2,"Initial analysis done");
 		unitHandler.extractStatements();
-		LOG.info("Statements extracted");
+		VLOG(2,"Statements extracted");
 		unitHandler.finalAnalysis();
-		LOG.info("Final analysis done");
+		VLOG(2,"Final analysis done");
 		unitHandler.finalizeStatements();
-		LOG.info("Statements finalized");
+		VLOG(2,"Statements finalized");
 
 		// Considering that indexes start at 0 and the first subtxn will be at 0
 		int subTransactionsIdx = -1;

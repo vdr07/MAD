@@ -2,8 +2,7 @@ package fec.utils;
 
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static logging.VLOGClass.*;
 
 import exceptions.ColumnDoesNotExist;
 import exceptions.UnknownUnitException;
@@ -41,7 +40,6 @@ import soot.jimple.StringConstant;
 import soot.jimple.toolkits.infoflow.FakeJimpleLocal;
 
 public class ValueToExpression {
-	private static final Logger LOG = LogManager.getLogger(Transformer.class);
 	static UnitData data;
 
 	public ValueToExpression(UnitData data) {
@@ -150,7 +148,7 @@ public class ValueToExpression {
 		}
 
 		String resName = "Abs-" + tp + "#" + (data.absIter++);
-		LOG.warn(v.getClass().getSimpleName() + " - Unhandled case - will abstract to: " + resName + "\n");
+		VLOG(3, v.getClass().getSimpleName() + " - Unhandled case - will abstract to: " + resName + "\n");
 		Expression defResult = new UnknownExp(resName, -1);
 		data.addExp(new FakeJimpleLocal(resName, null, null), defResult);
 		return defResult;
