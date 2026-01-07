@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Collections;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -99,6 +100,20 @@ public class Anomaly {
 			return Integer.valueOf(o.substring(o.length() - 1, o.length()));
 	}
 
+	public String getEntitiesNames() {
+		if (tables == null || tables.isEmpty()) {
+			return "[]";
+		}
+
+		List<String> names = new ArrayList<>();
+		for (Table t : tables) {
+			names.add(t.getName());
+		}
+
+		Collections.sort(names);
+
+		return "[" + String.join(", ", names) + "]";
+	}
 	public void generateCycleStructure() {
 		Map<String, FuncDecl> functions = getFunctions();
 		conflictingRow = new HashMap<>();

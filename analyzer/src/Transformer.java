@@ -30,7 +30,9 @@ import soot.Scene;
 import soot.jimple.JimpleBody;
 import soot.util.cfgcmd.CFGIntermediateRep;
 import Z3.Z3Driver;
-
+import results.Results;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 /**
  * 
  * @author Kia Rahmani (https://kiarahmani.github.io/)
@@ -283,8 +285,12 @@ public class Transformer extends BodyTransformer {
 		Map<List<String>, Integer> txnsInteractions = new HashMap<List<String>, Integer>();
 		Map<String, Integer> txnsAppearance = new HashMap<String, Integer>();
 		String anmlName = "";
+		Results results = new Results();
+
 		for (Anomaly seenVersAnml : seenVersAnmls) {
 			List<String> seenTxns = new ArrayList<>();
+			List<String> seenOriginalTxns = new ArrayList<>();
+
 			List<Tuple<String, String>> edgeTypesLeftOps = new ArrayList<>(); 
 			for (Tuple<String, Tuple<String, String>> edge : seenVersAnml.getCycleStructure()) {
 				String edgeType;
@@ -310,11 +316,20 @@ public class Transformer extends BodyTransformer {
 				} else {
 					txnsAppearance.put(leftTxn, txnsAppearance.get(leftTxn)+1);
 				}
+
 				seenTxns.add(leftTxn);
+				Transaction t = app.getTxnByName(leftTxn);
+				String origTxnName = t.getOriginalTransaction();
+
+				if (!seenOriginalTxns.contains(origTxnName)){
+					seenOriginalTxns.add(origTxnName);
+				}
+
 			}
 
 			Collections.sort(seenTxns);
-			
+			Collections.sort(seenOriginalTxns);
+
 			if(!txnsInteractions.containsKey(seenTxns)) {
 				txnsInteractions.put(seenTxns, 1);
 			} else {
@@ -339,6 +354,9 @@ public class Transformer extends BodyTransformer {
 			}
 
 			anmlName = anmlsTypesPatterns.get(edgeTypesLeftOps);
+			String subTransactions = "[" + String.join(", ", seenTxns) + "]";
+			String originalTxns = "[" + String.join(", ", seenOriginalTxns) + "]";
+			results.addAnomaly(anmlName, seenVersAnml.getEntitiesNames(), subTransactions, originalTxns);
 			currentCounterValue = anmlsCounters.get(anmlName);
 			anmlsCounters.put(anmlName, ++currentCounterValue);
 		}
@@ -354,6 +372,14 @@ public class Transformer extends BodyTransformer {
 			} else {
 				System.out.println(txnName + ": " + txnCount + "/"+seenVersAnmls.size());
 			}
+		}
+
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			String json = mapper.writeValueAsString(results);
+			System.out.println(json);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
 		}
 
 		printStats(app, tables, anmlsCounters, seenVersAnmls.size(), (analysis_finish_time - analysis_begin_time),
