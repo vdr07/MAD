@@ -38,7 +38,7 @@ RUN cd /opt/z3-z3-4.11.2 && \
     python3 scripts/mk_make.py --java && \
     cd build && \
     make -j$(nproc) && \
-    make install \
+    make install
 
 # Prevent daemon from trying to start
 RUN systemctl disable docker || true
