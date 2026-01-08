@@ -204,3 +204,43 @@ else
   rm results/myweb_full
   mv analyzer/results.json "$RESULTS_PATH/myweb/myweb_full.json"
 fi
+
+echo "react"
+make benchmark=spring_mvc_react
+mkdir -p "$RESULTS_PATH/react"
+
+echo "react Mono"
+if [ -e "$RESULTS_PATH/react/react_mono.json" ]; then
+    echo "react Mono was already executed, skipping"
+else
+  rm -f analyzer/src/benchmarks/spring_mvc_react/decomposition.json
+  cp analyzer/src/benchmarks/spring_mvc_react/mono_decomposition.json analyzer/src/benchmarks/spring_mvc_react/decomposition.json
+  ./mad.sh --analyze spring_mvc_react | tee results/spring_mvc_react_mono
+  cat results/spring_mvc_react_mono | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -e "Buildfile" -e "analyzing" -e "structure1" -e "structure3" -e "java].$" > results/spring_mvc_react_mono_short
+  rm results/spring_mvc_react_mono
+  mv analyzer/results.json "$RESULTS_PATH/react/react_mono.json"
+fi
+
+echo "react Best"
+if [ -e "$RESULTS_PATH/react/react_best.json" ]; then
+    echo "react Best was already executed, skipping"
+else
+  rm -f analyzer/src/benchmarks/spring_mvc_react/decomposition.json
+  cp analyzer/src/benchmarks/spring_mvc_react/best_decomposition.json analyzer/src/benchmarks/spring_mvc_react/decomposition.json
+  ./mad.sh --analyze spring_mvc_react | tee results/spring_mvc_react_best
+  cat results/spring_mvc_react_best | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -e "Buildfile" -e "analyzing" -e "structure1" -e "structure3" -e "java].$" > results/spring_mvc_react_best_short
+  rm results/spring_mvc_react_best
+  mv analyzer/results.json "$RESULTS_PATH/react/react_best.json"
+fi
+
+echo "react Full"
+if [ -e "$RESULTS_PATH/react/react_full.json" ]; then
+    echo "react Full was already executed, skipping"
+else
+  rm -f analyzer/src/benchmarks/spring_mvc_react/decomposition.json
+  cp analyzer/src/benchmarks/spring_mvc_react/full_decomposition.json analyzer/src/benchmarks/spring_mvc_react/decomposition.json
+  ./mad.sh --analyze spring_mvc_react | tee results/spring_mvc_react_full
+  cat results/spring_mvc_react_full | grep -v -e "INFO" -e "WARN" -e "Soot" -e "Transformer" -e "Buildfile" -e "analyzing" -e "structure1" -e "structure3" -e "java].$" > results/spring_mvc_react_full_short
+  rm results/spring_mvc_react_full
+  mv analyzer/results.json "$RESULTS_PATH/react/react_full.json"
+fi
