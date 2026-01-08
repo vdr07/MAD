@@ -67,9 +67,13 @@ RUN git clone https://github.com/vdr07/MAD.git MAD
 RUN git clone https://github.com/vdr07/MAD.git Sequential
 RUN git clone https://github.com/vdr07/MAD.git WithoutDC
 
-WORKDIR "MAD"
-RUN git pull
-RUN chmod +x mad.sh
+WORKDIR "Sequential"
+RUN git checkout dc_sequential
+RUN make benchmark=tpcc
+WORKDIR "../WithoutDC"
+RUN git checkout no_dc
+RUN make benchmark=tpcc
+WORKDIR "../MAD"
 RUN make benchmark=tpcc
 
 CMD ["sleep", "infinity"]

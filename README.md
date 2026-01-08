@@ -258,8 +258,8 @@ Similarly, we split the execution into two substeps:
 Once both steps have been executed, the reviewer may compile the results back into the `MAD` directory by running the command:
 
 ``` 
-rsync -av /Sequential/results/json /MAD/results/json
-rsync -av /WithoutDC/results/json /MAD/results/json
+rsync -av /Sequential/results/json /MAD/results
+rsync -av /WithoutDC/results/json /MAD/results
 ```
 
 Once compiled, the reviewer may visualize the results by once again starting the Jupyter Notebook as depicted in previous steps.
