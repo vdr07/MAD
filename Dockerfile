@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
     openjdk-8-jdk \
     git \
     python3 \
+    python3-pip \
     ca-certificates \
     curl \
     gnupg \
@@ -27,6 +28,10 @@ RUN apt-get update && apt-get install -y \
     wget \
     binutils \
     build-essential
+
+RUN pip3 install --upgrade pip && \
+    pip3 install jupyterlab && \
+    pip3 install tabulate
 
 # Download Z3 4.11.2 source
 RUN wget https://github.com/Z3Prover/z3/archive/refs/tags/z3-4.11.2.tar.gz -O /tmp/z3-4.11.2.tar.gz && \
@@ -49,6 +54,8 @@ RUN curl -fsSL https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/bi
     | tar -xz -C /opt && \
     ln -s /opt/apache-maven-${MAVEN_VERSION}/bin/mvn /usr/bin/mvn
 
+RUN pip3 install notebook
+
 # Export environment variables required for MAD
 ENV CLOTHO_RT_PATH=/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/rt.jar \
     CLOTHO_JCE_PATH=/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/jce.jar \
@@ -56,7 +63,9 @@ ENV CLOTHO_RT_PATH=/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/rt.jar \
 
 FROM builder AS runner
 # Clone Mad repository
-RUN git clone https://github.com/vdr07/MAD.git
+RUN git clone https://github.com/vdr07/MAD.git MAD
+RUN git clone https://github.com/vdr07/MAD.git Sequential
+RUN git clone https://github.com/vdr07/MAD.git WithoutDC
 
 WORKDIR "MAD"
 RUN git pull
