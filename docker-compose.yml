@@ -6,7 +6,6 @@ services:
     container_name: MAD
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /home/jrsoares/Desktop/MAD:/MADDev
     depends_on:
       - cas1
       - cas2
@@ -14,6 +13,8 @@ services:
       CASSANDRA_CONTACT_POINTS: cas1,cas2
     networks:
       - cassandra-net
+    ports:
+      - "8888:8888"
 
   cas1:
     image: cassandra:latest
@@ -26,8 +27,6 @@ services:
       CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
       CASSANDRA_DC: DC1
       CASSANDRA_RACK: RAC1
-      MAX_HEAP_SIZE: 512M
-      HEAP_NEWSIZE: 128M
       CASSANDRA_SEEDS: cas1
     volumes:
       - cas1-data:/var/lib/cassandra
@@ -45,8 +44,6 @@ services:
       CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
       CASSANDRA_DC: DC2
       CASSANDRA_RACK: RAC2
-      MAX_HEAP_SIZE: 512M
-      HEAP_NEWSIZE: 128M
       CASSANDRA_SEEDS: cas1
     depends_on:
       - cas1

@@ -70,6 +70,7 @@ public class Transformer extends BodyTransformer {
 	}
 
 	public static void main(String[] args) {
+		long exp_start = System.currentTimeMillis();
 		Application app = null;
 		// Anomaly anml1 = null, anml2 = null;
 		int iter = 1;
@@ -167,7 +168,10 @@ public class Transformer extends BodyTransformer {
 						threads[txnsNamesCombIdx] = new Thread(() -> {
 							int current_cycle_length = ConstantArgs._Current_Cycle_Length;
 							do {
-
+								if ( (System.currentTimeMillis() - exp_start) / 60000 > ConstantArgs._MAX_RUNTIME_MINUTES){
+									LOG.info("Timeout reached. Stopping search");
+									return;
+								}
 								LOG.info("New round of analysis for an anomaly of length: "
 										+ current_cycle_length);
 								LOG.info("Analysis for transactions: "
@@ -392,7 +396,13 @@ public class Transformer extends BodyTransformer {
 			}
 		}
 
-		results.setFinalStatistics(System.currentTimeMillis()-start_fec);
+		long final_time = System.currentTimeMillis()-start_fec;
+
+		if (final_time / 60000 > ConstantArgs._MAX_RUNTIME_MINUTES){
+			final_time = -1;
+		}
+
+		results.setFinalStatistics(final_time);
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			String json = mapper.writeValueAsString(results);
