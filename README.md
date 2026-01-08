@@ -263,6 +263,11 @@ rsync -av /WithoutDC/results/json /MAD/results
 ```
 
 Once compiled, the reviewer may visualize the results by once again starting the Jupyter Notebook as depicted in previous steps.
+Finally, run the additional steps in the Junyter Notebook and it will present Table 8 as pictured below.
+
+### Table 8
+![Table8](readme/Table8.png)
+
 
 ---
 Copyright (c) 2019 Kia Rahmani, Rafael Soares
