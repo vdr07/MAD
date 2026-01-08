@@ -103,6 +103,14 @@ public class Transaction {
 		return result;
 	}
 
+	public Statement getStmt(int index) {
+		if (index >= 0 && index < stmts.size()) {
+			return stmts.get(index);
+		} else {
+			throw new IndexOutOfBoundsException("Index " + index + " is out of range for current statements");
+		}
+	}
+
 	public String[] getStmtNames() {
 		List<String> invokations = new ArrayList<String>();
 		for (Statement s : this.stmts)

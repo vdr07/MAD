@@ -57,8 +57,10 @@ drive () {
 setup () {
   echo "setting up the clusters and intializing them"
   . scripts/env.sh
-  docker container stop $(docker ps -q)
-  docker rm $(docker ps -aq)
+  # Stop and remove all previous cassandra containers
+  docker ps -q --filter "name=^/cas" | xargs -r docker stop
+  docker ps -aq --filter "name=^/cas" | xargs -r docker rm
+
   sleep 5
   docker run --name cas1 -p 19041:9042 -e CASSANDRA_CLUSTER_NAME=MyCluster -e CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch -e CASSANDRA_DC=DC1 -e CASSANDRA_RACK=RAC1 -d cassandra
   sleep 20
@@ -82,7 +84,7 @@ init () {
 # -----------------------------------------------------------------
 clean () {
   rm analyzer/config.properties
-  rm tests/*
+  rm -rf tests/*
 }
 
 

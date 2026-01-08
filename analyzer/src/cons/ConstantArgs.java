@@ -29,6 +29,7 @@ public class ConstantArgs {
 	public static boolean _NO_WW, _NO_WR, _NO_RW;
 	public static int _MAX_TXN_INSTANCES;
 	public static boolean _ENFORCE_OPTIMIZED_ALGORITHM;
+	public static int _MAX_RUNTIME_MINUTES;
 
 	// read config.properties file and set the constants
 	public ConstantArgs() {
@@ -67,6 +68,7 @@ public class ConstantArgs {
 					.parseBoolean(prop.getProperty("_ENFORCE_OPTIMIZED_ALGORITHM", "true"));
 			ConstantArgs._LIMIT_ITERATIONS_PER_RUN = Integer
 					.parseInt(prop.getProperty("_LIMIT_ITERATIONS_PER_RUN", "-1"));
+			ConstantArgs._MAX_RUNTIME_MINUTES = Integer.parseInt(prop.getProperty("_MAX_RUNTIME_MINUTES", "240"));
 
 		} catch (IOException ex) {
 			ex.printStackTrace();
