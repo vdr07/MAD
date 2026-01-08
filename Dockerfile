@@ -67,6 +67,8 @@ RUN git clone https://github.com/vdr07/MAD.git MAD
 RUN git clone https://github.com/vdr07/MAD.git Sequential
 RUN git clone https://github.com/vdr07/MAD.git WithoutDC
 
+ARG FORCE_REBUILD=0
+
 WORKDIR "Sequential"
 RUN git checkout dc_sequential
 RUN make benchmark=tpcc
