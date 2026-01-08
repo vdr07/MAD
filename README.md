@@ -13,48 +13,37 @@ Begin by cloning this repository, using the command:
 git clone https://github.com/vdr07/MAD
 ```
 
-We provide a docker image containing all required packages and environment settings. You may obtain the latest image version via docker:
-``` 
-docker pull jrafaelsoares:MAD\latest
-```
-Or by building the image yourself:
-``` 
-docker build -t MAD .
-```
-
-You may install and deploy MAD manually. 
-We provide detailed instructions on manual installation and deployment [here](). 
-For the rest of this guide, we assume the user is using our provided docker images.
-
 ## Dependencies
 
 To deploy our prototype, we mainly depend on [Docker](https://www.docker.com/) and [Docker Compose]() to manage our containers.
 
 You may find detailed guides on how to install Docker [here](https://docs.docker.com/engine/install/).
 Furthermore, we require users to have access to docker without needing sudo. Details to achieve this can be found [here](https://docs.docker.com/engine/install/linux-postinstall/).
-Note - This step requires the user to have root access to the machine.
+
+**Note** - This step requires the user to have root access to the machine.
 
 ### Docker Images
 
 Our prototype requires two Docker images: one for our prototype and another to run a local [Cassandra](https://cassandra.apache.org/_/index.html) cluster.
 
-We include both images in our repository, which you may install by running the commands:
-
+We provide a docker image containing all required packages and environment settings. You may obtain the latest image version via docker:
 ``` 
-docker load -i ./images/cassandra_docker_image.tar
-docker load -i ./images/MAD.tar
+docker pull jrafaelsoares:mad\latest
+```
+Or by building the image yourself:
+``` 
+docker build -t jrafaelsoares:mad .
 ```
 
-You may also download the latest version of each image via DockerHub by running the command:
+Furthermore, we require Cassandra's Docker image. You may download it by running the command:
 ``` 
 docker pull cassandra:latest
-docker pull MAD:latest
 ```
 
 ## Deployment
 
 Once you have installed all required dependencies and images, you can deploy our prototype.
-We use [Docker Compose]() to manage our prototype's deployment. It deploys 3 containers:
+We use [Docker Compose](https://docs.docker.com/compose/) to manage our prototype's deployment. It deploys 3 containers:
 - MAD, where the prototype will run;
 - Two Cassandra Nodes;
 
@@ -63,7 +52,7 @@ To deploy our prototype, you can run the command:
 docker compose up -d --build
 ```
 
-If the deployment goes well, you should see a success message as so:
+If the deployment is successful, you should see a success message as so:
 
 ![DockerComposeSuccess](readme/DockerComposeSuccess.png)
 
@@ -141,8 +130,8 @@ The test scenario should take around 25-30 seconds to run, and should return a `
 With the code successfully built, we begin the experiment execution.
 We split the artifact evaluation in three steps, each resulting in different evaluation result and different execution times:
 - TPC-C Analysis | 10-15 Minutes (Resulting in Table 6 and 7 of the paper);
-- Complete Benchmark Analysis | 8 Hours (Resulting in Table 4 and 5 of the paper);
-- Divide and Conquer Technique Evaluation | 20 Hours split across two 10 Hours sessions (Resulting in Table 8);
+- Complete Benchmark Analysis | 6 Hours (Resulting in Table 4 and 5 of the paper);
+- Divide and Conquer Technique Evaluation | 20 Hours (Resulting in Table 8);
 
 Time estimations are based upon the experimental evaluation setup on a virtual machine with 32 virtual CPU cores running on two
 Intel(R) Xeon(R) Gold 5320 CPUs at 2.2GHz and 128GB of DDR4 RAM with Intel Optane Memory configured in App Mode.
@@ -155,7 +144,7 @@ We advise the reviewer to first run the short version of each step, as it accoun
 
 ## Step 1 - TPC-C Analysis
 
-In this step, we use MAD to analyze the TPC-C benchmark. We use this analysis to recreate Tables 6 and 7 of the paper.
+In this step, we use MAD to analyze the TPC-C benchmark. We use this analysis to recreate Tables 6 and 7 of the paper, showing MAD's capabilities in detecting anomalous executions derived by the Monolith Decomposition and classifying them. .
 
 Inside the MAD directory, run the command:
 ``` 
@@ -184,6 +173,8 @@ You should see the Notebook as seen bellow:
 You can now run each step by clicking the `Step` icon highlighted above (or via `Shift+Enter` in the keyboard).
 If done correctly, the reviewer should observe the two following tables:
 
+**NOTE** - The ordering by which functionalities and entities are ordered in the tables differ from the original paper table, but the contents remain the same.
+
 ### Table 6
 
 ![Table6](readme/Table6.png)
@@ -197,17 +188,17 @@ One can stop the notebook by simply interrupting via `Ctrl + C`.
 
 ## Step 2 - Complete Benchmark Analysis 
 
-In this step, we use MAD to analyze all other Benchmarks. We use this analysis to recreate Tables 4 and 5.
+In this step, we use MAD to analyze all other Benchmarks. We use this analysis to recreate Tables 4 and 5, showing that MAD can be used for anomaly detection across a wide variety of applications in useful time.
 
 As previously mentioned, the analysis of one benchmark in particular (`jpetstore`) comprises the majority of analysis time.
 As such, we split this step into two substeps:
 
 - A shorter step (90min), analyzing all benchmarks except `jpetstore`, via the command: `./short_benchmarks.sh` 
-- `jpetstore` Analysis (5h), solely analysing `jpetstore`, via the command: `./jpetstore_benchmark.sh`
+- `jpetstore` Analysis (5h), solely analysing `jpetstore`, via the command: `./long_benchmark.sh`
 
 ### Result Processing
 
-To visualize the results (which may be done even without the `jpetstore` analysis), deploy once again the Jupyter Notebook and connect via the browser, as in the previous step.
+To visualize the results (which may also be done without the `jpetstore` analysis), deploy once again the Jupyter Notebook and connect via the browser, as in the previous step.
 
 Continuing the execution of the Jupyter Notebook up until steps 8 and 9, the reviewer may now observe two additional tables filled as seen bellow:
 
