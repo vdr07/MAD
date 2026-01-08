@@ -136,24 +136,133 @@ The test scenario should take around 25-30 seconds to run, and should return a `
 
 ![SuccessTestCase](readme/SuccessTestCase.png)
 
+# Step-by-Step
 
-## Manual Installation
+With the code successfully built, we begin the experiment execution.
+We split the artifact evaluation in three steps, each resulting in different evaluation result and different execution times:
+- TPC-C Analysis | 10-15 Minutes (Resulting in Table 6 and 7 of the paper);
+- Complete Benchmark Analysis | 8 Hours (Resulting in Table 4 and 5 of the paper);
+- Divide and Conquer Technique Evaluation | 20 Hours split across two 10 Hours sessions (Resulting in Table 8);
 
-We include an automatic dependency installation script in `install_dependencies.sh`. 
-MAD has three key dependencies:
+Time estimations are based upon the experimental evaluation setup on a virtual machine with 32 virtual CPU cores running on two
+Intel(R) Xeon(R) Gold 5320 CPUs at 2.2GHz and 128GB of DDR4 RAM with Intel Optane Memory configured in App Mode.
 
-- [Java 1.8.0](https://java.com/en/download/help/index_installing.xml)
-- [Z3 Theorem Prover](https://github.com/Z3Prover/z3) (Our protype used version 4.11.2)
-- [Docker](https://www.docker.com/)
-- [Maven]()
+While it is possible to deploy MAD on less powerful machines, do keep in mind this may result in increased execution times than the ones presented in our evaluation.
+Nevertheless, the number and classification of detected anomalies will remain the same (unless MAD reaches the configurable limit analysis time of 4 hours for any given benchmark).
+
+Given the long duration of each step, we include a shortened version of each step which excludes the `jpetstore` benchmark, which is responsible for the majority of execution time.
+We advise the reviewer to first run the short version of each step, as it accounts for the majority of the evaluation.
+
+## Step 1 - TPC-C Analysis
+
+In this step, we use MAD to analyze the TPC-C benchmark. We use this analysis to recreate Tables 6 and 7 of the paper.
+
+Inside the MAD directory, run the command:
+``` 
+./tpcc_benchmarks.sh
+```
+
+### Result Processing
+If successful, the command will result in three `json` files being created in the directory `results/json/dc/tpcc`.
+
+To visualize the results, we use a Jupyter Notebook already installed in the Docker container.
+Inside the container, run the command:
+
+```
+jupyter notebook --ip=0.0.0.0 --no-browser --allow-root
+```
+
+The command should output a result as seen bellow, including a URL to access the Notebook:
+
+![JupyterNotebookStart](readme/JupyterNotebookStart.png)
+
+Copy one of the two presented URL's into a local browser, which will open the Jupyter Notebook. Inside the Notebook, select the `table_results.ipynb` file.
+You should see the Notebook as seen bellow:
+
+![JupyterExample](readme/JupyterExample.png)
+
+You can now run each step by clicking the `Step` icon highlighted above (or via `Shift+Enter` in the keyboard).
+If done correctly, the reviewer should observe the two following tables:
+
+### Table 6
+
+![Table6](readme/Table6.png)
+
+### Table 7
+
+![Table7](readme/Table7.png)
+
+**WARNING -** Stop the jupyter notebook before continuing the evaluation, as it will affect the results. 
+One can stop the notebook by simply interrupting via `Ctrl + C`.
+
+## Step 2 - Complete Benchmark Analysis 
+
+In this step, we use MAD to analyze all other Benchmarks. We use this analysis to recreate Tables 4 and 5.
+
+As previously mentioned, the analysis of one benchmark in particular (`jpetstore`) comprises the majority of analysis time.
+As such, we split this step into two substeps:
+
+- A shorter step (90min), analyzing all benchmarks except `jpetstore`, via the command: `./short_benchmarks.sh` 
+- `jpetstore` Analysis (5h), solely analysing `jpetstore`, via the command: `./jpetstore_benchmark.sh`
+
+### Result Processing
+
+To visualize the results (which may be done even without the `jpetstore` analysis), deploy once again the Jupyter Notebook and connect via the browser, as in the previous step.
+
+Continuing the execution of the Jupyter Notebook up until steps 8 and 9, the reviewer may now observe two additional tables filled as seen bellow:
+
+### Table 4
+
+![Table4](readme/Table4.png)
+
+### Table 5
+
+![Table5](readme/Table5.png)
+
+## Step 3 - Divide and Conquer Technique Evaluation
+
+In this step, we evaluate the performance benefits of MAD's divide and Conquer Technique by comparing its performance with variations of the search algorithm:
+- Without Divide and Conquer;
+- Sequential Divide and Conquer;
+
+Each version is located in a separate directory inside the container.
+
+**NOTE** - Since the reviewer is likely to deploy MAD on different hardware, it is to be expected that the obtained results diverge from the absolute values depicted in the paper.
+Nevertheless, the reviewer can observe the advantages of the Divide and Conquer Technique by specially comparing the execution times of the `TPC-C` and `jpabook` benchmarks.
+Thus, we suggest the reviewer first runs both short versions of each step to observe these results, as they take significantly shorter time than the longer versions.
 
 
----
+### Without Divide and Conquer
 
-### Result Reproducibility
+For this version, change your directory inside the container by running the command:
+``` 
+cd /WithoutDC
+```
 
-MAD follows the same running instruction as of CLOTHO, which can be found in detail [here](https://github.com/Kiarahmani/CLOTHO/blob/master/README.md).
-For reproducibility, we provide `run_benchmark.sh`, which analyses the seven benchmarks and respective decomponsotions evaluated in the paper.
+Similarly to Step 2, we split the execution into two substeps:
+- A shorter step (3h), analyzing all benchmarks except `jpetstore` and `react`, via the command: `./short_benchmarks.sh`
+- `jpetstore` and `react` Analysis (16h), analyzing both `jpetstore` and `react` which both include multiple decompositions that eventually timeout after 4h, via the command: `./long_benchmarks.sh`
+
+### Sequential Divide and Conquer
+
+For this version, change your directory inside the container by running the command:
+``` 
+cd /Sequential
+```
+Similarly, we split the execution into two substeps:
+- A shorter step (90min), analyzing all benchmarks except `jpetstore`, via the command: `./short_benchmarks.sh`
+- `jpetstore` Analysis (5h), solely analysing `jpetstore`, via the command: `./long_benchmarks.sh`
+
+### Result Processing
+
+Once both steps have been executed, the reviewer may compile the results back into the `MAD` directory by running the command:
+
+``` 
+rsync -av /Sequential/results/json /MAD/results/json
+rsync -av /WithoutDC/results/json /MAD/results/json
+```
+
+Once compiled, the reviewer may visualize the results by once again starting the Jupyter Notebook as depicted in previous steps.
 
 ---
 Copyright (c) 2019 Kia Rahmani, Rafael Soares
