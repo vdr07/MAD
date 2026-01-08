@@ -82,7 +82,7 @@ init () {
 # -----------------------------------------------------------------
 clean () {
   rm analyzer/config.properties
-  rm tests/*
+  rm -rf tests/*
 }
 
 

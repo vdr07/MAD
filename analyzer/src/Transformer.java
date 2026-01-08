@@ -8,7 +8,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Collections;
 import java.util.stream.Collectors;
+import java.io.File;
 import utils.Tuple;
+import java.util.Iterator;
+
+import results.Results;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,6 +29,8 @@ import fec.utils.DDLParser;
 import ar.Application;
 import ar.Transaction;
 import ar.OriginalTransaction;
+import ar.statement.Statement;
+import ar.statement.InvokeStmt;
 import soot.Body;
 import soot.BodyTransformer;
 import soot.PhaseOptions;
@@ -63,6 +71,7 @@ public class Transformer extends BodyTransformer {
 	}
 
 	public static void main(String[] args) {
+		long exp_start = System.currentTimeMillis();
 		Application app = null;
 		// Anomaly anml1 = null, anml2 = null;
 		int iter = 1;
@@ -134,6 +143,11 @@ public class Transformer extends BodyTransformer {
 					// Iterate over different anomaly lengths
 					int current_cycle_length = ConstantArgs._Minimum_Cycle_Length;
 					do {
+						if ( (System.currentTimeMillis() - exp_start) / 60000 > ConstantArgs._MAX_RUNTIME_MINUTES){
+							LOG.info("Timeout reached. Stopping search");
+							return;
+						}
+
 						LOG.info("New round of analysis for an anomaly of length: "
 								+ current_cycle_length);
 						try {
@@ -232,8 +246,13 @@ public class Transformer extends BodyTransformer {
 		Map<List<String>, Integer> txnsInteractions = new HashMap<List<String>, Integer>();
 		Map<String, Integer> txnsAppearance = new HashMap<String, Integer>();
 		String anmlName = "";
+		Results results = new Results();
+
 		for (Anomaly seenVersAnml : seenVersAnmls) {
 			List<String> seenTxns = new ArrayList<>();
+			List<String> seenOriginalTxns = new ArrayList<>();
+			List<String> seenEntities = new ArrayList<>();
+
 			List<Tuple<String, String>> edgeTypesLeftOps = new ArrayList<>(); 
 			for (Tuple<String, Tuple<String, String>> edge : seenVersAnml.getCycleStructure()) {
 				String edgeType;
@@ -260,10 +279,31 @@ public class Transformer extends BodyTransformer {
 					txnsAppearance.put(leftTxn, txnsAppearance.get(leftTxn)+1);
 				}
 				seenTxns.add(leftTxn);
+
+				Transaction t = app.getTxnByName(leftTxn);
+				String origTxnName = t.getOriginalTransaction();
+
+				if (!seenOriginalTxns.contains(origTxnName)){
+					seenOriginalTxns.add(origTxnName);
+				}
+
+				int stmtLeftIndexBound = edge.y.x.indexOf("#", rightIndex + 1);
+				int StmtRightIndexBound = edge.y.x.indexOf("|", stmtLeftIndexBound + 1);
+				String stmtIndex = edge.y.x.substring(stmtLeftIndexBound+1, StmtRightIndexBound);
+				Statement s = t.getStmt(Integer.parseInt(stmtIndex)-1);
+				String entityName = ((InvokeStmt) s).getQuery().getTable().getName();
+
+				if (!seenEntities.contains(entityName)){
+					seenEntities.add(entityName);
+				}
+
+
 			}
 
 			Collections.sort(seenTxns);
-			
+			Collections.sort(seenOriginalTxns);
+			Collections.sort(seenEntities);
+
 			if(!txnsInteractions.containsKey(seenTxns)) {
 				txnsInteractions.put(seenTxns, 1);
 			} else {
@@ -288,6 +328,11 @@ public class Transformer extends BodyTransformer {
 			}
 
 			anmlName = anmlsTypesPatterns.get(edgeTypesLeftOps);
+			String subTransactions = "[" + String.join(", ", seenTxns) + "]";
+			String originalTxns = "[" + String.join(", ", seenOriginalTxns) + "]";
+			String entities = "[" + String.join(", ", seenEntities) + "]";
+			results.addAnomaly(anmlName, entities, subTransactions, originalTxns);
+
 			currentCounterValue = anmlsCounters.get(anmlName);
 			anmlsCounters.put(anmlName, ++currentCounterValue);
 		}
@@ -303,6 +348,23 @@ public class Transformer extends BodyTransformer {
 			} else {
 				System.out.println(txnName + ": " + txnCount + "/"+seenVersAnmls.size());
 			}
+		}
+
+		long final_time = System.currentTimeMillis()-exp_start;
+
+		if (final_time / 60000 > ConstantArgs._MAX_RUNTIME_MINUTES){
+			final_time = -1;
+		}
+
+		results.setFinalStatistics(final_time);
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			String json = mapper.writeValueAsString(results);
+
+			System.out.println(json);
+			mapper.writeValue(new File("results.json"), results);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 		printStats(app, tables, anmlsCounters, seenVersAnmls.size(), (analysis_finish_time - analysis_begin_time),

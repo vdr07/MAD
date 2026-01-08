@@ -22,6 +22,9 @@
         <pathelement location="lib/apache-log4j-2.12.0-bin/log4j-api-2.12.0-javadoc.jar"/>
         <pathelement location="lib/apache-log4j-2.12.0-bin/log4j-api-2.12.0.jar"/>
         <pathelement location="lib/apache-log4j-2.12.0-bin/log4j-api-2.12.0-sources.jar"/>
+        <pathelement location="lib/jackson-annotations-2.17.3.jar"/>
+        <pathelement location="lib/jackson-core-2.17.3.jar"/>
+        <pathelement location="lib/jackson-databind-2.17.3.jar"/>
         <pathelement location="lib/jsqlparser-1.4-SNAPSHOT.jar"/>
         <pathelement location="lib/com.microsoft.z3.jar"/>
         <pathelement location="lib/json-simple-1.1.1.jar"/>
@@ -71,7 +74,7 @@
         <java classname="Transformer" failonerror="true" fork="true">
 		<classpath refid="CLOTHO.classpath"/>
 		<!-- TODO: is hard coded for the system under test-->
-		<sysproperty key="java.library.path" path="/mnt/c/Users/valen/Desktop/Thesis/z3-z3-4.11.2/build"/>
+		<sysproperty key="java.library.path" path="/opt/z3-z3-4.11.2/build"/>
         <env key="CLOTHO_RT_PATH" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/rt.jar"/>
         <env key="CLOTHO_JCE_PATH" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/jce.jar"/>
     <!--sysproperty key="java.library.path" path="/Users/Kiarash/dev/packages/z3/build"/-->
