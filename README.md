@@ -84,7 +84,7 @@ docker exec -it MAD /bin/bash
 
 This will connect your terminal to the docker container in the MAD directory. 
 Before beginning the experiments, you must make sure that both Cassandra containers have finished their respective setups.
-To do so, run the command:
+It takes around one minute for both Cassandra containers to become ready for execution. To check the Cassandra cluster status, run the command:
 
 ``` 
 ./mad.sh --cluster
@@ -92,9 +92,18 @@ To do so, run the command:
 
 Both clusters are ready once both containers are observed in the `UN` state and the `Load` parameter in both containers is set to a value other than `?`.
 
+### Cassandra Loading Stage
+During loading, you may observe some error message as seen below:
+
+![DeploymentNotReady](readme/DeploymentNotReady.png)
+
+This is often the case right after running the `docker compose` command, where Cassandra is still starting. To make sure that Cassandra containers have successfully begun, you may run the command `docker ps` and ensure both Cassandra containers have their `STATUS` as `Up`. If so, wait another minute and rerun the `./mad.sh --cluster` command.
+
 Example of an unready / loading scenario (Note that the node representing DC1 is **UP** (via the state **UN** and **Load** different than **?**) while DC2 is still down (via the state **DN** and **Load** = **?**)
 
 ![CassandraNotReady](readme/CassandraNotReady.png)
+
+### Ready Stage
 
 Example of a ready state / scenario, with both clusters showing the **UP** state:
 
@@ -116,7 +125,7 @@ Finally, we will test running MAD with a simple example.
 
 Run the following command:
 ``` 
-rm analyzer/src/benchmarks/tpcc/decomposition.json
+rm -rf analyzer/src/benchmarks/tpcc/decomposition.json
 cp analyzer/src/benchmarks/tpcc/mono_decomposition.json analyzer/src/benchmarks/tpcc/decomposition.json
 ./mad.sh --analyze tpcc | tee results/tpcc_mono
 ```
